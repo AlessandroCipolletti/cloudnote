@@ -6,22 +6,60 @@
 
   var PI = Math.PI;
   var PI2 = PI * 2;
+  var random = function (n) {
+    return app.math.random() * n | 0;
+  };
   var _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
-  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY;
-  var _step = [];
+  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
+  var _step = [], _stepCacheLength = 31;
   var _tool = {
-    size: 2,
-    color: "red",
+    size: 30,
+    color: "",
+    randomColor: true,
     shape: "circle"
   };
 
-  function setTool(tool) {
+  function setTool (tool) {
     // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
     // devo tener conto anche che potrebbe essere il righello o il picker
   }
 
-  function _checkCoord(x, y) {
+  _saveLayer = function () {
+
+    return {
+      data : _minX === -1 ? _context.getImageData(-1, -1, -1, -1) : _context.getImageData(_minX, _minY, _maxX - _minX, _maxY - _minY),
+      minX : _minX,
+      minY : _minY,
+      maxX : _maxX,
+      maxY : _maxY,
+      oldX : _oldX,
+      oldY : _oldY
+    }
+
+  },
+
+  function _saveStep () {
+
+    if (_currentStep !== 0) {
+      _step.splice(0, _currentStep);
+      _currentStep = 0;
+    }
+    _step.splice(0, 0, _saveLayer());
+    if (_step.length > _stepCacheLength)
+      _step.splice(_stepCacheLength, _step.length);
+    if (_step.length > 1) {
+      //_enableElements(_editorUndo);
+      //app.Utils.enableElement();
+    } else {
+      //_disableElements(_editorUndo);
+    }
+    //_disableElements(_editorRedo);
+
+  }
+
+  function _checkCoord (x, y) {
+
     var offset = _tool.size / 2;
     if (_minX === -1 || _minX > (x - offset)) _minX = x - offset;
     if (_minY === -1 || _minY > (y - offset)) _minY = y - offset;
@@ -33,80 +71,102 @@
     if (_maxY > app.height) _maxY = app.height;
     _oldX = x;
     _oldY = y;
+
   }
 
-  function _circle(x, y) {
+  function _circle (x, y) {
+
     _context.beginPath();
     _context.fillStyle = _tool.color;
     _context.arc(x, y, _tool.size / 2, 0, PI2, true);
     _context.fill();
+
   }
 
-  function _onTouchStart(e) {
+  function _getRandomColor () {
+    //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
+    return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
+  }
+
+  function _onTouchStart (e) {
 
     e.preventDefault();
+    console.log(e);
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
     _touchDown = true;
-    var x = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
-    var y = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
-    _checkCoord(x, y);
-    if (_tool.shape === "circle") {
-      _circle(x, y);
+    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
+    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
+    _checkCoord(_cursorX, _cursorY);
+    if (_tool.randomColor) {
+      _tool.color = _getRandomColor();
     }
-
+    if (_tool.shape === "circle") {
+      _circle(_cursorX, _cursorY);
+    }
     _context.lineWidth = _tool.size;
     _context.strokeStyle = _tool.color;
     _context.lineJoin = "round";
     _context.lineCap = "round";
-    _context.shadowBlur = 2;
-	_context.shadowColor = _tool.color;
-    _oldMidX = x;
-    _oldMidY = y;
+    //_context.shadowBlur = 0;
+    //_context.shadowColor = _tool.color;
+    _oldMidX = _cursorX;
+    _oldMidY = _cursorY;
 
   }
 
-  function _onTouchMove(e) {
-	//calcolare se la distanza dal vecchio punto è inferiore ad un certo valore (max 5)
-	// e fare return, per fixare la troppa variabilità quando ci si muove piano con mano non proprio ferma
-    console.log(e.type);
+  function _onTouchMove (e) {
+    
     e.preventDefault();
     if (_touchDown === false) return;
-    var x = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
-    var y = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
-    var midX = _oldX + x >> 1;
-    var midY = _oldY + y >> 1;
+    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
+    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
+    if (_tool.size < 25 && app.math.abs(_oldX - _cursorX) + app.math.abs(_oldY - _cursorY) < 6) return;
+    var midX = _oldX + _cursorX >> 1;
+    var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
     _context.moveTo(midX, midY);
     _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
     _context.stroke();
-    _oldX = x;
-    _oldY = y;
+    _oldX = _cursorX;
+    _oldY = _cursorY;
     _oldMidX = midX;
     _oldMidY = midY;
-    _checkCoord(x, y);
+    _checkCoord(_cursorX, _cursorY);
 
   }
 
-  function _onTouchEnd(e) {
+  function _onTouchEnd (e) {
 
-    if (e.touches && e.touches.length) return;
+    if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
+    return;
+    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
+    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
+    if (_cursorX !== _oldX) {
+      var midX = _oldX + _cursorX >> 1;
+      var midY = _oldY + _cursorY >> 1;
+      _context.beginPath();
+      _context.moveTo(_oldMidX, _oldMidY);
+      _context.quadraticCurveTo(_oldX, _oldY, _cursorX, _cursorY);
+      _context.stroke();
+    }
+    _saveStep();
 
   }
 
-  function _onGestureStart(e) {
+  function _onGestureStart (e) {
     console.log(e);
   }
 
-  function _onGestureChange(e) {
+  function _onGestureChange (e) {
     console.log(e);
   }
 
-  function _onGestureEnd(e) {
+  function _onGestureEnd (e) {
     console.log(e);
   }
 
-  function _onRotate(e) {
+  function _onRotate (e) {
 
     var canvasStyle = app.window.getComputedStyle(_canvas);
     _canvasWidth = parseInt(canvasStyle.width);
@@ -117,7 +177,7 @@
 
   }
 
-  function _initDom() {
+  function _initDom () {
 
     _canvas = app.document.createElement("canvas");
     _context = _canvas.getContext("2d");
@@ -139,7 +199,7 @@
 
   }
 
-  function _setConfig(params) {
+  function _setConfig (params) {
 
     var key;
     for (key in params) {
@@ -150,7 +210,7 @@
 
   }
 
-  function init(params) {
+  function init (params) {
 
     _setConfig(params);
     _initDom();
