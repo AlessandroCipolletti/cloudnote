@@ -1,0 +1,22 @@
+{
+  "name": "cloudnote",
+  "version": "0.1.0",
+  "description": "Get your notes in the cloud with iPad Pro",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlessandroCipolletti/cloudnote.git"
+  },
+  "keywords": [
+    "npm"
+  ],
+  "author": "Alessandro Cipolletti <cipolletti.alessandro@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlessandroCipolletti/cloudnote/issues"
+  },
+  "homepage": "https://github.com/AlessandroCipolletti/cloudnote"
+}
