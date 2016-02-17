@@ -11,7 +11,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY;
   var _step = [];
   var _tool = {
-    size: 1,
+    size: 2,
     color: "red",
     shape: "circle"
   };
@@ -58,13 +58,16 @@
     _context.strokeStyle = _tool.color;
     _context.lineJoin = "round";
     _context.lineCap = "round";
+    _context.shadowBlur = 2;
+	_context.shadowColor = _tool.color;
     _oldMidX = x;
     _oldMidY = y;
 
   }
 
   function _onTouchMove(e) {
-
+	//calcolare se la distanza dal vecchio punto è inferiore ad un certo valore (max 5)
+	// e fare return, per fixare la troppa variabilità quando ci si muove piano con mano non proprio ferma
     console.log(e.type);
     e.preventDefault();
     if (_touchDown === false) return;
