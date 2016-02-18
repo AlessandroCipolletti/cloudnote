@@ -1,8 +1,7 @@
 .cloudnote-editor__canvas {
   width: calc(100% - 200px);
   height: calc(100% - 150px);
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
-  border: solid 1px red;
 }
