@@ -19,7 +19,7 @@
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 31, _currentStep = 0;
   var _tool = {
-    size: 100,
+    size: 6,
     forceFactor: 2.5,
     color: "",
     randomColor: true,
@@ -48,7 +48,7 @@
       maxY : _maxY,
       oldX : _oldX,
       oldY : _oldY
-    }
+    };
 
   }
 
@@ -133,6 +133,7 @@
       _tool.color = _getRandomColor();
     }
     //_context.globalAlpha = 0.7;
+    //_context.globalCompositeOperation = "lighter";
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
     }
