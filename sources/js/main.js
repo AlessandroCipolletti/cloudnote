@@ -71,6 +71,7 @@
     _initViewport();
 
     app.Editor.init();
+    app.ColorPicker.init();
 
     _onRotate(); // this calls also all modules' rotate hadlers
 

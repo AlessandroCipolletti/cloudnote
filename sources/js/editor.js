@@ -9,12 +9,18 @@
   var random = function (n) {
     return app.math.random() * n | 0;
   };
+  var round = function (n, d) {
+    var m = d ? app.math.pow(10, d) : 1;
+    return app.math.round(n * m) / m;
+  };
   var _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
-  var _step = [], _stepCacheLength = 31;
+  var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
+  var _step = [], _stepCacheLength = 31, _currentStep = 0;
   var _tool = {
-    size: 30,
+    size: 100,
+    forceFactor: 2.5,
     color: "",
     randomColor: true,
     shape: "circle"
@@ -23,9 +29,16 @@
   function setTool (tool) {
     // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
     // devo tener conto anche che potrebbe essere il righello o il picker
+    var key;
+    for (key in tool) {
+      if (typeof (_tool[key]) !== "undefined") {
+        _tool[key] = tool[key];
+      }
+    }
+
   }
 
-  _saveLayer = function () {
+   function _saveLayer () {
 
     return {
       data : _minX === -1 ? _context.getImageData(-1, -1, -1, -1) : _context.getImageData(_minX, _minY, _maxX - _minX, _maxY - _minY),
@@ -37,7 +50,7 @@
       oldY : _oldY
     }
 
-  },
+  }
 
   function _saveStep () {
 
@@ -83,16 +96,35 @@
 
   }
 
-  function _getRandomColor () {
+  function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
-    return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
+    if (typeof(alpha) === "undefined") {
+      return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
+    } else if (alpha === true) {
+      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", 0.7)";
+    } else if (typeof(alpha) === "number") {
+      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", " + alpha + ")";
+    }
+
+  }
+
+  function _updateTouchForce () {
+    _touchForce = _touchEventObject.force;
+    if (_touchForce > 0) {
+      _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
+    } else {
+      _frameUpdateForce = false;
+    }
   }
 
   function _onTouchStart (e) {
 
     e.preventDefault();
-    console.log(e);
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
+    if (app.Param.supportTouch) {
+      _touchEventObject = e.touches[0];
+      _updateTouchForce();
+    }
     _touchDown = true;
     _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
     _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
@@ -100,11 +132,12 @@
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
     }
+    //_context.globalAlpha = 0.7;
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
     }
-    _context.lineWidth = _tool.size;
     _context.strokeStyle = _tool.color;
+    _context.lineWidth = _tool.size;
     _context.lineJoin = "round";
     _context.lineCap = "round";
     //_context.shadowBlur = 0;
@@ -115,15 +148,22 @@
   }
 
   function _onTouchMove (e) {
-    
+
     e.preventDefault();
-    if (_touchDown === false) return;
+    if ((e.touches && e.touches.length > 1) || _touchDown === false) return;
+    if (app.Param.supportTouch) {
+      _touchEventObject = e.touches[0];
+      if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
+        _updateTouchForce();
+      }
+    }
     _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
     _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
     if (_tool.size < 25 && app.math.abs(_oldX - _cursorX) + app.math.abs(_oldY - _cursorY) < 6) return;
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
+    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1);
     _context.moveTo(midX, midY);
     _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
     _context.stroke();
@@ -139,16 +179,17 @@
 
     if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
-    return;
-    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
-    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
-    if (_cursorX !== _oldX) {
-      var midX = _oldX + _cursorX >> 1;
-      var midY = _oldY + _cursorY >> 1;
-      _context.beginPath();
-      _context.moveTo(_oldMidX, _oldMidY);
-      _context.quadraticCurveTo(_oldX, _oldY, _cursorX, _cursorY);
-      _context.stroke();
+    if (app.Param.supportTouch === false) {
+      _cursorX = e.clientX;
+      _cursorY = e.clientY;
+      if (_cursorX !== _oldX) {
+        var midX = _oldX + _cursorX >> 1;
+        var midY = _oldY + _cursorY >> 1;
+        _context.beginPath();
+        _context.moveTo(_oldMidX, _oldMidY);
+        _context.quadraticCurveTo(_oldX, _oldY, _cursorX, _cursorY);
+        _context.stroke();
+      }
     }
     _saveStep();
 

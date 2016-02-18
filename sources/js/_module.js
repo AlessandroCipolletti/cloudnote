@@ -29,7 +29,6 @@
 
     _setConfig(params);
     _initDom();
-    _onRotate();
 
   }
 
