@@ -7,6 +7,7 @@
   var _container, _isOpen = false;
   var _randomButtom = {};
   var _selectedValue = "";
+  var _primaryColors = [];
 
   function _selectColor (target) {
 
@@ -56,7 +57,7 @@
       if (_selectedValue !== "random") {
         _selectRandom();
       }
-    } else if (e.target.classList.contains("cloudnote-colorpicker__open")) {
+    } else if (e.target.classList.contains("cloudnote-colorpicker__showhide")) {
       if (_isOpen) {
         _hide();
       } else {
@@ -65,6 +66,21 @@
     }
 
   }
+
+  var _getColorDom = (function () {
+
+    var dom;
+
+    return function (color) {
+
+      var dom = app.document.createElement("div");
+      dom.classList.add("cloudnote-colorpicker__color");
+      dom.style.backgroundColor = color;
+      return dom;
+
+    };
+
+  })();
 
   function _initColorPicker () {
 
@@ -76,6 +92,20 @@
     var secondaryContainer = app.document.createElement("div");
     secondaryContainer.classList.add("cloudnote-colorpicker__secondary");
 
+    // init primary
+    // TODO prima creo pulsante random
+    var primaryColorNumber = app.math.min(round((app.width - 400) / 110), _primaryColors.length);
+    for (var i = 0; i < primaryColorNumber; i++) {
+      primaryContainer.appendChild(_getColorDom(_primaryColors[i]));
+    }
+    // TODO poi pulsante + colori. entrambi larghezza 200
+
+    // init secondary
+
+
+
+    frame.appendChild(primaryContainer);
+    frame.appendChild(secondaryContainer);
     // quando è chiuso piccolo in basso --> una sola riga coi colori primari
     // quando si apre a tutto schermo --> tutti i colori in ordine di croma
     _container.appendChild(frame);

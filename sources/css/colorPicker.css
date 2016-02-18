@@ -1,4 +1,5 @@
 .cloudnote-colorpicker__container {
+  background-color: rgba(255, 255, 255, 0.5);
   border-top: solid 2px black;
   width: 100%;
   height: 100%;
@@ -25,4 +26,26 @@
 .cloudnote-colorpicker__secondary {
   top: 150px;
   height: calc(100% - 150px);
+}
+
+.cloudnote-colorpicker__color {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 30px;
+}
+.cloudnote-colorpicker__color-selected {
+  border: solid 2px black;
+  magin: 28px;
+}
+
+.cloudnote-colorpicker__showhide {
+  /*
+  background-image: url();
+  */
+  transition: transform 0.4s;
+  transform-origin: 50% 50%;
+}
+.cloudnote-colorpicker__container-open .cloudnote-colorpicker__showhide {
+  transform: rotate(90deg)
 }
