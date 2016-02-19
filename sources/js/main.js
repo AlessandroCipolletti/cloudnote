@@ -6,24 +6,27 @@
 
   var _container = {};
   var _rotationHandler = [];
+  var _initialised = false;
 
   function addRotationHandler(handler) {
     _rotationHandler.push(handler);
   }
 
-  function _onRotate(e) {
+  function _onRotate (e) {
 
     app.width = app.window.innerWidth;
     app.height = app.window.innerHeight;
     console.log("rotate:", app.width, app.height);
 
-    for (var i in _rotationHandler) {
-      _rotationHandler[i]();
+    if (_initialised) {
+      for (var i in _rotationHandler) {
+        _rotationHandler[i]();
+      }
     }
 
   }
 
-  function _initViewport() {
+  function _initViewport () {
 
     var attributes = [];
     attributes.push("initial-scale=" + app.Param.scale);
@@ -38,7 +41,7 @@
 
   }
 
-  function _initDom() {
+  function _initDom () {
 
     _container = app.document.createElement("div");
     _container.classList.add("cloudnote__container");
@@ -48,7 +51,7 @@
 
   }
 
-  function _setConfig(params) {
+  function _setConfig (params) {
 
     var key;
     for (key in params) {
@@ -59,7 +62,7 @@
 
   }
 
-  function init(params) {
+  function init (params) {
 
     app.window = window;
     app.document = document;
@@ -69,10 +72,12 @@
     _setConfig(params);
     _initDom();
     _initViewport();
+    _onRotate();
 
     app.Editor.init();
     app.ColorPicker.init();
 
+    _initialised = true;
     _onRotate(); // this calls also all modules' rotate hadlers
 
   }

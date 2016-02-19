@@ -1,23 +1,29 @@
+/* CONTAINER */
 .cloudnote-colorpicker__container {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.95);
   border-top: solid 2px black;
   width: 100%;
   height: 100%;
   position: fixed;
   top: 0px;
   left: 0px;
-  transition: transform 0.4s;
+  transition: transform 0.8s;
   transform: translate3d(0px, calc(100% - 152px), 0px);
 }
-
 .cloudnote-colorpicker__container-open {
   transform: translate3d(0px, 0px, 0px);
 }
 
+/* PRIMARY SECONDARY */
 .cloudnote-colorpicker__primary, .cloudnote-colorpicker__secondary {
+  display: flex;
   position: absolute;
   left: 0px;
   width: 100%;
+}
+.cloudnote-colorpicker__primary {
+  flex-flow: row nowrap;
+  justify-content: space-between;
 }
 .cloudnote-colorpicker__primary {
   height: 150px;
@@ -28,24 +34,62 @@
   height: calc(100% - 150px);
 }
 
+/* COLORS */
 .cloudnote-colorpicker__color {
   width: 80px;
   height: 80px;
+  margin: 35px 20px;
   border-radius: 50%;
-  margin: 30px;
+  box-shadow: 0px -1px 3px 0px rgba(50, 50, 50, 0.75), inset 0px 0px 3px 0px black;
 }
-.cloudnote-colorpicker__color-selected {
-  border: solid 2px black;
-  magin: 28px;
+.cloudnote-colorpicker__color-selected::before {
+  content: '';
+  display: inline-block;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  margin: 4px;
+  border-radius: 50%;
+  box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+  border: solid 3px white;
 }
 
+/* RANDOM */  /* SHOW HIDE */
+.cloudnote-colorpicker__random-container, .cloudnote-colorpicker__showhide-container {
+  width: 250px;
+  height: 100%;
+  display: inline-block;
+}
+.cloudnote-colorpicker__random, .cloudnote-colorpicker__showhide {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: auto;
+}
+.cloudnote-colorpicker__random {
+  height: 90%;
+  width: 55%;
+  margin-top: 3%;
+  background-image: url("../img/icons/random.png");
+}
+.cloudnote-colorpicker__random-selected::before {
+  content: '';
+  display: inline-block;
+  width: 90%;
+  height: 90%;
+  margin-left: 7px;
+  margin-top: 7px;
+  border-radius: 50%;
+  border: solid 0px black;
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 1);
+}
 .cloudnote-colorpicker__showhide {
-  /*
-  background-image: url();
-  */
-  transition: transform 0.4s;
+  height: 60%;
+  width: 40%;
+  margin-top: 12.5%;
+  background-image: url("../img/icons/add.png");
+  transition: transform 0.8s;
   transform-origin: 50% 50%;
 }
 .cloudnote-colorpicker__container-open .cloudnote-colorpicker__showhide {
-  transform: rotate(90deg)
+  transform: rotate(-45deg)
 }
