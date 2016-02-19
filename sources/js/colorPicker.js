@@ -39,6 +39,9 @@
     }
     _randomButtom.classList.add("cloudnote-colorpicker__random-selected");
     _selectedValue = "random";
+    if (_isOpen) {
+      _hide();
+    }
     app.Editor.setTool({
       color: "",
       randomColor: true

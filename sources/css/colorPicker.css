@@ -1,14 +1,14 @@
 /* CONTAINER */
 .cloudnote-colorpicker__container {
   background-color: rgba(255, 255, 255, 0.95);
-  border-top: solid 2px black;
+  border-top: solid 1px gray;
   width: 100%;
   height: 100%;
   position: fixed;
   top: 0px;
   left: 0px;
   transition: transform 0.8s;
-  transform: translate3d(0px, calc(100% - 152px), 0px);
+  transform: translate3d(0px, calc(100% - 151px), 0px);
 }
 .cloudnote-colorpicker__container-open {
   transform: translate3d(0px, 0px, 0px);
