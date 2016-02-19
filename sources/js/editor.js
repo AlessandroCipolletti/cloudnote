@@ -244,6 +244,7 @@
   function _initSubModules (params) {
 
     app.Editor.ColorPicker.init(params);
+    app.Editor.Tools.init(params);
 
   }
 
