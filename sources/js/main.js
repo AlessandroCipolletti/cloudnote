@@ -75,7 +75,6 @@
     _onRotate();
 
     app.Editor.init();
-    app.ColorPicker.init();
 
     _initialised = true;
     _onRotate(); // this calls also all modules' rotate hadlers

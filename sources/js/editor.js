@@ -241,6 +241,12 @@
 
   }
 
+  function _initSubModules (params) {
+
+    app.Editor.ColorPicker.init(params);
+
+  }
+
   function _setConfig (params) {
 
     var key;
@@ -257,6 +263,7 @@
     _setConfig(params);
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
+    _initSubModules(params);
 
   }
 

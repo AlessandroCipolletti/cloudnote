@@ -170,7 +170,7 @@
 
   }
 
-  app.ColorPicker = {
+  app.Editor.ColorPicker = {
     init: init
   };
 
