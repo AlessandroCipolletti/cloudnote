@@ -1,5 +1,5 @@
 /* CONTAINER */
-.cloudnote-colorpicker__container {
+.cloudnote-editor-colorpicker__container {
   background-color: rgba(255, 255, 255, 0.95);
   border-top: solid 1px gray;
   width: 100%;
@@ -10,39 +10,39 @@
   transition: transform 0.6s;
   transform: translate3d(0px, calc(100% - 151px), 0px);
 }
-.cloudnote-colorpicker__container-open {
+.cloudnote-editor-colorpicker__container-open {
   transform: translate3d(0px, 0px, 0px);
 }
 
 /* PRIMARY SECONDARY */
-.cloudnote-colorpicker__primary, .cloudnote-colorpicker__secondary {
+.cloudnote-editor-colorpicker__primary, .cloudnote-editor-colorpicker__secondary {
   display: flex;
   position: absolute;
   left: 0px;
   width: 100%;
 }
-.cloudnote-colorpicker__primary {
+.cloudnote-editor-colorpicker__primary {
   flex-flow: row nowrap;
   justify-content: space-between;
 }
-.cloudnote-colorpicker__primary {
+.cloudnote-editor-colorpicker__primary {
   height: 150px;
   top: 0px;
 }
-.cloudnote-colorpicker__secondary {
+.cloudnote-editor-colorpicker__secondary {
   top: 150px;
   height: calc(100% - 150px);
 }
 
 /* COLORS */
-.cloudnote-colorpicker__color {
+.cloudnote-editor-colorpicker__color {
   width: 80px;
   height: 80px;
   margin: 35px 20px;
   border-radius: 50%;
   box-shadow: 0px -1px 3px 0px rgba(50, 50, 50, 0.75), inset 0px 0px 3px 0px black;
 }
-.cloudnote-colorpicker__color-selected::before {
+.cloudnote-editor-colorpicker__color-selected::before {
   content: '';
   display: inline-block;
   width: calc(100% - 14px);
@@ -54,24 +54,24 @@
 }
 
 /* RANDOM */  /* SHOW HIDE */
-.cloudnote-colorpicker__random-container, .cloudnote-colorpicker__showhide-container {
+.cloudnote-editor-colorpicker__random-container, .cloudnote-editor-colorpicker__showhide-container {
   width: 250px;
   height: 100%;
   display: inline-block;
 }
-.cloudnote-colorpicker__random, .cloudnote-colorpicker__showhide {
+.cloudnote-editor-colorpicker__random, .cloudnote-editor-colorpicker__showhide {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   margin: auto;
 }
-.cloudnote-colorpicker__random {
+.cloudnote-editor-colorpicker__random {
   height: 90%;
   width: 55%;
   margin-top: 3%;
   background-image: url("../img/icons/random.png");
 }
-.cloudnote-colorpicker__random-selected::before {
+.cloudnote-editor-colorpicker__random-selected::before {
   content: '';
   display: inline-block;
   width: 90%;
@@ -82,7 +82,7 @@
   border: solid 0px black;
   box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 1);
 }
-.cloudnote-colorpicker__showhide {
+.cloudnote-editor-colorpicker__showhide {
   height: 60%;
   width: 40%;
   margin-top: 12.5%;
@@ -90,6 +90,6 @@
   transition: transform 1.5s;
   transform-origin: 50% 50%;
 }
-.cloudnote-colorpicker__container-open .cloudnote-colorpicker__showhide {
+.cloudnote-editor-colorpicker__container-open .cloudnote-editor-colorpicker__showhide {
   transform: rotate(-45deg)
 }

@@ -19,8 +19,8 @@
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 31, _currentStep = 0;
   var _tool = {
-    size: 6,
-    forceFactor: 2.5,
+    size: 25,
+    forceFactor: 2,
     color: "",
     randomColor: true,
     shape: "circle"

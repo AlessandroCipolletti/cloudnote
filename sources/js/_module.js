@@ -4,17 +4,23 @@
 
   };
 
-  function _onRotate(e) {
+  var _container = {};
+
+  function _onRotate (e) {
     // do some stuff
   }
 
-  function _initDom() {
+  function _initDom () {
 
+    var _container = app.document.createElement("div");
+    _container.classList.add("cloudnote-module__container");
+
+    app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 
   }
 
-  function _setConfig(params) {
+  function _setConfig (params) {
 
     var key;
     for (key in params) {
@@ -25,14 +31,14 @@
 
   }
 
-  function init(params) {
+  function init (params) {
 
     _setConfig(params);
     _initDom();
 
   }
 
-  app.Main = {
+  app.Module = {
     init: init
   };
 
