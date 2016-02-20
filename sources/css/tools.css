@@ -5,5 +5,10 @@
   width: 200px;
   height: calc(100% - 150px);
   background-color: rgba(255, 255, 255, 0.95);
-  border-right: solid 1px gray;
+  border-left: solid 1px gray;
+  transition: transform 0.6s;
+  transform: translate3d(0px, 0px, 0px);
+}
+.cloudnote-editor-colorpicker__OPEN .cloudnote-editor-tools__container {
+  transform: translate3d(201px, 0px, 0px);
 }

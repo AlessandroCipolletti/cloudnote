@@ -10,7 +10,7 @@
   transition: transform 0.6s;
   transform: translate3d(0px, calc(100% - 151px), 0px);
 }
-.cloudnote-editor-colorpicker__container-open {
+.cloudnote-editor-colorpicker__OPEN .cloudnote-editor-colorpicker__container {
   transform: translate3d(0px, 0px, 0px);
 }
 

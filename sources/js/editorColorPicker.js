@@ -51,14 +51,14 @@
 
   function _show () {
 
-    _container.classList.add("cloudnote-editor-colorpicker__container-open");
+    app.Param.container.classList.add("cloudnote-editor-colorpicker__OPEN");
     _isOpen = true;
 
   }
 
   function _hide () {
 
-    _container.classList.remove("cloudnote-editor-colorpicker__container-open");
+    app.Param.container.classList.remove("cloudnote-editor-colorpicker__OPEN");
     _isOpen = false;
 
   }
