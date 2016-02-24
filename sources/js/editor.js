@@ -1,7 +1,8 @@
 (function (app) {
 
   var _config = {
-
+    primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
+    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear"]
   };
 
   var PI = Math.PI;
@@ -21,14 +22,16 @@
   var _tool = {
     size: 25,
     forceFactor: 2,
+    speedFactor: 0,
     color: "",
     randomColor: true,
-    shape: "circle"
+    shape: "circle",
+    globalCompositeOperation: ""
   };
 
   function setTool (tool) {
     // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
-    // devo tener conto anche che potrebbe essere il righello o il picker
+    // TODO: devo tener conto anche che potrebbe essere il righello o il picker
     var key;
     for (key in tool) {
       if (typeof (_tool[key]) !== "undefined") {
@@ -38,7 +41,7 @@
 
   }
 
-   function _saveLayer () {
+  function _saveLayer () {
 
     return {
       data : _minX === -1 ? _context.getImageData(-1, -1, -1, -1) : _context.getImageData(_minX, _minY, _maxX - _minX, _maxY - _minY),
@@ -62,18 +65,80 @@
     if (_step.length > _stepCacheLength)
       _step.splice(_stepCacheLength, _step.length);
     if (_step.length > 1) {
-      //_enableElements(_editorUndo);
-      //app.Utils.enableElement();
+      app.Editor.Tools.toggleHistoryButtons("undo", true);
     } else {
-      //_disableElements(_editorUndo);
+      app.Editor.Tools.toggleHistoryButtons("undo", false);
     }
-    //_disableElements(_editorRedo);
+    app.Editor.Tools.toggleHistoryButtons("redo", false);
+
+  }
+
+  function undo () {
+
+    var step = _step[_currentStep + 1];
+    if (step) {
+
+      var tot = _step.length - _currentStep - 2;
+      _currentStep = _currentStep + 1;
+      _clear();
+      _restoreStep(step);
+      if (!tot) {
+        app.Editor.Tools.toggleHistoryButtons("undo", false);
+      }
+      app.Editor.Tools.toggleHistoryButtons("redo", true);
+
+    }
+
+  }
+
+  function redo () {
+
+    if (_currentStep > 0) {
+      _currentStep -= 1;
+      var step = _step[_currentStep];
+      _clear();
+      _restoreStep(step);
+      app.Editor.Tools.toggleHistoryButtons("undo", true);
+      if (_currentStep <= 0) {
+        app.Editor.Tools.toggleHistoryButtons("redo", false);
+      }
+    }
+
+  }
+
+  function _restoreStep (step) {
+
+    _context.putImageData(step.data, step.minX, step.minY);
+    _minX = step.minX;
+    _minY = step.minY;
+    _maxX = step.maxX;
+    _maxY = step.maxY;
+    _oldX = step.oldX;
+    _oldY = step.oldY
+
+  }
+
+  clear = function (force) {
+
+    //if (Messages.confirm(label["areYouSure"])) {
+    _clear();
+    //_draft = {};
+    _saveStep();
+    app.Editor.Tools.toggleHistoryButtons("redo", false);
+
+  }
+
+  function _clear () {
+
+    _context.clearRect(0, 0, app.width, app.height);
+    _minX = _minY = _maxX = _maxY = _oldX = _oldY = -1;
 
   }
 
   function _checkCoord (x, y) {
 
-    var offset = _tool.size / 2;
+    //var offset = _tool.size / 2;
+    var offset = _tool.size;
     if (_minX === -1 || _minX > (x - offset)) _minX = x - offset;
     if (_minY === -1 || _minY > (y - offset)) _minY = y - offset;
     if (_maxX === -1 || _maxX < (x + offset)) _maxX = x + offset;
@@ -98,7 +163,7 @@
 
   function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
-    if (typeof(alpha) === "undefined") {
+    if (alpha === false || typeof(alpha) === "undefined") {
       return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
     } else if (alpha === true) {
       return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", 0.7)";
@@ -134,15 +199,16 @@
     }
     //_context.globalAlpha = 0.7;
     //_context.globalCompositeOperation = "lighter";
-    if (_tool.shape === "circle") {
-      _circle(_cursorX, _cursorY);
-    }
+    _context.globalCompositeOperation = _tool.globalCompositeOperation;
     _context.strokeStyle = _tool.color;
     _context.lineWidth = _tool.size;
     _context.lineJoin = "round";
     _context.lineCap = "round";
-    //_context.shadowBlur = 0;
+    //_context.shadowBlur = 10;
     //_context.shadowColor = _tool.color;
+    if (_tool.shape === "circle") {
+      _circle(_cursorX, _cursorY);
+    }
     _oldMidX = _cursorX;
     _oldMidY = _cursorY;
 
@@ -157,19 +223,21 @@
       if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
         _updateTouchForce();
       }
+    } else {
+      _touchForce = 0;
     }
     _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
     _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
-    if (_tool.size < 25 && app.math.abs(_oldX - _cursorX) + app.math.abs(_oldY - _cursorY) < 6) return;
+    var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
+
+    if (_tool.size < 25 && distance < 5) return;
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
-    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1);
+    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? app.math.min(distance, _tool.size * _tool.speedFactor) : 0);
     _context.moveTo(midX, midY);
     _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
     _context.stroke();
-    _oldX = _cursorX;
-    _oldY = _cursorY;
     _oldMidX = midX;
     _oldMidY = midY;
     _checkCoord(_cursorX, _cursorY);
@@ -241,10 +309,10 @@
 
   }
 
-  function _initSubModules (params) {
+  function _initSubModules () {
 
-    app.Editor.ColorPicker.init(params);
-    app.Editor.Tools.init(params);
+    app.Editor.ColorPicker.init(_config);
+    app.Editor.Tools.init(_config);
 
   }
 
@@ -264,13 +332,17 @@
     _setConfig(params);
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
-    _initSubModules(params);
+    _saveStep();
+    _initSubModules();
 
   }
 
   app.Editor = {
     init: init,
-    setTool: setTool
+    setTool: setTool,
+    undo: undo,
+    redo: redo,
+    clear: clear
   };
 
 })(cloudnote);

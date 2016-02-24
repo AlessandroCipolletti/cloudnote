@@ -1,13 +1,12 @@
 (function (app) {
 
   var _config = {
-
+    primaryColors: []
   };
 
   var _container, _isOpen = false;
   var _randomButtom = {};
   var _selectedValue = "";
-  var _primaryColors = ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"];
   var round = function (n, d) {
     var m = d ? app.math.pow(10, d) : 1;
     return app.math.round(n * m) / m;
@@ -51,29 +50,30 @@
 
   function _show () {
 
-    app.Param.container.classList.add("cloudnote-editor-colorpicker__OPEN");
+    app.Param.container.classList.add("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = true;
 
   }
 
   function _hide () {
 
-    app.Param.container.classList.remove("cloudnote-editor-colorpicker__OPEN");
+    app.Param.container.classList.remove("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = false;
 
   }
 
   function _onTouchStart (e) {
 
-    if (e.target.classList.contains("cloudnote-editor-colorpicker__color")) {
-      if (e.target.classList.contains("cloudnote-editor-colorpicker__color-selected") === false) {
-        _selectColor(e.target);
+    var target = e.target;
+    if (target.classList.contains("cloudnote-editor-colorpicker__color")) {
+      if (target.classList.contains("cloudnote-editor-colorpicker__color-selected") === false) {
+        _selectColor(target);
       }
-    } else if (e.target.classList.contains("cloudnote-editor-colorpicker__random")) {
+    } else if (target.classList.contains("cloudnote-editor-colorpicker__random")) {
       if (_selectedValue !== "random") {
         _selectRandom();
       }
-    } else if (e.target.classList.contains("cloudnote-editor-colorpicker__showhide")) {
+    } else if (target.classList.contains("cloudnote-editor-colorpicker__showhide")) {
       if (_isOpen) {
         _hide();
       } else {
@@ -83,17 +83,17 @@
 
   }
 
-  var _getColorDom = (function () {
+  var _getColorButton = (function () {
 
-    var dom;
+    var button;
 
     return function (color) {
 
-      dom = app.document.createElement("div");
-      dom.classList.add("cloudnote-editor-colorpicker__color");
-      dom.setAttribute("data-color", color);
-      dom.style.backgroundColor = color;
-      return dom;
+      button = app.document.createElement("div");
+      button.classList.add("cloudnote-editor-colorpicker__color");
+      button.setAttribute("data-color", color);
+      button.style.backgroundColor = color;
+      return button;
 
     };
 
@@ -117,9 +117,9 @@
     button.classList.add("cloudnote-editor-colorpicker__random-selected");
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
-    var primaryColorNumber = app.math.min(round((app.width - 500) / 110), _primaryColors.length);
+    var primaryColorNumber = app.math.min(round((app.width - 500) / 110), _config.primaryColors.length);
     for (var i = 0; i < primaryColorNumber; i++) {
-      primaryContainer.appendChild(_getColorDom(_primaryColors[i]));
+      primaryContainer.appendChild(_getColorButton(_config.primaryColors[i]));
     }
     buttonContainer = app.document.createElement("div");
     buttonContainer.classList.add("cloudnote-editor-colorpicker__showhide-container");
