@@ -13,8 +13,8 @@
 
       _selectTool("marker");
       app.Editor.setTool({
-        size: 25,
-        forceFactor: 1,
+        size: 15,
+        forceFactor: 1.4,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "source-over"
@@ -37,8 +37,8 @@
 
       _selectTool("eraser");
       app.Editor.setTool({
-        size: 10,
-        forceFactor: 0,
+        size: 20,
+        forceFactor: 2,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "destination-out"
@@ -53,6 +53,9 @@
     },
     clear: function () {
       app.Editor.clear();
+    },
+    paper: function () {
+      app.Editor.changePaper();
     }
   };
 

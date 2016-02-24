@@ -2,7 +2,7 @@
 
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
-    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear"],
+    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear", "paper"],
     toolsSide: "left"
   };
 
@@ -17,9 +17,10 @@
   };
   var _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
+  var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY, _toolsWidth;
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
-  var _step = [], _stepCacheLength = 31, _currentStep = 0;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0;
   var _tool = {
     size: 25,
     forceFactor: 2,
@@ -107,19 +108,21 @@
 
   }
 
-  function _restoreStep (step) {
+  function changePaper () {
 
-    _context.putImageData(step.data, step.minX, step.minY);
-    _minX = step.minX;
-    _minY = step.minY;
-    _maxX = step.maxX;
-    _maxY = step.maxY;
-    _oldX = step.oldX;
-    _oldY = step.oldY
+    _canvas.classList.remove("paper-squares", "paper-lines", "paper-white");
+    if (_currentPaper === "white") {
+      _currentPaper = "squares";
+    } else if (_currentPaper === "squares") {
+      _currentPaper = "lines";
+    } else {
+      _currentPaper = "white";
+    }
+    _canvas.classList.add("paper-" + _currentPaper);
 
   }
 
-  clear = function (force) {
+  function clear () {
 
     //if (Messages.confirm(label["areYouSure"])) {
     _clear();
@@ -133,6 +136,18 @@
 
     _context.clearRect(0, 0, app.width, app.height);
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = -1;
+
+  }
+
+  function _restoreStep (step) {
+
+    _context.putImageData(step.data, step.minX, step.minY);
+    _minX = step.minX;
+    _minY = step.minY;
+    _maxX = step.maxX;
+    _maxY = step.maxY;
+    _oldX = step.oldX;
+    _oldY = step.oldY
 
   }
 
@@ -259,7 +274,7 @@
     _cursorY = _getCoordY(e);
     var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
 
-    if (_tool.size < 25 && distance < 5) return;
+    if (_tool.size < 25 && distance < 3) return;
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
@@ -320,7 +335,7 @@
 
     _canvas = app.document.createElement("canvas");
     _context = _canvas.getContext("2d");
-    _canvas.classList.add("cloudnote-editor__canvas");
+    _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
     _canvas.addEventListener(app.Param.eventStart, _onTouchStart, true);
     _canvas.addEventListener(app.Param.eventMove, _onTouchMove, true);
     _canvas.addEventListener(app.Param.eventEnd, _onTouchEnd, true);
@@ -372,7 +387,8 @@
     setTool: setTool,
     undo: undo,
     redo: redo,
-    clear: clear
+    clear: clear,
+    changePaper: changePaper
   };
 
 })(cloudnote);

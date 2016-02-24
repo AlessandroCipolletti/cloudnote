@@ -13,3 +13,13 @@
 .cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor__canvas {
   right: 0px;
 }
+
+.cloudnote-editor__canvas.paper-white {
+  background-image: url("../img/paper/white.png");
+}
+.cloudnote-editor__canvas.paper-squares {
+  background-image: url("../img/paper/squares.png");
+}
+.cloudnote-editor__canvas.paper-lines {
+  background-image: url("../img/paper/lines.png");
+}
