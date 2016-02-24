@@ -1,9 +1,11 @@
 (function (app) {
 
   var _config = {
-    tools: []
+    tools: [],
+    toolsSide: "right"
   };
 
+  // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
   var _container = {};
   var _undoButton = false, _redoButton = false;
   var _toolsFunctions = {
@@ -151,6 +153,11 @@
 
   function _initDom () {
 
+    if (_config.toolsSide === "right") {
+      app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
+    } else {
+      app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
+    }
     _container = app.document.createElement("div");
     _container.classList.add("cloudnote-editor-tools__container");
     _container.addEventListener(app.Param.eventStart, _onTouchStart, true);

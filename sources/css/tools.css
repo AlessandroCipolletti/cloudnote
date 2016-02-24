@@ -1,11 +1,9 @@
 .cloudnote-editor-tools__container {
   position: fixed;
-  right: 0px;
   top: 0px;
   width: 200px;
   height: calc(100% - 150px);
-  background-color: rgba(255, 255, 255, 0.95);
-  border-left: solid 1px gray;
+  background-color: rgba(255, 255, 255, 1);
   transition: transform 0.6s;
   transform: translate3d(0px, 0px, 0px);
   z-index: 20;
@@ -13,7 +11,19 @@
   flex-flow: column wrap;
   justify-content: space-around;
 }
-.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
+
+.cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__container {
+  left: 0px;
+  border-right: solid 1px gray;
+}
+.cloudnote__EDITOR-TOOLS-LEFT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
+  transform: translate3d(-201px, 0px, 0px);
+}
+.cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__container {
+  right: 0px;
+  border-left: solid 1px gray;
+}
+.cloudnote__EDITOR-TOOLS-RIGHT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
   transform: translate3d(201px, 0px, 0px);
 }
 

@@ -50,14 +50,14 @@
 
   function _show () {
 
-    app.Param.container.classList.add("cloudnote__EDITOR-COLORPICKER-OPEN");
+    app.Utils.addGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = true;
 
   }
 
   function _hide () {
 
-    app.Param.container.classList.remove("cloudnote__EDITOR-COLORPICKER-OPEN");
+    app.Utils.removeGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = false;
 
   }

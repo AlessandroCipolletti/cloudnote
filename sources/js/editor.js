@@ -2,7 +2,8 @@
 
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
-    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear"]
+    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear"],
+    toolsSide: "left"
   };
 
   var PI = Math.PI;
@@ -16,7 +17,7 @@
   };
   var _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
-  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
+  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY, _toolsWidth;
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 31, _currentStep = 0;
   var _tool = {
@@ -182,8 +183,36 @@
     }
   }
 
-  function _onTouchStart (e) {
+  function _getCoordX (e) {
 
+    if (typeof(e.layerX) === "undefined") {
+      if (e.type.indexOf("mouse") >= 0) {
+        return e.clientX - _toolsWidth;
+      } else {
+        return e.touches[0].clientX - _toolsWidth;
+      }
+    } else {
+      return e.layerX;
+    }
+
+  }
+
+  function _getCoordY (e) {
+
+    if (typeof(e.layerY) === "undefined") {
+      if (e.type.indexOf("mouse") >= 0) {
+        return e.clientY - _toolsWidth;
+      } else {
+        return e.touches[0].clientY - _toolsWidth;
+      }
+    } else {
+      return e.layerY;
+    }
+
+  }
+
+  function _onTouchStart (e) {
+    console.log(e);
     e.preventDefault();
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
     if (app.Param.supportTouch) {
@@ -191,8 +220,8 @@
       _updateTouchForce();
     }
     _touchDown = true;
-    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
-    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
+    _cursorX = _getCoordX(e);
+    _cursorY = _getCoordY(e);
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
@@ -226,8 +255,8 @@
     } else {
       _touchForce = 0;
     }
-    _cursorX = e.type.indexOf("mouse") >= 0 ? e.clientX : e.touches[0].clientX;
-    _cursorY = e.type.indexOf("mouse") >= 0 ? e.clientY : e.touches[0].clientY;
+    _cursorX = _getCoordX(e);
+    _cursorY = _getCoordY(e);
     var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
 
     if (_tool.size < 25 && distance < 5) return;
@@ -249,8 +278,8 @@
     if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
     if (app.Param.supportTouch === false) {
-      _cursorX = e.clientX;
-      _cursorY = e.clientY;
+      _cursorX = _getCoordX(e);
+      _cursorY = _getCoordY(e);
       if (_cursorX !== _oldX) {
         var midX = _oldX + _cursorX >> 1;
         var midY = _oldY + _cursorY >> 1;
@@ -324,6 +353,7 @@
         _config[key] = params[key];
       }
     }
+    _toolsWidth = _config.toolsSide === "left" ? app.width - _canvasWidth : 0;
 
   }
 

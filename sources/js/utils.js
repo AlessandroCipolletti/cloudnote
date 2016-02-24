@@ -4,8 +4,18 @@
     return app.math.round(app.math.sqrt(app.math.pow(x2 - x1, 2) + app.math.pow(y2 - y1, 2)));
   }
 
+  function addGlobalStatus (status) {
+    app.Param.container.classList.add(status);
+  }
+
+  function removeGlobalStatus (status) {
+    app.Param.container.classList.remove(status);
+  }
+
   app.Utils = {
-    distance: distance
+    distance: distance,
+    addGlobalStatus: addGlobalStatus,
+    removeGlobalStatus: removeGlobalStatus
   };
 
 })(cloudnote);
