@@ -25,7 +25,7 @@
 
       _selectTool("pencil");
       app.Editor.setTool({
-        size: 2,
+        size: 1,
         forceFactor: 4,
         speedFactor: 0,
         shape: "circle",

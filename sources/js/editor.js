@@ -296,8 +296,6 @@
       _cursorX = _getCoordX(e);
       _cursorY = _getCoordY(e);
       if (_cursorX !== _oldX) {
-        var midX = _oldX + _cursorX >> 1;
-        var midY = _oldY + _cursorY >> 1;
         _context.beginPath();
         _context.moveTo(_oldMidX, _oldMidY);
         _context.quadraticCurveTo(_oldX, _oldY, _cursorX, _cursorY);

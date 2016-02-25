@@ -28,13 +28,15 @@
 }
 
 .cloudnote-editor-tools__tool {
-  width: 100%;
+  width: 200px;
   height: 200px;
   min-height: 200px;
   background-position: center;
-  background-size: 80% 80%;
+  background-size: 160px 160px;
   background-repeat: no-repeat;
 }
 .cloudnote-editor-tools__tool-selected {
-  background-color: red;
+  border-right: solid 4px gray;
+  border-left: solid 4px transparent;
+  width: 192px;
 }
