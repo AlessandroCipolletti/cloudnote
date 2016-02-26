@@ -7,7 +7,7 @@
 
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
   var _container = {};
-  var _undoButton = false, _redoButton = false;
+  var _undoButton = false, _redoButton = false, _saveButton = false;
   var _toolsFunctions = {
     marker: function () {
 
@@ -56,33 +56,36 @@
     },
     paper: function () {
       app.Editor.changePaper();
+    },
+    save: function () {
+      app.Editor.save();
     }
   };
 
-  var toggleHistoryButtons = (function () {
+  function toggleButton (tool, enabled) {
 
-    var historyButtons = ["undo", "redo"];
-    return function (tool, enabled) {
+    var button = false;
+    if (_config.tools.indexOf(tool) >= 0) {
 
-      if (historyButtons.indexOf(tool) >= 0) {
-        if (tool === "undo" && _undoButton) {
-          if (enabled) {
-            _undoButton.classList.remove("disabled");
-          } else {
-            _undoButton.classList.add("disabled");
-          }
-        } else if (tool === "redo" && _redoButton) {
-          if (enabled) {
-            _redoButton.classList.remove("disabled");
-          } else {
-            _redoButton.classList.add("disabled");
-          }
+      if (tool === "undo") {
+        button = _undoButton;
+      } else if (tool === "redo") {
+        button = _redoButton;
+      } else if (tool === "save") {
+        button = _saveButton;
+      }
+
+      if (button) {
+        if (enabled) {
+          button.classList.remove("disabled");
+        } else {
+          button.classList.add("disabled");
         }
       }
 
     }
 
-  })();
+  }
 
   function _selectTool (tool) {
 
@@ -128,6 +131,10 @@
     }
     if (_config.tools.indexOf("redo") >= 0) {
       _redoButton = _container.querySelector(".cloudnote-editor-tools__tool-redo");
+    }
+    if (_config.tools.indexOf("save") >= 0) {
+      _saveButton = _container.querySelector(".cloudnote-editor-tools__tool-save");
+      toggleButton("save", false);
     }
 
   }
@@ -191,7 +198,7 @@
 
   app.Editor.Tools = {
     init: init,
-    toggleHistoryButtons: toggleHistoryButtons
+    toggleButton: toggleButton
   };
 
 })(cloudnote);

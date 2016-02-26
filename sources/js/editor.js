@@ -2,7 +2,7 @@
 
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
-    tools: ["marker", "pencil", "eraser", "undo", "redo", "clear", "paper"],
+    tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "paper", "clear"],
     toolsSide: "left"
   };
 
@@ -30,6 +30,19 @@
     shape: "circle",
     globalCompositeOperation: ""
   };
+
+  function save () {
+
+
+  }
+
+  function show () {
+    app.Utils.fadeInElements(_container);
+  }
+
+  function _hide () {
+    app.Utils.fadeOutElements(_container);
+  }
 
   function setTool (tool) {
     // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
@@ -67,11 +80,13 @@
     if (_step.length > _stepCacheLength)
       _step.splice(_stepCacheLength, _step.length);
     if (_step.length > 1) {
-      app.Editor.Tools.toggleHistoryButtons("undo", true);
+      app.Editor.Tools.toggleButton("undo", true);
+      app.Editor.Tools.toggleButton("save", true);
     } else {
-      app.Editor.Tools.toggleHistoryButtons("undo", false);
+      app.Editor.Tools.toggleButton("undo", false);
+      app.Editor.Tools.toggleButton("save", false);
     }
-    app.Editor.Tools.toggleHistoryButtons("redo", false);
+    app.Editor.Tools.toggleButton("redo", false);
 
   }
 
@@ -85,9 +100,12 @@
       _clear();
       _restoreStep(step);
       if (!tot) {
-        app.Editor.Tools.toggleHistoryButtons("undo", false);
+        app.Editor.Tools.toggleButton("undo", false);
+        app.Editor.Tools.toggleButton("save", false);
+      } else {
+        app.Editor.Tools.toggleButton("save", true);
       }
-      app.Editor.Tools.toggleHistoryButtons("redo", true);
+      app.Editor.Tools.toggleButton("redo", true);
 
     }
 
@@ -100,9 +118,10 @@
       var step = _step[_currentStep];
       _clear();
       _restoreStep(step);
-      app.Editor.Tools.toggleHistoryButtons("undo", true);
+      app.Editor.Tools.toggleButton("undo", true);
+      app.Editor.Tools.toggleButton("save", true);
       if (_currentStep <= 0) {
-        app.Editor.Tools.toggleHistoryButtons("redo", false);
+        app.Editor.Tools.toggleButton("redo", false);
       }
     }
 
@@ -125,10 +144,14 @@
   function clear () {
 
     //if (Messages.confirm(label["areYouSure"])) {
+    if (_minX === -1) {
+      return;
+    }
     _clear();
     //_draft = {};
     _saveStep();
-    app.Editor.Tools.toggleHistoryButtons("redo", false);
+    app.Editor.Tools.toggleButton("redo", false);
+    app.Editor.Tools.toggleButton("save", false);
 
   }
 
@@ -320,9 +343,8 @@
 
   function _onRotate (e) {
 
-    var canvasStyle = window.getComputedStyle(_canvas);
-    _canvasWidth = parseInt(canvasStyle.width);
-    _canvasHeight = parseInt(canvasStyle.height);
+    _canvasWidth = app.width - 151;
+    _canvasHeight = app.height - 151;
     _canvas.width = _canvasWidth;
     _canvas.height = _canvasHeight;
     canvasStyle = undefined;
@@ -332,7 +354,7 @@
   function _initDom () {
 
     _container = document.createElement("div");
-    _container.classList.add("cloudnote-editor__container");
+    _container.classList.add("cloudnote-editor__container", "displayNone", "fadeOut");
     _canvas = document.createElement("canvas");
     _context = _canvas.getContext("2d");
     _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
@@ -389,6 +411,7 @@
 
   app.Editor = {
     init: init,
+    show: show,
     setTool: setTool,
     undo: undo,
     redo: redo,

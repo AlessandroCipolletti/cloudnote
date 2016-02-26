@@ -201,6 +201,14 @@
   var _nameSpaceUri = "http://www.w3.org/2000/svg";
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _maxDeltaDragYgps = 10 /* km */, _deltaDragYgps = 0;
 
+  function show () {
+    app.Utils.fadeInElements(_container);
+  }
+
+  function _hide () {
+    app.Utils.fadeOutElements(_container);
+  }
+
   function go2Gps () {
     _gps.currentGps2px(false, _go2XYZ);
   }
@@ -289,9 +297,16 @@
     // do some stuff
   }
 
+  function _showEditor () {
+
+    _hide();
+    app.Editor.show();
+
+  }
+
   function _initDom () {
 
-    var _container = document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote-dashboard__container");
     _svg = document.createElement("svg");
     _svg.setAttribute("version", "1.1");
@@ -313,6 +328,11 @@
     _svg.appendChild(rect);
     _svg.appendChild(_zoomLabel);
     _container.appendChild(_svg);
+    var showEditor = document.createElement("a");
+    showEditor.classList.add("cloudnote-dashboard__showeditor", "button");
+    showEditor.innerHTML = "Disegna";
+    showEditor.addEventListener(app.Param.eventStart, _showEditor);
+    _container.appendChild(showEditor);
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 
@@ -345,6 +365,7 @@
 
   app.Dashboard = {
     init: init,
+    show: show,
     go2Gps: go2Gps
   };
 

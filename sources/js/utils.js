@@ -12,6 +12,49 @@
     app.Param.container.classList.remove(status);
   }
 
+
+  function _iterable (els, fn) {
+    if (els.length) {
+      for (var i = els.length; i--; )
+        fn(els[i]);
+    } else {
+      fn(els);
+    }
+  }
+
+  function _doFadeIn () {
+    this.classList.add("fadeIn");
+    this.classList.remove("fadeOut");
+  }
+
+  function _fadeInEl (el) {
+    if (el) {
+      el.classList.remove("displayNone");
+      requestAnimationFrame(_doFadeIn.bind(el));
+    }
+  }
+
+  function _doFadeOut () {
+    this.classList.add("displayNone");
+  }
+
+  function _fadeOutEl (el) {
+    if (el) {
+      el.classList.add("fadeOut");
+      el.classList.remove("fadeIn");
+      setTimeout(_doFadeOut.bind(el), 400);
+    }
+  }
+
+  function fadeInElements (els) {
+    _iterable(els, _fadeInEl);
+  }
+
+  function fadeOutElements (els) {
+    _iterable(els, _fadeOutEl);
+  }
+
+
   function init () {
 
     var MATH = Math;
@@ -28,7 +71,9 @@
     init: init,
     distance: distance,
     addGlobalStatus: addGlobalStatus,
-    removeGlobalStatus: removeGlobalStatus
+    removeGlobalStatus: removeGlobalStatus,
+    fadeInElements: fadeInElements,
+    fadeOutElements: fadeOutElements
   };
 
 })(cloudnote);

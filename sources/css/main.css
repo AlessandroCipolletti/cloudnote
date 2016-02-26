@@ -1,3 +1,17 @@
+@font-face {
+	font-family: disegnato;
+	src: url('../font/font.ttf');
+}
+
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: disegnato !important;
+	letter-spacing: 1px;
+	user-select: none;
+	opacity: 1;
+}
+
 html, body {
   margin: 0px;
   padding: 0px;
@@ -19,4 +33,43 @@ html, body {
 
 .displayNone {
   display: none;
+}
+
+.fadeIn {
+  opacity: 1;
+	transition: opacity 400ms;
+}
+.fadeOut {
+  opacity: 0;
+	transition: opacity 400ms;
+}
+
+
+.button {
+	font-size: 30px;
+	padding: 16px 20px;
+	border: solid 2px #186f8f;
+	box-shadow: inset 0px 2px 0px #7fd2f1, 0px 2px 0px #fff;
+  background-color:#3bb3e0;
+	cursor: pointer;
+	letter-spacing: 1px;
+	text-decoration:none;
+	color:#fff;
+	position: relative;
+	border-radius: 12px;
+	background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+}
+.button:active {
+	background-image: linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+}
+.button.disabled:active {
+	background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+}
+.button img {
+	height: 36px;
+	width: 36px;
+	margin: 0px 12px -10px -6px;
 }

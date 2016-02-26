@@ -7,8 +7,8 @@
 }
 
 .cloudnote-editor__canvas {
-  width: calc(100% - 201px);
-  height: calc(100% - 150px);
+  width: calc(100% - 151px);
+  height: calc(100% - 151px);
   position: fixed;
   top: 0px;
   z-index: 10;

@@ -73,7 +73,7 @@
 
     app.Utils.init();
     app.Dashboard.init();
-    //app.Editor.init();
+    app.Editor.init();
 
     _initialised = true;
     _onRotate(); // this calls also all modules' rotate hadlers
