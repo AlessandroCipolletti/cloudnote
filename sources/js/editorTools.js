@@ -96,7 +96,7 @@
 
   function _getToolButton (tool, params) {
 
-    var button = app.document.createElement("div");
+    var button = document.createElement("div");
     button.classList.add("cloudnote-editor-tools__tool");
     button.classList.add("cloudnote-editor-tools__tool-" + tool);
     if (params.selected) {
@@ -161,10 +161,10 @@
     } else {
       app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
     }
-    _container = app.document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote-editor-tools__container");
     _container.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    app.Param.container.appendChild(_container);
+    app.Editor.addSubmoduleDom(_container);
     app.Main.addRotationHandler(_onRotate);
 
   }

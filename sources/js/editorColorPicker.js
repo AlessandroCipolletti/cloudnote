@@ -8,8 +8,8 @@
   var _randomButtom = {};
   var _selectedValue = "";
   var round = function (n, d) {
-    var m = d ? app.math.pow(10, d) : 1;
-    return app.math.round(n * m) / m;
+    var m = d ? Math.pow(10, d) : 1;
+    return Math.round(n * m) / m;
   };
 
   function _selectColor (target) {
@@ -89,7 +89,7 @@
 
     return function (color) {
 
-      button = app.document.createElement("div");
+      button = document.createElement("div");
       button.classList.add("cloudnote-editor-colorpicker__color");
       button.setAttribute("data-color", color);
       button.style.backgroundColor = color;
@@ -101,29 +101,29 @@
 
   function _initColorPicker () {
 
-    var frame = app.document.createDocumentFragment();
+    var frame = document.createDocumentFragment();
 
-    var primaryContainer = app.document.createElement("div");
+    var primaryContainer = document.createElement("div");
     primaryContainer.classList.add("cloudnote-editor-colorpicker__primary");
-    var secondaryContainer = app.document.createElement("div");
+    var secondaryContainer = document.createElement("div");
     secondaryContainer.classList.add("cloudnote-editor-colorpicker__secondary");
 
     // init primary
-    var buttonContainer = app.document.createElement("div");
+    var buttonContainer = document.createElement("div");
     buttonContainer.classList.add("cloudnote-editor-colorpicker__random-container");
-    var button = app.document.createElement("div");
+    var button = document.createElement("div");
     _randomButtom = button;
     button.classList.add("cloudnote-editor-colorpicker__random");
     button.classList.add("cloudnote-editor-colorpicker__random-selected");
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
-    var primaryColorNumber = app.math.min(round((app.width - 500) / 110), _config.primaryColors.length);
+    var primaryColorNumber = Math.min(round((app.width - 500) / 110), _config.primaryColors.length);
     for (var i = 0; i < primaryColorNumber; i++) {
       primaryContainer.appendChild(_getColorButton(_config.primaryColors[i]));
     }
-    buttonContainer = app.document.createElement("div");
+    buttonContainer = document.createElement("div");
     buttonContainer.classList.add("cloudnote-editor-colorpicker__showhide-container");
-    button = app.document.createElement("div");
+    button = document.createElement("div");
     button.classList.add("cloudnote-editor-colorpicker__showhide");
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
@@ -143,10 +143,10 @@
 
   function _initDom () {
 
-    _container = app.document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote-editor-colorpicker__container");
     _container.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    app.Param.container.appendChild(_container);
+    app.Editor.addSubmoduleDom(_container);
     app.Main.addRotationHandler(_onRotate);
 
   }

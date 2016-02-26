@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Git.Art</title>
+	<meta http-equiv="charset" content="utf-8">
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8"/>
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script charset="utf-8" type="text/javascript" src="js/app.js"></script>
+
+	<style>
+		#showEditor {
+			position: absolute;
+			bottom: 20px;
+			left: 20px;
+		}
+    #dashboard_update-gps {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      padding: 5px;
+    }
+      #dashboard_update-gps img {
+        width: 30px;
+        height: auto;
+        margin: auto;
+      }
+		#fblogin {
+			z-index: 10000;
+			position: absolute;
+			left: 100px;
+		}
+	</style>
+
+	<script>
+		function touchHandler(e) {
+			e.preventDefault();
+			var first = e.changedTouches[0],
+				type = e.type === "touchstart" ? "mousedown" : e.type === "touchmove" ? "mousemove" : "mouseup";
+				simulatedEvent = document.createEvent("MouseEvent");
+			simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY, false, false, false, false, 0, null);
+			first.target.dispatchEvent(simulatedEvent);
+		}
+		document.addEventListener("touchstart", touchHandler, true);
+		document.addEventListener("touchmove", touchHandler, true);
+		document.addEventListener("touchend", touchHandler, true);
+	</script>
+</head>
+<body id="body" onLoad="App.Init()">
+	<!-- SOCIAL LOGIN  SOCIAL LOGIN  SOCIAL LOGIN  SOCIAL LOGIN  SOCIAL LOGIN  -->
+	<div id="socialLoginPopup" class="popupPanel displayNone" align="center">
+		<h1>Social.Art</h1>
+		<div id="fbLogin">
+			<img src="img/social/loginfb.png">
+		</div>
+		<div id="fbLogged" class="displayNone">
+			<img src="img/social/fb.png">
+			<p id="fbStatus"></p>
+		</div>
+		<div class="close"><img src="img/icon/x.png"></div>
+	</div>
+
+	<div id="darkOverlay" class="displayNone fadeOut"></div>
+	<ul id="spinner" class="displayNone">
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	<!-- DASHBOARD DASHBOARD DASHBOARD DASHBOARD DASHBOARD DASHBOARD -->
+	<div id="dashboardContainer">
+		<svg version="1.1" id="dashboard">
+			<defs>
+				<style>
+					image {
+						pointer-events: visiblePainted;
+					}
+					image {
+						cursor: pointer;
+					}
+				</style>
+				<filter id="contour">
+					<!-- su :hover -> filter: url(#contour); -->
+					<feMorphology in="SourceAlpha" operator="dilate" radius="1" style="stroke: yellow"/>
+					<feComposite in="SourceGraphic"/>
+				</filter>
+			</defs>
+			<g id="imageGroup"></g>
+			<rect id="zoomLabelCont" x="-10" y="-10" rx="10" ry="10" width="70" height="60"></rect>
+			<text id="zoomLabel" x="15" y="30">100%</text>
+		</svg>
+		<a id="showEditor" class="button displayNone">Disegna</a>
+    <a id="dashboard_update-gps" class="button displayNone"><img src="img/icon/gitart.png"></a>
+		<span id="dashboardTooltip">
+			<div class="close"><img src="img/icon/x.png"></div>
+			<div id="tooltipUserImage"></div>
+			<p id="tooltipTitle"></p>
+			<p id="tooltipUserName"></p>
+			<div id="tooltipDrawContainer"></div>
+			<span id="tooltipLocation"></span>
+			<span id="tooltipLikeTot"></span>
+			<span id="tooltipCommentsTot"></span>
+			<span id="tooltipShareTot"></span>
+			<div id="tooltipFooter">
+				<div id="tooltipLike"></div>
+				<div id="tooltipComment"></div>
+				<div id="tooltipShare"></div>
+				<div id="tooltipSave"></div>
+			</div>
+		</span>
+		<div id="dashboardCoords" class="displayNone">
+			<div></div>
+			<span></span>
+		</div>
+	</div>
+	<!-- EDITOR EDITOR EDITOR EDITOR EDITOR EDITOR -->
+	<div id="editorContainer" class="displayNone fadeOut">
+		<canvas id="editor" class="useBrush"></canvas>
+		<div id="editorMenu">
+			<div><a id="editorMenu1" class="enabled selected"><div></div></a></div>
+			<div><a id="editorMenu2" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu3" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu4" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu5" class="enabled selected"><div></div></a></div>
+			<div><a id="editorMenu6" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu7" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu8" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu9" class="enabled"><div></div></a></div>
+			<div><a id="editorMenu0" class="enabled"><div></div></a></div>
+		</div>
+		<!-- TOOLS TOOLS TOOLS TOOLS TOOLS TOOLS TOOLS TOOLS TOOLS TOOLS -->
+		<div id="pickerToolPreview" class="displayNone">
+			<div id="pickerToolColor"></div>
+			<div id="pickerToolColor2"></div>
+		</div>
+		<div id="sizeToolContainer" class="displayNone">
+			<div id="sizeToolPreview"></div>
+			<a id="sizeToolLabel"></a>
+		</div>
+		<div id="pencilGrayscaleCont" class="displayNone">
+			<div id="grayscalePointer"></div>
+		</div>
+		<!-- INIZIO COLOR PICKER -->
+		<div id="colorPickerCont" class="displayNone">
+			<canvas id="colorPicker" width="285" height="180"></canvas>
+			<div id="colorPreview" ></div><br>
+		</div>
+		<!-- FINE COLOR PICKER -->
+		<!-- OPTIONS OPTIONS OPTIONS OPTIONS OPTIONS -->
+		<div id="editorOptions" class="popupPanel displayNone" align="center">
+			<ul>
+				<li id="optionDraft" class="button"></li>
+				<li id="optionRestore" class="button"></li>
+				<li id="optionSquare" class="button"></li>
+				<li id="optionExport" class="button"></li>
+				<li id="optionClear" class="button"></li>
+			</ul>
+			<div class="close"><img src="img/icon/x.png"></div>
+		</div>
+	</div>
+	<!-- EDITOR EDITOR EDITOR EDITOR EDITOR EDITOR -->
+</body>
+</html>

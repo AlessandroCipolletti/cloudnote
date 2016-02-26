@@ -14,8 +14,8 @@
 
   function _onRotate (e) {
 
-    app.width = app.window.innerWidth;
-    app.height = app.window.innerHeight;
+    app.width = window.innerWidth;
+    app.height = window.innerHeight;
     console.log("rotate:", app.width, app.height);
 
     if (_initialised) {
@@ -37,17 +37,17 @@
     viewport = document.createElement("meta");
     viewport.setAttribute("name", "viewport");
     viewport.setAttribute("content", attributes.join(","));
-    app.document.head.appendChild(viewport);
+    document.head.appendChild(viewport);
 
   }
 
   function _initDom () {
 
-    _container = app.document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote__container");
-    app.document.body.appendChild(_container);
+    document.body.appendChild(_container);
     app.Param.container = _container;
-    app.window.addEventListener(app.Param.eventResize, _onRotate, false);
+    window.addEventListener(app.Param.eventResize, _onRotate, false);
 
   }
 
@@ -64,9 +64,6 @@
 
   function init (params) {
 
-    app.window = window;
-    app.document = document;
-    app.math = Math;
     app.Param.init(params);
 
     _setConfig(params);
@@ -74,7 +71,9 @@
     _initViewport();
     _onRotate();
 
-    app.Editor.init();
+    app.Utils.init();
+    app.Dashboard.init();
+    //app.Editor.init();
 
     _initialised = true;
     _onRotate(); // this calls also all modules' rotate hadlers

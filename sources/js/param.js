@@ -20,11 +20,11 @@
   param.init = function (params) {
 
     _setConfig(params);
-    param.eventResize = "onorientationchange" in app.window ? "orientationchange" : "resize";
+    param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
     param.pixelRatio = window.devicePixelRatio;
     param.scale = 1 / param.pixelRatio;
-    param.supportTouch = ("ontouchstart" in app.window);
-    param.supportGesture = ("ongesturechange" in app.window);
+    param.supportTouch = ("ontouchstart" in window);
+    param.supportGesture = ("ongesturechange" in window);
 
     if (param.supportTouch) {
 

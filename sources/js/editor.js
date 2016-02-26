@@ -9,13 +9,13 @@
   var PI = Math.PI;
   var PI2 = PI * 2;
   var random = function (n) {
-    return app.math.random() * n | 0;
+    return Math.random() * n | 0;
   };
   var round = function (n, d) {
-    var m = d ? app.math.pow(10, d) : 1;
-    return app.math.round(n * m) / m;
+    var m = d ? Math.pow(10, d) : 1;
+    return Math.round(n * m) / m;
   };
-  var _canvas, _context, _canvasWidth, _canvasHeight;
+  var _container, _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY, _toolsWidth;
@@ -278,7 +278,7 @@
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
-    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? app.math.min(distance, _tool.size * _tool.speedFactor) : 0);
+    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
     _context.moveTo(midX, midY);
     _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
     _context.stroke();
@@ -320,7 +320,7 @@
 
   function _onRotate (e) {
 
-    var canvasStyle = app.window.getComputedStyle(_canvas);
+    var canvasStyle = window.getComputedStyle(_canvas);
     _canvasWidth = parseInt(canvasStyle.width);
     _canvasHeight = parseInt(canvasStyle.height);
     _canvas.width = _canvasWidth;
@@ -331,7 +331,9 @@
 
   function _initDom () {
 
-    _canvas = app.document.createElement("canvas");
+    _container = document.createElement("div");
+    _container.classList.add("cloudnote-editor__container");
+    _canvas = document.createElement("canvas");
     _context = _canvas.getContext("2d");
     _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
     _canvas.addEventListener(app.Param.eventStart, _onTouchStart, true);
@@ -346,7 +348,8 @@
 
     }
 
-    app.Param.container.appendChild(_canvas);
+    _container.appendChild(_canvas);
+    app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 
   }
@@ -356,6 +359,10 @@
     app.Editor.ColorPicker.init(_config);
     app.Editor.Tools.init(_config);
 
+  }
+
+  function addSubmoduleDom (dom) {
+    _container.appendChild(dom);
   }
 
   function _setConfig (params) {
@@ -386,7 +393,8 @@
     undo: undo,
     redo: redo,
     clear: clear,
-    changePaper: changePaper
+    changePaper: changePaper,
+    addSubmoduleDom: addSubmoduleDom
   };
 
 })(cloudnote);
