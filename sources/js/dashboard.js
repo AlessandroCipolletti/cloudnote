@@ -226,7 +226,7 @@
     if (!_drawExist || replace) {
       _drawExist && _removeDraw(draw.id, true);
       var _newDraw = document.createElementNS("http://www.w3.org/2000/svg", "image");
-      _newDraw.setAttributeNS("http://www.w3.org/2000/xlink", "xlink:href", draw.base64);
+      _newDraw.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", draw.base64);
       _newDraw.setAttribute("x", round(((draw.x - _currentX) * z + app.width / 2 - _imageGroup.pxx) / z, _decimals));
       _newDraw.setAttribute("y", round(((_currentY - draw.y) * z + app.height / 2 - _imageGroup.pxy) / z, _decimals));
       _newDraw.setAttribute("width", draw.w);
@@ -364,22 +364,22 @@
 
     _container = document.createElement("div");
     _container.classList.add("cloudnote-dashboard__container");
-    _svg = document.createElement("svg");
+    _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
     _initDomGroup();
     var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("x", "-10");
-    rect.setAttribute("y", "-10");
-    rect.setAttribute("rx", "10");
-    rect.setAttribute("ry", "10");
-    rect.setAttribute("width", "140");
-    rect.setAttribute("height", "120");
     rect.classList.add("cloundote-dashboard__zoom-label-rect");
+    rect.setAttribute("x", "-16");
+    rect.setAttribute("y", "-16");
+    rect.setAttribute("rx", "16");
+    rect.setAttribute("ry", "16");
+    rect.setAttribute("width", "120");
+    rect.setAttribute("height", "100");
     _zoomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
     _zoomLabel.classList.add("cloundote-dashboard__zoom-label");
-    _zoomLabel.setAttribute("x", "15");
-    _zoomLabel.setAttribute("y", "30");
+    _zoomLabel.setAttribute("x", "20");
+    _zoomLabel.setAttribute("y", "50");
     _zoomLabel.innerHTML = "100%";
     _svg.appendChild(rect);
     _svg.appendChild(_zoomLabel);
