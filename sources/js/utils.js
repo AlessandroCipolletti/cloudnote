@@ -1,5 +1,29 @@
 (function (app) {
 
+  function arrayOrderStringDown (a, b) {
+
+    if (a < b) return +1;
+    if (a > b) return -1;
+    return 0;
+
+  }
+
+  function arrayOrderStringUp (a, b) {
+
+    if (a > b) return +1;
+    if (a < b) return -1;
+    return 0;
+
+  }
+
+  function arrayOrderNumberUp (a, b) {
+    return a - b;
+  }
+
+  function arrayOrderNumberDown (a, b) {
+    return b - a;
+  }
+
   function distance (x1, y1, x2, y2) {
     return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
   }
@@ -73,7 +97,11 @@
     addGlobalStatus: addGlobalStatus,
     removeGlobalStatus: removeGlobalStatus,
     fadeInElements: fadeInElements,
-    fadeOutElements: fadeOutElements
+    fadeOutElements: fadeOutElements,
+    arrayOrderStringDown: arrayOrderStringDown,
+    arrayOrderStringUp: arrayOrderStringUp,
+    arrayOrderNumberUp: arrayOrderNumberUp,
+    arrayOrderNumberDown: arrayOrderNumberDown
   };
 
 })(cloudnote);

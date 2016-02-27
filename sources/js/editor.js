@@ -19,6 +19,7 @@
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY, _toolsWidth;
+  var _savedDraw = {};
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0;
   var _tool = {
@@ -31,8 +32,47 @@
     globalCompositeOperation: ""
   };
 
+  function _saveToDashboard () {
+
+    _savedDraw.id = random(10000);
+    app.Dashboard.addDraw(_savedDraw, true);
+    _savedDraw = undefined;
+    _clear();
+    _step = [];
+    _currentStep = 0;
+    _saveStep();
+    _hide();
+    app.Dashboard.show();
+    
+  }
+
   function save () {
 
+    //app.Utils.setSpinner(true, true);
+    _savedDraw = _saveLayer();
+    var _coords = app.Dashboard.getCoords(),
+      _tempCanvas = document.createElement("canvas");
+    _tempCanvas.width = _savedDraw.data.width;
+    _tempCanvas.height = _savedDraw.data.height;
+    _tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);
+    _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
+    _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
+    _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
+    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x;	// coordinate del px in alto a sx rispetto alle coordinate assolute correnti della lavagna
+    _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
+    _savedDraw.r = _savedDraw.x + _savedDraw.w;			// ccordinate assolute massime e minime del disegno
+    _savedDraw.b = _savedDraw.y - _savedDraw.h;
+    _savedDraw.data = undefined;
+    delete _savedDraw.data;
+    delete _savedDraw.oldX;
+    delete _savedDraw.oldY;
+    delete _savedDraw.maxX;
+    delete _savedDraw.maxY;
+    delete _savedDraw.minX;
+    delete _savedDraw.minY;
+    _tempCanvas = undefined;
+    //_saveToServer(_savedDraw);
+    _saveToDashboard();
 
   }
 
@@ -412,6 +452,7 @@
   app.Editor = {
     init: init,
     show: show,
+    save: save,
     setTool: setTool,
     undo: undo,
     redo: redo,

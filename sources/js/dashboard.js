@@ -198,8 +198,56 @@
   }
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {};
-  var _nameSpaceUri = "http://www.w3.org/2000/svg";
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _maxDeltaDragYgps = 10 /* km */, _deltaDragYgps = 0;
+  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [];
+
+  _appendDraw = function (draw) {	// aggiunge alla dashboard un svg image già elaborato
+
+    if (!draw || !draw.id || _idsImagesOnDashboard.indexOf(draw.id) >= 0) return false;
+    console.log(["aggiungo", draw]);
+    _idsImagesOnDashboard.push(draw.id);
+    _idsImagesOnDashboard = _idsImagesOnDashboard.sort(app.Utils.arrayOrderStringDown);
+    var index = _idsImagesOnDashboard.indexOf(draw.id) + 1;
+    if (index < _idsImagesOnDashboard.length) {
+      _imageGroup.tag.insertBefore(draw.data, DOCUMENT.getElementById(_idsImagesOnDashboard[index]));
+    } else {
+      _imageGroup.tag.appendChild(draw.data);
+    }
+    draw.onDashboard = true;
+    _cache.add(draw.id, draw);
+
+  }
+
+  addDraw = function (draw, replace) {
+
+    if (!draw || !draw.id) return false;
+    var _drawExist = _cache.exist(draw.id),
+      z = _imageGroup.matrix.a;
+    if (!_drawExist || replace) {
+      _drawExist && _removeDraw(draw.id, true);
+      var _newDraw = document.createElementNS("http://www.w3.org/2000/svg", "image");
+      _newDraw.setAttributeNS("http://www.w3.org/2000/xlink", "xlink:href", draw.base64);
+      _newDraw.setAttribute("x", round(((draw.x - _currentX) * z + app.width / 2 - _imageGroup.pxx) / z, _decimals));
+      _newDraw.setAttribute("y", round(((_currentY - draw.y) * z + app.height / 2 - _imageGroup.pxy) / z, _decimals));
+      _newDraw.setAttribute("width", draw.w);
+      _newDraw.setAttribute("height", draw.h);
+      _newDraw.id = draw.id;
+      draw.base64 = undefined;
+      delete draw.minX;
+      delete draw.minY;
+      delete draw.maxX;
+      delete draw.maxY;
+      delete draw.coordX;
+      delete draw.coordY;
+      delete draw.base64;
+      draw.data = _newDraw;
+      _appendDraw(draw);
+      _newDraw = draw = undefined;
+    }
+    _cacheNeedsUpdate = true;
+    return true;
+
+  }
 
   function show () {
     app.Utils.fadeInElements(_container);
@@ -207,6 +255,14 @@
 
   function _hide () {
     app.Utils.fadeOutElements(_container);
+  }
+
+  function getCoords () {
+    return {
+      x: round(_currentX),
+      y: round(_currentY),
+      z: round(_currentZ)
+    };
   }
 
   function go2Gps () {
@@ -276,8 +332,8 @@
       _imageGroup.pxx = _imageGroup.pxy = 0;
       _imageGroup.matrix = null;
     }
-    var g = document.createElementNS(_nameSpaceUri, "g");
-    var origin = document.createElementNS(_nameSpaceUri, 'rect');
+    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    var origin = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
     g.setAttribute('id', 'imageGroup');
     origin.setAttributeNS(null, 'x', 0);
     origin.setAttributeNS(null, 'y', 0);
@@ -312,7 +368,7 @@
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
     _initDomGroup();
-    var rect = document.createElementNS(_nameSpaceUri, "rect");
+    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", "-10");
     rect.setAttribute("y", "-10");
     rect.setAttribute("rx", "10");
@@ -320,7 +376,7 @@
     rect.setAttribute("width", "140");
     rect.setAttribute("height", "120");
     rect.classList.add("cloundote-dashboard__zoom-label-rect");
-    _zoomLabel = document.createElementNS(_nameSpaceUri, "text");
+    _zoomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
     _zoomLabel.classList.add("cloundote-dashboard__zoom-label");
     _zoomLabel.setAttribute("x", "15");
     _zoomLabel.setAttribute("y", "30");
@@ -366,6 +422,8 @@
   app.Dashboard = {
     init: init,
     show: show,
+    addDraw: addDraw,
+    getCoords: getCoords,
     go2Gps: go2Gps
   };
 
