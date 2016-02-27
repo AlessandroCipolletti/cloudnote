@@ -197,7 +197,7 @@
     return Math.round(n * m) / m;
   }
   var PI = Math.PI;
-  var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {};
+  var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {};
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _maxDeltaDragYgps = 10 /* km */, _deltaDragYgps = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [];
 
@@ -209,7 +209,7 @@
     _idsImagesOnDashboard = _idsImagesOnDashboard.sort(app.Utils.arrayOrderStringDown);
     var index = _idsImagesOnDashboard.indexOf(draw.id) + 1;
     if (index < _idsImagesOnDashboard.length) {
-      _imageGroup.tag.insertBefore(draw.data, DOCUMENT.getElementById(_idsImagesOnDashboard[index]));
+      _imageGroup.tag.insertBefore(draw.data, document.getElementById(_idsImagesOnDashboard[index]));
     } else {
       _imageGroup.tag.appendChild(draw.data);
     }
@@ -250,11 +250,11 @@
   }
 
   function show () {
-    app.Utils.fadeInElements(_container);
+    app.Utils.fadeInElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
   function _hide () {
-    app.Utils.fadeOutElements(_container);
+    app.Utils.fadeOutElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
   function getCoords () {
@@ -353,7 +353,7 @@
     // do some stuff
   }
 
-  function _showEditor () {
+  function _openEditor () {
 
     _hide();
     app.Editor.show();
@@ -368,27 +368,27 @@
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
     _initDomGroup();
-    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.classList.add("cloundote-dashboard__zoom-label-rect");
-    rect.setAttribute("x", "-16");
-    rect.setAttribute("y", "-16");
-    rect.setAttribute("rx", "16");
-    rect.setAttribute("ry", "16");
-    rect.setAttribute("width", "120");
-    rect.setAttribute("height", "100");
+    _zoomRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    _zoomRect.classList.add("cloundote-dashboard__zoom-label-rect");
+    _zoomRect.setAttribute("x", "-16");
+    _zoomRect.setAttribute("y", "-16");
+    _zoomRect.setAttribute("rx", "16");
+    _zoomRect.setAttribute("ry", "16");
+    _zoomRect.setAttribute("width", "120");
+    _zoomRect.setAttribute("height", "100");
     _zoomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
     _zoomLabel.classList.add("cloundote-dashboard__zoom-label");
     _zoomLabel.setAttribute("x", "20");
     _zoomLabel.setAttribute("y", "50");
     _zoomLabel.innerHTML = "100%";
-    _svg.appendChild(rect);
+    _svg.appendChild(_zoomRect);
     _svg.appendChild(_zoomLabel);
     _container.appendChild(_svg);
-    var showEditor = document.createElement("a");
-    showEditor.classList.add("cloudnote-dashboard__showeditor", "button");
-    showEditor.innerHTML = "Disegna";
-    showEditor.addEventListener(app.Param.eventStart, _showEditor);
-    _container.appendChild(showEditor);
+    _showEditor = document.createElement("a");
+    _showEditor.classList.add("cloudnote-dashboard__showeditor", "button");
+    _showEditor.innerHTML = "Disegna";
+    _showEditor.addEventListener(app.Param.eventStart, _openEditor);
+    _container.appendChild(_showEditor);
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 

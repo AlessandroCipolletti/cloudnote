@@ -4,6 +4,7 @@
 	left: 0px;
 	width: 100%;
 	height: 100%;
+  z-index: 50;
 }
 
 .cloudnote-editor__canvas {
@@ -11,7 +12,7 @@
   height: calc(100% - 151px);
   position: fixed;
   top: 0px;
-  z-index: 10;
+  z-index: 60;
 }
 
 .cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor__canvas {

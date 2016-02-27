@@ -43,7 +43,7 @@
     _saveStep();
     _hide();
     app.Dashboard.show();
-    
+
   }
 
   function save () {
@@ -58,7 +58,7 @@
     _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
     _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
     _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x;	// coordinate del px in alto a sx rispetto alle coordinate assolute correnti della lavagna
+    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + 151;	// coordinate del px in alto a sx rispetto alle coordinate assolute correnti della lavagna
     _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;			// ccordinate assolute massime e minime del disegno
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
