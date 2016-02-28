@@ -5,6 +5,18 @@
   top: 0px;
   left: 0px;
   border-bottom: solid 1px gray;
-  background-color: red;
+  background-image: url("../img/headerBG.png");
+  background-size: contain;
+  background-repeat: repeat-x;
   z-index: 150;
+}
+
+.cloudnote-header__logo {
+  height: 100%;
+  width: 500px;
+  margin: auto;
+  background-image: url("../img/logo.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }

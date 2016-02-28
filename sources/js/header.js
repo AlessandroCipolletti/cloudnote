@@ -12,9 +12,11 @@
 
   function _initDom () {
 
-    var _container = document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote-header__container");
-
+    var logo = document.createElement("div");
+    logo.classList.add("cloudnote-header__logo");
+    _container.appendChild(logo);
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 

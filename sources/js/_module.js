@@ -12,7 +12,7 @@
 
   function _initDom () {
 
-    var _container = document.createElement("div");
+    _container = document.createElement("div");
     _container.classList.add("cloudnote-module__container");
 
     app.Param.container.appendChild(_container);
