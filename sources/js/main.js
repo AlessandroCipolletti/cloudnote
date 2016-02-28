@@ -76,6 +76,10 @@
 
     app.Utils.init();
     app.Header.init();
+    app.User.init({
+      fbAppId: app.Param.fb.appId,
+      fbApiVersion: app.Param.fb.apiVersion
+    });
     app.Dashboard.init();
     app.Editor.init();
 

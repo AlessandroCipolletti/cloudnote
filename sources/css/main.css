@@ -44,7 +44,9 @@ html, body {
   opacity: 0;
 	transition: opacity 400ms;
 }
-
+.popup {
+  z-index: 300;
+}
 
 .button {
 	font-size: 30px;

@@ -9,6 +9,7 @@
   background-size: contain;
   background-repeat: repeat-x;
   z-index: 150;
+  display: flex;
 }
 
 .cloudnote-header__logo {
@@ -19,4 +20,11 @@
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+}
+
+.cloudnote-header__button {
+  width: 80px;
+  height: 80px;
+  margin: 10px 25px;
+  position: absolute;
 }

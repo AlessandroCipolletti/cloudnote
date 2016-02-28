@@ -20,6 +20,14 @@
   param.init = function (params) {
 
     _setConfig(params);
+    param.appName = "gitart.co";
+    param.isDebug = (document.location.host !== param.appName);
+    param.socketUrl = (param.isDebug ? "http://46.252.150.61:5000" : "http://46.252.150.61:4000");
+    param.fb = {
+      appId: "1448620825449065",
+      apiVersion: "v2.2"
+    };
+
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
     param.pixelRatio = window.devicePixelRatio;
     param.scale = 1 / param.pixelRatio;
