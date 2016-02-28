@@ -393,8 +393,7 @@
 
   function _initDom () {
 
-    _container = document.createElement("div");
-    _container.classList.add("cloudnote-editor__container", "displayNone", "fadeOut");
+    _container = app.Utils.createDom("cloudnote-editor__container", "displayNone", "fadeOut");
     _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
     _container.style.top = app.Param.headerSize + "px";
     _canvas = document.createElement("canvas");

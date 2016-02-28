@@ -168,8 +168,7 @@
     } else {
       app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
     }
-    _container = document.createElement("div");
-    _container.classList.add("cloudnote-editor-tools__container");
+    _container = app.Utils.createDom("cloudnote-editor-tools__container");
     _container.addEventListener(app.Param.eventStart, _onTouchStart, true);
     app.Editor.addSubmoduleDom(_container);
     app.Main.addRotationHandler(_onRotate);

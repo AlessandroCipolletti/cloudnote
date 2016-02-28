@@ -28,8 +28,7 @@
 
   function _initDom () {
 
-    _container = document.createElement("div");
-    _container.classList.add("cloudnote-header__container");
+    _container = app.Utils.createDom("cloudnote-header__container");
     var logo = document.createElement("div");
     logo.classList.add("cloudnote-header__logo");
     _container.appendChild(logo);

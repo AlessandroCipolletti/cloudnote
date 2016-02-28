@@ -144,24 +144,19 @@
 
   function _initDom () {
 
-    _loginPanel = document.createElement("div");
-    _loginPanel.classList.add("cloudnote-user__login-panel-container", "popup", "displayNone", "fadeOut");
-    var overlay = document.createElement("div");
-    overlay.classList.add("cloudnote-user__login-panel-overlay");
+    _loginPanel = app.Utils.createDom("cloudnote-user__login-panel-container", "popup", "displayNone", "fadeOut");
+    var overlay = app.Utils.createDom("cloudnote-user__login-panel-overlay");
     overlay.addEventListener(app.Param.eventStart, _hideLogin);
-    var panel = document.createElement("div");
-    panel.classList.add("cloudnote-user__login-panel");
+    var panel = app.Utils.createDom("cloudnote-user__login-panel");
     //var logo = document.createElement("div");
     //logo.classList.add("cloudnote-user__login-panel-logo");
     //panel.appendChild(logo);
-    _facebookLoginButton = document.createElement("div");
-    _facebookLoginButton.classList.add("cloudnote-user__login-panel-facebook");
+    _facebookLoginButton = app.Utils.createDom("cloudnote-user__login-panel-facebook");
     panel.appendChild(_facebookLoginButton);
     _loginPanel.appendChild(panel);
     _loginPanel.appendChild(overlay);
 
-    _headerUserButton = document.createElement("div");
-    _headerUserButton.classList.add("cloudnote-user__header-button");
+    _headerUserButton = app.Utils.createDom("cloudnote-user__header-button");
     _headerUserButton.addEventListener(app.Param.eventStart, _headerButtonClick)
 
     app.Param.container.appendChild(_loginPanel);

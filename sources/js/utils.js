@@ -36,7 +36,6 @@
     app.Param.container.classList.remove(status);
   }
 
-
   function _iterable (els, fn) {
     if (els.length) {
       for (var i = els.length; i--; )
@@ -90,6 +89,17 @@
 
   }
 
+  function createDom () {
+
+    var dom = document.createElement("div");
+    for (var i in arguments) {
+      dom.classList.add(arguments[i]);
+    }
+
+    return dom;
+
+  }
+
   function init () {
 
     var MATH = Math;
@@ -113,7 +123,8 @@
     arrayOrderStringUp: arrayOrderStringUp,
     arrayOrderNumberUp: arrayOrderNumberUp,
     arrayOrderNumberDown: arrayOrderNumberDown,
-    setConfig: setConfig
+    setConfig: setConfig,
+    createDom: createDom
   };
 
 })(cloudnote);
