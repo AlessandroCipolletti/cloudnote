@@ -1,14 +1,12 @@
 .cloudnote-dashboard__container {
-  position: fixed;
-	top: 0px;
+  position: absolute;
 	left: 0px;
 	width: 100%;
-	height: 100%;
   z-index: 10;
 }
 
 .cloudnote-dashboard__svg {
-  position: fixed;
+  position: absolute;
 	top: 0px;
 	left: 0px;
 	width: 100%;
@@ -28,7 +26,7 @@
 }
 
 .cloudnote-dashboard__showeditor {
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   left: 20px;
   z-index: 50;

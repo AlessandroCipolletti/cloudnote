@@ -364,6 +364,8 @@
 
     _container = document.createElement("div");
     _container.classList.add("cloudnote-dashboard__container");
+    _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
+    _container.style.top = app.Param.headerSize + "px";
     _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");

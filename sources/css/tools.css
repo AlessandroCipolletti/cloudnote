@@ -1,5 +1,5 @@
 .cloudnote-editor-tools__container {
-  position: fixed;
+  position: absolute;
   top: 0px;
   width: 150px;
   height: calc(100% - 150px);

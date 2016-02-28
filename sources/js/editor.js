@@ -18,10 +18,10 @@
   var _container, _canvas, _context, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _currentPaper = "white";
-  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY, _toolsWidth;
+  var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {};
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
-  var _step = [], _stepCacheLength = 21, _currentStep = 0;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 151, _colorsPickerHeight = 151;
   var _tool = {
     size: 25,
     forceFactor: 2,
@@ -279,9 +279,9 @@
 
     if (typeof(e.layerY) === "undefined") {
       if (e.type.indexOf("mouse") >= 0) {
-        return e.clientY - _toolsWidth;
+        return e.clientY - app.Param.headerSize;
       } else {
-        return e.touches[0].clientY - _toolsWidth;
+        return e.touches[0].clientY - app.Param.headerSize;
       }
     } else {
       return e.layerY;
@@ -383,8 +383,8 @@
 
   function _onRotate (e) {
 
-    _canvasWidth = app.width - 151;
-    _canvasHeight = app.height - 151;
+    _canvasWidth = app.width - _toolsWidth;
+    _canvasHeight = app.height - _colorsPickerHeight - app.Param.headerSize;
     _canvas.width = _canvasWidth;
     _canvas.height = _canvasHeight;
     canvasStyle = undefined;
@@ -395,6 +395,8 @@
 
     _container = document.createElement("div");
     _container.classList.add("cloudnote-editor__container", "displayNone", "fadeOut");
+    _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
+    _container.style.top = app.Param.headerSize + "px";
     _canvas = document.createElement("canvas");
     _context = _canvas.getContext("2d");
     _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
@@ -435,7 +437,6 @@
         _config[key] = params[key];
       }
     }
-    _toolsWidth = _config.toolsSide === "left" ? app.width - _canvasWidth : 0;
 
   }
 
