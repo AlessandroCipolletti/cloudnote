@@ -10,48 +10,6 @@
 
   var _facebook = (function () {
 
-    function init () {
-
-      window.fbAsyncInit = function () {
-        FB.init({
-          appId: _config.fbAppId,
-          cookie: true,  // enable cookies to allow the server to access the session
-          xfbml: true,  // parse social plugins on this page
-          version: _config.fbApiVersion
-        });
-        FB.getLoginStatus(_loginCallback);
-      };
-
-      (function (d, s, id) {// Load the SDK asynchronously
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, "script", "facebook-jssdk"));
-
-      _facebookLoginButton.addEventListener(app.Param.eventStart, function () {
-
-        if (app.Param.isDebug) {
-          _doLogin("fb", {
-            email: "cipolletti.alessandro@gmail.com",
-            first_name: "Alessandro",
-            gender: "male",
-            id: "884481848254624",
-            last_name: "Cippo",
-            link: "https://www.facebook.com/app_scoped_user_id/884481848254624/",
-            locale: "it_IT",
-            name: "Alessandro Cippo",
-            timezone: 1
-          });
-        } else {
-          FB.login(_loginCallback, { scope: "public_profile,email" });
-        }
-
-      });
-
-    }
-
     function _getUserInfo () {
 
       FB.api("/me", function (response) {
@@ -72,8 +30,54 @@
 
     }
 
+    function testLogin () {
+
+      if (app.Param.isDebug) {
+        _doLogin("fb", {
+          email: "cipolletti.alessandro@gmail.com",
+          first_name: "Alessandro",
+          gender: "male",
+          id: "884481848254624",
+          last_name: "Cippo",
+          link: "https://www.facebook.com/app_scoped_user_id/884481848254624/",
+          locale: "it_IT",
+          name: "Alessandro Cippo",
+          timezone: 1
+        });
+      } else {
+        FB.login(_loginCallback, { scope: "public_profile,email" });
+      }
+
+    }
+
+    function init () {
+
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: _config.fbAppId,
+          cookie: true,  // enable cookies to allow the server to access the session
+          xfbml: true,  // parse social plugins on this page
+          version: _config.fbApiVersion
+        });
+        FB.getLoginStatus(_loginCallback);
+      };
+
+      (function (d, s, id) {// Load the SDK asynchronously
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, "script", "facebook-jssdk"));
+
+      _facebookLoginButton.addEventListener(app.Param.eventStart, testLogin);
+      testLogin();
+
+    }
+
     return {
-      init: init
+      init: init,
+      testLogin: testLogin
     };
 
   })();
@@ -94,9 +98,9 @@
 
     }
 
-    if (false && app.Param.isDebug) {
+    if (app.Param.isDebug) {
       onSocketLogin(JSON.stringify({
-        id: data.id
+        id: "5584332c21b3985708c33bf7"
       }));
     } else {
       app.Socket.emit("user login", _userInfo);
