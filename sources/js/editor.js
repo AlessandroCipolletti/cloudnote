@@ -48,10 +48,10 @@
 
   function save () {
 
-    //app.Utils.setSpinner(true, true);
+    app.Utils.setSpinner(true);
     _savedDraw = _saveLayer();
-    var _coords = app.Dashboard.getCoords(),
-      _tempCanvas = document.createElement("canvas");
+    var _coords = app.Dashboard.getCoords();
+    var _tempCanvas = document.createElement("canvas");
     _tempCanvas.width = _savedDraw.data.width;
     _tempCanvas.height = _savedDraw.data.height;
     _tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);

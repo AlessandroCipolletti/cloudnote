@@ -1,5 +1,7 @@
 (function (app) {
 
+  var _overlaySpinner = {};
+
   function arrayOrderStringDown (a, b) {
 
     if (a < b) return +1;
@@ -100,6 +102,30 @@
 
   }
 
+  function setSpinner (loading) {
+
+    if (loading) {
+      fadeInElements(_overlaySpinner);
+    } else {
+      fadeOutElements(_overlaySpinner);
+    }
+
+  }
+
+  function _initDom () {
+
+    _overlaySpinner = createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
+    var spinner = document.createElement("img");
+    spinner.classList.add("cloudnote__overlay-spinner-image");
+    spinner.src = "img/spinner.gif";
+    _overlaySpinner.appendChild(spinner);
+    _overlaySpinner.addEventListener(app.Param.eventStart, function (e) {
+      e.preventDefault();
+    });
+    app.Param.container.appendChild(_overlaySpinner);
+
+  }
+
   function init () {
 
     var MATH = Math;
@@ -109,6 +135,8 @@
     MATH.degrees = function (radians) {
       return radians / (MATH.PI / 180);
     };
+
+    _initDom();
 
   }
 
@@ -124,7 +152,8 @@
     arrayOrderNumberUp: arrayOrderNumberUp,
     arrayOrderNumberDown: arrayOrderNumberDown,
     setConfig: setConfig,
-    createDom: createDom
+    createDom: createDom,
+    setSpinner: setSpinner
   };
 
 })(cloudnote);
