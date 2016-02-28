@@ -1,7 +1,7 @@
 (function (app) {
 
   var _config = {
-
+    testDebugFalse: false
   };
 
   var _container = {};

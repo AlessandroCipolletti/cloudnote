@@ -19,7 +19,7 @@
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
-  var _savedDraw = {};
+  var _savedDraw = {}, _currentUser = {};
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 151, _colorsPickerHeight = 151;
   var _tool = {
@@ -32,9 +32,9 @@
     globalCompositeOperation: ""
   };
 
-  function _saveToDashboard () {
+  function __save () {
 
-    _savedDraw.id = random(10000);
+    _savedDraw.user = _currentUser;
     app.Dashboard.addDraw(_savedDraw, true);
     _savedDraw = undefined;
     _clear();
@@ -42,7 +42,39 @@
     _currentStep = 0;
     _saveStep();
     _hide();
+    app.Utils.setSpinner(false);
     app.Dashboard.show();
+
+  }
+
+  function onSocketMessage (data) {
+
+    data = JSON.parse(data);
+    if (data.ok) {
+
+      _savedDraw.id = data.id;
+      __save();
+
+    } else {
+      alert("errore salvataggio");
+    }
+
+  }
+
+  function _saveToDashboard () {
+
+    _savedDraw.id = random(10000);
+    __save();
+
+  }
+
+  function _saveToServer () {
+
+    _currentUser = app.User.getUserInfo();
+    if (_currentUser.id) {
+      _savedDraw.userId = _currentUser.id;
+      app.Socket.emit("editor save", _savedDraw);
+    }
 
   }
 
@@ -71,8 +103,11 @@
     delete _savedDraw.minX;
     delete _savedDraw.minY;
     _tempCanvas = undefined;
-    //_saveToServer(_savedDraw);
-    _saveToDashboard();
+    if (app.Param.isDebug) {
+      _saveToServer();
+    } else {
+      _saveToDashboard();
+    }
 
   }
 
@@ -447,7 +482,8 @@
     redo: redo,
     clear: clear,
     changePaper: changePaper,
-    addSubmoduleDom: addSubmoduleDom
+    addSubmoduleDom: addSubmoduleDom,
+    onSocketMessage: onSocketMessage
   };
 
 })(cloudnote);

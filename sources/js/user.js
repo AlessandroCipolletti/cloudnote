@@ -66,7 +66,6 @@
     function _loginCallback (response) {
 
       console.log("Login", response);
-      _status.innerHTML = "";
       if (response.status === "connected") {
         _getUserInfo();
       }
@@ -82,6 +81,8 @@
   function _doLogin (mode, data) {
 
     _userInfo.mode = mode;
+    _userInfo[mode] = data;
+
     if (mode === "fb") {
 
       delete data.updated_time;
@@ -93,7 +94,7 @@
 
     }
 
-    if (app.Param.isDebug) {
+    if (false && app.Param.isDebug) {
       onSocketLogin(JSON.stringify({
         id: data.id
       }));
@@ -138,6 +139,10 @@
 
   }
 
+  function getUserInfo () {
+    return _userInfo;
+  }
+
   function _onRotate (e) {
     // do some stuff
   }
@@ -175,7 +180,8 @@
 
   app.User = {
     init: init,
-    onSocketLogin: onSocketLogin
+    onSocketLogin: onSocketLogin,
+    getUserInfo: getUserInfo
   };
 
 })(cloudnote);
