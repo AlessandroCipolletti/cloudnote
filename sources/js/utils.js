@@ -78,6 +78,17 @@
     _iterable(els, _fadeOutEl);
   }
 
+  function setConfig (params, config) {
+
+    var key;
+    for (key in params) {
+      if (typeof (config[key]) !== "undefined") {
+        config[key] = params[key];
+      }
+    }
+    return config;
+
+  }
 
   function init () {
 
@@ -101,7 +112,8 @@
     arrayOrderStringDown: arrayOrderStringDown,
     arrayOrderStringUp: arrayOrderStringUp,
     arrayOrderNumberUp: arrayOrderNumberUp,
-    arrayOrderNumberDown: arrayOrderNumberDown
+    arrayOrderNumberDown: arrayOrderNumberDown,
+    setConfig: setConfig
   };
 
 })(cloudnote);

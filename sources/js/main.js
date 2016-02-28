@@ -75,6 +75,7 @@
     _onRotate();
 
     app.Utils.init();
+    app.Socket.init();
     app.Header.init();
     app.User.init({
       fbAppId: app.Param.fb.appId,

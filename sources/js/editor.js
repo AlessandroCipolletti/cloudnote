@@ -429,20 +429,9 @@
     _container.appendChild(dom);
   }
 
-  function _setConfig (params) {
-
-    var key;
-    for (key in params) {
-      if (typeof (_config[key]) !== "undefined") {
-        _config[key] = params[key];
-      }
-    }
-
-  }
-
   function init (params) {
 
-    _setConfig(params);
+    _config = app.Utils.setConfig(params, _config);
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _saveStep();
