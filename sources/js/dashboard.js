@@ -72,7 +72,7 @@
   })();
   var _gps = (function () {
     var _px4mm = 1, _lastPosition = false, _refreshTime = 5000, _scalePrecision = true,
-      _GEO = navigator.geolocation, _scaleFactor,
+      _GEO = navigator.geolocation,
       _WGS84 = {
         r_major: 6378137000,
         r_minor: 6356752314.245179,
@@ -116,9 +116,8 @@
         var TOL = 0.0000000001;
         var ts = Math.exp(0 - (mmy / _WGS84.r_major));
         var e = _WGS84.eccent;
-        var eccnth, Phi, con, dphi;
         var i = N_ITER;
-        var eccnth = 0.5 * e;
+        var eccnth = 0.5 * e, Phi, con, dphi;
         Phi = HALFPI - 2 * Math.atan(ts);
         do {
           con = e * Math.sin(Phi);
@@ -130,8 +129,8 @@
       },
       _gps2px = function (position, lat, lon) {
         if (position) {
-          var lon = position.coords.longitude;
-          var lat = position.coords.latitude;
+          lon = position.coords.longitude;
+          lat = position.coords.latitude;
         }
         return {
           x: _lon2mm(lon) * _px4mm,
@@ -147,14 +146,16 @@
       _geoCallback = function (callback) {
         return function (position) {
           _lastPosition = position;
-          LAT.push(position.coords.latitude)
+          LAT.push(position.coords.latitude);
           LON.push(position.coords.longitude);
           console.log("GPS - lat:", position.coords.latitude, "lon:", position.coords.longitude);
-          callback && callback(position);
+          if (callback) {
+            callback(position);
+          }
         };
       },
       _geoError = function (err) {
-        Messages.error(label['errorGeo']);
+        alert("geolocalisation generic error");
       },
       _getPosition = _GEO ? function (force, callback, error) {
         if (force || !_positionIsValid()) {
@@ -201,7 +202,7 @@
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _maxDeltaDragYgps = 10 /* km */, _deltaDragYgps = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [];
 
-  _appendDraw = function (draw) {	// aggiunge alla dashboard un svg image già elaborato
+  function _appendDraw (draw) {	// aggiunge alla dashboard un svg image già elaborato
 
     if (!draw || !draw.id || _idsImagesOnDashboard.indexOf(draw.id) >= 0) return false;
     console.log(["aggiungo", draw]);
@@ -218,13 +219,16 @@
 
   }
 
-  addDraw = function (draw, replace) {
+  function addDraw (draw, replace) {
 
     if (!draw || !draw.id) return false;
     var _drawExist = _cache.exist(draw.id),
       z = _imageGroup.matrix.a;
     if (!_drawExist || replace) {
-      _drawExist && _removeDraw(draw.id, true);
+
+      if (_drawExist) {
+        _removeDraw(draw.id, true);
+      }
       var _newDraw = document.createElementNS("http://www.w3.org/2000/svg", "image");
       _newDraw.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", draw.base64);
       _newDraw.setAttribute("x", round(((draw.x - _currentX) * z + app.width / 2 - _imageGroup.pxx) / z, _decimals));
@@ -243,6 +247,7 @@
       draw.data = _newDraw;
       _appendDraw(draw);
       _newDraw = draw = undefined;
+
     }
     _cacheNeedsUpdate = true;
     return true;
@@ -310,7 +315,7 @@
     _deltaVisibleCoordX = app.width / z * _currentGpsMapScale;
     _deltaVisibleCoordY = app.height / z * _currentGpsMapScale;
 
-  };
+  }
 
   function _updateCurrentCoords (x, y, z) {
 
@@ -361,7 +366,7 @@
   }
 
   function _initDom () {
-    
+
     _container = app.Utils.createDom("cloudnote-dashboard__container");
     _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
     _container.style.top = app.Param.headerSize + "px";
