@@ -104,9 +104,9 @@
     delete _savedDraw.minY;
     _tempCanvas = undefined;
     if (app.Param.isDebug) {
-      _saveToServer();
-    } else {
       _saveToDashboard();
+    } else {
+      _saveToServer();
     }
 
   }

@@ -70,128 +70,6 @@
       reset: reset
     };
   })();
-  var _gps = (function () {
-    var _px4mm = 1, _lastPosition = false, _refreshTime = 5000, _scalePrecision = true,
-      _GEO = navigator.geolocation,
-      _WGS84 = {
-        r_major: 6378137000,
-        r_minor: 6356752314.245179,
-        f: 298.257223563,
-      },
-      _geoOptions = {
-        enableHighAccuracy: true,
-        timeout: 25000,
-        maximumAge: 0
-      },
-      _positionIsValid = function () {
-        return (_lastPosition && (new Date().getTime() - _lastPosition.timestamp < _refreshTime));
-      },
-      _scaleFactorExact = function (lat) {
-        var r = Math.radians(lat);
-        var s = 1 / Math.cos(r);
-        var c = Math.sqrt(1 - Math.pow(0.006694379990141317, 2) * Math.pow(Math.sin(r), 2));
-        return s * c;
-      },
-      _scaleFactorRounded = function (lat) {
-        return 1 / Math.cos(Math.radians(lat));
-      },
-      _scaleFactor = _scalePrecision ? _scaleFactorExact : _scaleFactorRounded,
-      _lon2mm = function (lon) {
-        return Math.round((_WGS84.r_major * Math.radians(lon)) * 10) / 10;
-      },
-      _lat2mm = function (lat) {
-        if (lat > 89.5) lat = 89.5;
-        if (lat < -89.5) lat = -89.5;
-        var phi = Math.radians(lat);
-        var con = _WGS84.eccent * Math.sin(phi);
-        con = Math.pow((1.0 - con) / (1.0 + con), 0.5 * _WGS84.eccent);
-        return Math.round((-_WGS84.r_major * Math.log(Math.tan(0.5 * (PI * 0.5 - phi)) / con)) * 10) / 10;
-      },
-      _mm2lon = function (mmx) {
-        return Math.degrees((mmx / _WGS84.r_major));
-      },
-      _mm2lat = function (mmy) {
-        var N_ITER = 15;
-        var HALFPI = PI / 2;
-        var TOL = 0.0000000001;
-        var ts = Math.exp(0 - (mmy / _WGS84.r_major));
-        var e = _WGS84.eccent;
-        var i = N_ITER;
-        var eccnth = 0.5 * e, Phi, con, dphi;
-        Phi = HALFPI - 2 * Math.atan(ts);
-        do {
-          con = e * Math.sin(Phi);
-          dphi = HALFPI - 2 * Math.atan(ts * Math.pow((1 - con) / (1 + con), eccnth)) - Phi;
-          Phi = Phi + dphi;
-        }
-        while (Math.abs(dphi) > TOL && --i);
-        return Math.degrees(Phi);
-      },
-      _gps2px = function (position, lat, lon) {
-        if (position) {
-          lon = position.coords.longitude;
-          lat = position.coords.latitude;
-        }
-        return {
-          x: _lon2mm(lon) * _px4mm,
-          y: _lat2mm(lat) * _px4mm
-        };
-      },
-      _px2gps = function (pxx, pxy) {
-        return {
-          lat: _mm2lat(pxy / _px4mm),
-          lon: _mm2lon(pxx / _px4mm)
-        };
-      },
-      _geoCallback = function (callback) {
-        return function (position) {
-          _lastPosition = position;
-          LAT.push(position.coords.latitude);
-          LON.push(position.coords.longitude);
-          console.log("GPS - lat:", position.coords.latitude, "lon:", position.coords.longitude);
-          if (callback) {
-            callback(position);
-          }
-        };
-      },
-      _geoError = function (err) {
-        alert("geolocalisation generic error");
-      },
-      _getPosition = _GEO ? function (force, callback, error) {
-        if (force || !_positionIsValid()) {
-          _GEO.getCurrentPosition(_geoCallback(callback), error || _geoError, _geoOptions);
-        } else {
-          callback(_lastPosition);
-        }
-      } : function (force, callback, error) {
-        (error || _geoError)();
-      },
-      pxy2scale = function (pxy) {
-        return _scaleFactor(_mm2lat(pxy / _px4mm));
-      },
-      coordGps2px = function (lat, lon) {
-        return _gps2px(false, lat, lon);
-      },
-      // so che potrei usare un livello di callback in meno per avere comunque gps2px, ma cosi posso usare_getPosition anche per altre funzionalità API
-      currentGps2px = function (forceRefresh, callback, error) {
-        if (!callback) return;
-        _getPosition(forceRefresh || false, function (position) {
-          var px = _gps2px(position);
-          callback(px.x, px.y);
-        }, error || emptyFN);
-      },
-      init = function () {
-        _WGS84.temp = _WGS84.r_minor / _WGS84.r_major;
-        _WGS84.eccent = Math.sqrt(1.0 - (_WGS84.temp * _WGS84.temp));
-        _maxDeltaDragYgps = _maxDeltaDragYgps * 1000 * 1000 * _px4mm; // passaggio da metri a mm e poi px
-      };
-    return {
-      init: init,
-      pxy2scale: pxy2scale,
-      currentGps2px: currentGps2px,
-      coordGps2px: coordGps2px
-    };
-  })();
 
   function round (n, d) {
     var m = d ? Math.pow(10, d) : 1;
@@ -271,7 +149,7 @@
   }
 
   function go2Gps () {
-    _gps.currentGps2px(false, _go2XYZ);
+    app.Dashboard.Gps.currentGps2px(false, _go2XYZ);
   }
 
   function _fillScreen () {	// OK
@@ -304,7 +182,7 @@
 
   function _updateGpsMapScaleForY (pxy) {
 
-    _currentGpsMapScale = _gps.pxy2scale(pxy);
+    _currentGpsMapScale = app.Dashboard.Gps.pxy2scale(pxy);
     _deltaDragYgps = 0;
 
   }
@@ -338,13 +216,12 @@
       _imageGroup.matrix = null;
     }
     var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    var origin = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-    g.setAttribute('id', 'imageGroup');
-    origin.setAttributeNS(null, 'x', 0);
-    origin.setAttributeNS(null, 'y', 0);
-    origin.setAttributeNS(null, 'height', '1');
-    origin.setAttributeNS(null, 'width', '1');
-    origin.setAttributeNS(null, 'fill', '#FFF');
+    var origin = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    origin.setAttributeNS(null, "x", 0);
+    origin.setAttributeNS(null, "y", 0);
+    origin.setAttributeNS(null, "height", "1");
+    origin.setAttributeNS(null, "width", "1");
+    origin.setAttributeNS(null, "fill", "#FFF");
     g.appendChild(origin);
     _svg.appendChild(g);
     _imageGroup.tag = g;
@@ -403,11 +280,11 @@
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);
+    app.Dashboard.Gps.init();
+    _maxDeltaDragYgps = app.Dashboard.Gps.mm2px(_maxDeltaDragYgps * 1000 * 1000);
     _imageGroup.updateMatrix = function () {
-
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
-
     };
     _initDom();
     _go2XYZ(0, 0, 0);
