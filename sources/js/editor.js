@@ -245,7 +245,7 @@
     _maxX = step.maxX;
     _maxY = step.maxY;
     _oldX = step.oldX;
-    _oldY = step.oldY
+    _oldY = step.oldY;
 
   }
 
