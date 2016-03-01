@@ -32,12 +32,15 @@
     attributes.push("initial-scale=" + app.Param.scale);
     attributes.push("minimum-scale=" + app.Param.scale);
     attributes.push("maximum-scale=" + app.Param.scale);
+    attributes.push("orientation=landscape");
     attributes.push("user-scalable=no");
 
     viewport = document.createElement("meta");
     viewport.setAttribute("name", "viewport");
     viewport.setAttribute("content", attributes.join(","));
     document.head.appendChild(viewport);
+
+    document.querySelector("html").style.fontSize = (app.Param.pixelRatio * 10) + "px";
 
   }
 

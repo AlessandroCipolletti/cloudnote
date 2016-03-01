@@ -1,14 +1,14 @@
 .cloudnote-dashboard__container {
   position: absolute;
-	left: 0px;
+	left: 0rem;
 	width: 100%;
   z-index: 10;
 }
 
 .cloudnote-dashboard__svg {
   position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0rem;
+	left: 0rem;
 	width: 100%;
 	height: 100%;
 }
@@ -21,13 +21,13 @@
 }
 .cloundote-dashboard__zoom-label {
   fill: black;
-  font-size: 34px;
+  font-size: 1.7rem;  /* 34px */
   opacity: 0.7;
 }
 
 .cloudnote-dashboard__showeditor {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
+  bottom: 1rem; /* 20px */
+  left: 1rem; /* 20px */
   z-index: 50;
 }

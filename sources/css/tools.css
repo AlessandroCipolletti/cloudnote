@@ -1,11 +1,11 @@
 .cloudnote-editor-tools__container {
   position: absolute;
-  top: 0px;
-  width: 150px;
-  height: calc(100% - 150px);
+  top: 0rem;
+  width: 7.5rem;  /* 150px */
+  height: calc(100% - 7.5rem);  /* 150px */
   background-color: rgba(255, 255, 255, 1);
   transition: transform 0.6s;
-  transform: translate3d(0px, 0px, 0px);
+  transform: translate3d(0rem, 0rem, 0rem);
   z-index: 70;
   display: flex;
   flex-flow: column wrap;
@@ -13,30 +13,30 @@
 }
 
 .cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__container {
-  left: 0px;
-  border-right: solid 1px gray;
+  left: 0rem;
+  border-right: solid 0.05rem gray;
 }
 .cloudnote__EDITOR-TOOLS-LEFT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
-  transform: translate3d(-151px, 0px, 0px);
+  transform: translate3d(-7.55rem, 0rem, 0rem); /* 151px */
 }
 .cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__container {
-  right: 0px;
-  border-left: solid 1px gray;
+  right: 0rem;
+  border-left: solid 0.05rem gray;
 }
 .cloudnote__EDITOR-TOOLS-RIGHT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
-  transform: translate3d(151px, 0px, 0px);
+  transform: translate3d(7.55rem, 0rem, 0rem);  /* 151px */
 }
 
 .cloudnote-editor-tools__tool {
-  width: 150px;
-  height: 150px;
-  min-height: 150px;
+  width: 7.5rem;  /* 150px */
+  height: 7.5rem; /* 150px */
+  min-height: 7.5rem; /* 150px */
   background-position: center;
-  background-size: 110px 110px;
+  background-size: 5.5rem 5.5rem; /* 110px */
   background-repeat: no-repeat;
 }
 .cloudnote-editor-tools__tool-selected {
-  border-right: solid 4px gray;
-  border-left: solid 4px transparent;
-  width: 142px;
+  border-right: solid 0.2rem gray;
+  border-left: solid 0.2rem transparent;
+  width: 7.1rem;  /* 142px */
 }

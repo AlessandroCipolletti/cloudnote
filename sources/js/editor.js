@@ -21,7 +21,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {};
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
-  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 151, _colorsPickerHeight = 151;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
   var _tool = {
     size: 25,
     forceFactor: 2,
@@ -90,7 +90,7 @@
     _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
     _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
     _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + 151;	// coordinate del px in alto a sx rispetto alle coordinate assolute correnti della lavagna
+    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + (_config.toolsSide === "left" ? (_toolsWidth * app.Param.pixelRatio) : 0);
     _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;			// ccordinate assolute massime e minime del disegno
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
@@ -466,6 +466,8 @@
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);
+    _toolsWidth *= app.Param.pixelRatio;
+    _colorsPickerHeight *= app.Param.pixelRatio;
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _saveStep();

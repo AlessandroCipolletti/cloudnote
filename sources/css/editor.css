@@ -1,24 +1,24 @@
 .cloudnote-editor__container {
   position: absolute;
-	left: 0px;
+	left: 0rem;
 	width: 100%;
   z-index: 50;
 }
 
 .cloudnote-editor__canvas {
-  width: calc(100% - 151px);
-  height: calc(100% - 151px);
+  width: calc(100% - 7.55rem);  /* 151px */
+  height: calc(100% - 7.55rem); /* 151px */
   position: absolute;
-  top: 0px;
+  top: 0rem;
   z-index: 60;
 }
 
 .cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor__canvas {
-  left: 0px;
+  left: 0rem;
 }
 
 .cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor__canvas {
-  right: 0px;
+  right: 0rem;
 }
 
 .cloudnote-editor__canvas.paper-white {

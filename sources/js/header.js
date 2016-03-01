@@ -5,17 +5,17 @@
   };
 
   var _container = {};
-  var _buttonWidth = 130;
+  var _buttonWidth = 65;
   var _rightCounter = 0, _leftCounter = 0;
 
   function addButton (button, side) {
 
     button.classList.add("cloudnote-header__button");
     if (side === "right") {
-      button.style.right = _rightCounter * _buttonWidth + "px";
+      button.style.right = _rightCounter * _buttonWidth * app.Param.pixelRatio + "px";
       _rightCounter++;
     } else {
-      button.style.left = _leftCounter * _buttonWidth + "px";
+      button.style.left = _leftCounter * _buttonWidth * app.Param.pixelRatio + "px";
       _leftCounter++;
     }
     _container.appendChild(button);
@@ -41,7 +41,7 @@
 
     _config = app.Utils.setConfig(params, _config);
     _initDom();
-    app.Param.headerSize = 101;
+    app.Param.headerSize = 50.5 * app.Param.pixelRatio;
 
   }
 
