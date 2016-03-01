@@ -1,7 +1,12 @@
 (function (app) {
 
-  var _px4mm = 1, PI = Math.PI, _lastPosition = false, _refreshTime = 5000, _scalePrecision = true, _GEO = navigator.geolocation;
-  var _scaleFactor = _scalePrecision ? _scaleFactorExact : _scaleFactorRounded;
+  _config = {
+    px4mm: 1,
+    gpsRefreshTime: 5000,
+    scalePrecision: true
+  };
+
+  var PI = Math.PI, _lastPosition = false, _GEO = navigator.geolocation, _scaleFactor;
   var _WGS84 = {
     r_major: 6378137000,
     r_minor: 6356752314.245179,
@@ -13,7 +18,7 @@
   };
 
   function _positionIsValid () {
-    return (_lastPosition && (new Date().getTime() - _lastPosition.timestamp < _refreshTime));
+    return (_lastPosition && (new Date().getTime() - _lastPosition.timestamp < _config.gpsRefreshTime));
   }
 
   function _scaleFactorExact (lat) {
@@ -78,8 +83,8 @@
     }
 
     return {
-      x: _lon2mm(lon) * _px4mm,
-      y: _lat2mm(lat) * _px4mm
+      x: _lon2mm(lon) * _config.px4mm,
+      y: _lat2mm(lat) * _config.px4mm
     };
 
   }
@@ -87,8 +92,8 @@
   function _px2gps (pxx, pxy) {
 
     return {
-      lat: _mm2lat(pxy / _px4mm),
-      lon: _mm2lon(pxx / _px4mm)
+      lat: _mm2lat(pxy / _config.px4mm),
+      lon: _mm2lon(pxx / _config.px4mm)
     };
 
   }
@@ -124,7 +129,7 @@
     };
 
   function pxy2scale (pxy) {
-    return _scaleFactor(_mm2lat(pxy / _px4mm));
+    return _scaleFactor(_mm2lat(pxy / _config.px4mm));
   }
 
   function coordGps2px (lat, lon) {
@@ -139,20 +144,17 @@
     }, error || emptyFN);
   }
 
-  function mm2px (mm) {
-    return mm * _px4mm;
-  }
+  function init (params) {
 
-  function init () {
-
+    _config = app.Utils.setConfig(params, _config);
     _WGS84.temp = _WGS84.r_minor / _WGS84.r_major;
     _WGS84.eccent = Math.sqrt(1.0 - (_WGS84.temp * _WGS84.temp));
+    _scaleFactor = _config.scalePrecision ? _scaleFactorExact : _scaleFactorRounded;
 
   }
 
   app.Dashboard.Gps = {
     init: init,
-    mm2px: mm2px,
     pxy2scale: pxy2scale,
     currentGps2px: currentGps2px,
     coordGps2px: coordGps2px

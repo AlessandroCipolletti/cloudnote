@@ -7,7 +7,10 @@
 (function (app) {
 
   var _config = {
-
+    px4mm: 1,
+    gpsRefreshTime: 5000,
+    scalePrecision: true,
+    maxDeltaDragYgps: 10  // km
   };
 
   var _cache = (function () {
@@ -77,7 +80,7 @@
   }
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {};
-  var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _maxDeltaDragYgps = 10 /* km */, _deltaDragYgps = 0;
+  var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [];
 
   function _appendDraw (draw) {	// aggiunge alla dashboard un svg image già elaborato
@@ -168,7 +171,7 @@
   function _go2XYZ (x, y, z) {
 
     z = z || 5; // TODO valore zoom default
-    if (_currentGpsMapScale === 0 || _currentY === false || Math.abs(y - _currentY) > _maxDeltaDragYgps) {
+    if (_currentGpsMapScale === 0 || _currentY === false || Math.abs(y - _currentY) > _config.maxDeltaDragYgps) {
       _updateGpsMapScaleForY(y);
     }
     _updateDeltaVisibleCoords(z);
@@ -280,8 +283,8 @@
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);
-    app.Dashboard.Gps.init();
-    _maxDeltaDragYgps = app.Dashboard.Gps.mm2px(_maxDeltaDragYgps * 1000 * 1000);
+    _config.maxDeltaDragYgps = _config.maxDeltaDragYgps * 1000 * 1000 * _config.px4mm; // from km to px
+    app.Dashboard.Gps.init(_config);
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
