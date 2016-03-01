@@ -9,6 +9,7 @@
   var _config = {
     px4mm: 1,
     gpsRefreshTime: 5000,
+    gpsTimeoutTime: 25000,
     scalePrecision: true,
     maxDeltaDragYgps: 10  // km
   };

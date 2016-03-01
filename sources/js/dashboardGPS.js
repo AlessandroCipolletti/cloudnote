@@ -3,6 +3,7 @@
   _config = {
     px4mm: 1,
     gpsRefreshTime: 5000,
+    gpsTimeoutTime: 25000,
     scalePrecision: true
   };
 
@@ -119,14 +120,16 @@
   }
 
   var _getPosition = _GEO ? function (force, callback, error) {
+
     if (force || !_positionIsValid()) {
-        _GEO.getCurrentPosition(_geoCallback(callback), error || _geoError, _geoOptions);
-      } else {
-        callback(_lastPosition);
-      }
-    } : function (force, callback, error) {
-      (error || _geoError)();
-    };
+      _GEO.getCurrentPosition(_geoCallback(callback), error || _geoError, _geoOptions);
+    } else {
+      callback(_lastPosition);
+    }
+
+  } : function (force, callback, error) {
+    (error || _geoError)();
+  };
 
   function pxy2scale (pxy) {
     return _scaleFactor(_mm2lat(pxy / _config.px4mm));
@@ -137,16 +140,19 @@
   }
 
   function currentGps2px (forceRefresh, callback, error) {
+
     if (!callback) return;
     _getPosition(forceRefresh || false, function (position) {
       var px = _gps2px(position);
       callback(px.x, px.y);
     }, error || emptyFN);
+
   }
 
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);
+    _geoOptions.timeout = _config.gpsTimeoutTime;
     _WGS84.temp = _WGS84.r_minor / _WGS84.r_major;
     _WGS84.eccent = Math.sqrt(1.0 - (_WGS84.temp * _WGS84.temp));
     _scaleFactor = _config.scalePrecision ? _scaleFactorExact : _scaleFactorRounded;
