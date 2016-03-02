@@ -11,7 +11,8 @@
     gpsRefreshTime: 5000,
     gpsTimeoutTime: 25000,
     scalePrecision: true,
-    maxDeltaDragYgps: 10  // km
+    maxDeltaDragYgps: 10,  // km
+    clickMargin: 6
   };
 
   var _cache = (function () {
@@ -82,8 +83,8 @@
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {}, _spinner = {};
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
-  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false, _touchDown = false;
-  var _cursorX = 0, _cursorY = 0;
+  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
+  var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _draggable = true, _touchDown = false;
 
   function _appendDraw (draw) {
 
@@ -358,23 +359,59 @@
 
   function _onTouchStart (e) {
 
-    if ((e.touches && e.touches.length > 1) || _touchDown || e.button > 0) return;
-    _touchDown = true;
+    e.preventDefault();
+    if ((!e.button) && (!e.touches || e.touches.length === 1) && _touchDown === false) {
 
-    //_tooltip.hide();
-    _svg.classList.add("cloudnote-dashboard__dragging");
-    _cursorX = app.Utils.getEventCoordX(e);
-    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      _touchDown = true;
+      _svg.classList.add("cloudnote-dashboard__dragging");
+      _cursorX = _clickX = app.Utils.getEventCoordX(e);
+      _cursorY = _clickY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      _imageGroup.matrix = _imageGroup.tag.getCTM();
 
-    _imageGroup.matrix = _imageGroup.tag.getCTM();
+    }
+
+  }
+
+  function __touchMove (dx, dy, cursorX, cursorY) {
+
+    _drag(dx, dy, false);
+    _cursorX = cursorX;
+    _cursorY = cursorY;
+    _draggable = true;
 
   }
 
   function _onTouchMove (e) {
 
+    e.preventDefault();
+    if ((!e.touches || e.touches.length === 1) && _touchDown && _draggable) {
+
+      _draggable = false;
+      var cursorX = app.Utils.getEventCoordX(e);
+      var cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      var dx = cursorX - _cursorX;
+      var dy = cursorY - _cursorY;
+      requestAnimationFrame(__touchMove.bind({}, dx, dy, cursorX, cursorY));
+
+    }
+
   }
 
   function _onTouchEnd (e) {
+
+    e.preventDefault();
+    if ((!e.button) && (!e.touches || e.touches.length === 0) && _touchDown) {
+
+      var cursorX = app.Utils.getEventCoordX(e);
+      var cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      if (Math.abs(_clickX - cursorX) < _config.clickMargin && Math.abs(_clickY - cursorX) < _config.clickMargin) {
+        _selectDrawAtPx(cursorX, cursorY);
+      }
+      _cursorX = _cursorY = 0;
+      _touchDown = false;
+      _svg.classList.remove("cloudnote-dashboard__dragging");
+
+    }
 
   }
 
@@ -382,7 +419,7 @@
 
   }
 
-  function _onTouchMove (e) {
+  function _onGestureChange (e) {
 
   }
 
@@ -449,6 +486,7 @@
 
     _config = app.Utils.setConfig(params, _config);
     _config.maxDeltaDragYgps = _config.maxDeltaDragYgps * 1000 * 1000 * _config.px4mm; // from km to px
+    _config.clickMargin = _config.clickMargin * app.Param.pixelRatio;
     app.Dashboard.Gps.init(_config);
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
