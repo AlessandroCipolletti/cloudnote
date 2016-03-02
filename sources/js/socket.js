@@ -31,7 +31,7 @@
     };
 
     _socket.io.on("error", function () {
-      console.log(label["socketError"]);
+      console.log("socket error");
     });
     _socket.io.on("disconnect", function () {
       console.log("socket disconnect");
@@ -45,9 +45,13 @@
     });
 
     _socket.io.on("user login", app.User.onSocketLogin);
-    //_socket.io.on("dashboard drag", app.Dashboard.onSocketMessage);
+    _socket.io.on("dashboard drag", app.Dashboard.onSocketMessage);
     _socket.io.on("editor save", app.Editor.onSocketMessage);
 
+  }
+
+  function isConnected () {
+    return _socket.io.connected;
   }
 
   function emit (event, data) {
@@ -63,7 +67,8 @@
 
   app.Socket = {
     init: init,
-    emit: emit
+    emit: emit,
+    isConnected: isConnected
   };
 
 })(cloudnote);

@@ -81,10 +81,10 @@
   }
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {};
-  var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0;
-  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [];
+  var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
+  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
 
-  function _appendDraw (draw) {	// aggiunge alla dashboard un svg image già elaborato
+  function _appendDraw (draw) {
 
     if (!draw || !draw.id || _idsImagesOnDashboard.indexOf(draw.id) >= 0) return false;
     console.log(["aggiungo", draw]);
@@ -156,6 +156,74 @@
     app.Dashboard.Gps.currentGps2px(false, _go2XYZ);
   }
 
+  function _isOnScreen (img) {
+    return (img.pxr > 0 && img.pxx < XX && img.pxb > 0 && img.pxy < YY);
+  }
+
+  function _isOnDashboard (img) {
+    return (img.r > _minVisibleCoordX && img.b < _maxVisibleCoordY && img.x < _maxVisibleCoordX && img.y > _minVisibleCoordY);
+  }
+
+  function _getVisibleArea () {
+
+    return {
+      minX: _minVisibleCoordX,
+      maxX: _maxVisibleCoordX,
+      minY: _minVisibleCoordY,
+      maxY: _maxVisibleCoordY,
+      x: _currentX,
+      y: _currentY
+    }
+
+  }
+
+  function _updateCache () {
+
+    var ids = _cache.ids(), img, rect;
+    _idsImagesOnScreen = [];
+    for (var i = ids.length; i--;) {
+
+      img = _cache.get(ids[i]);
+      img.onDashboard = _isOnDashboard(img);
+      img.onScreen = _isOnScreen(img);
+      (_idsImagesOnDashboard.indexOf(img.id) >= 0) && (!img.onDashboard) && _removeDraw(img.id, false);
+      if (img.onScreen) {
+        _idsImagesOnScreen.push(img.id);
+      }
+      _cache.set(img.id, img);
+
+    }
+    _cacheNeedsUpdate = false;
+
+  }
+
+  function _findInCache () {
+
+    var _ids = _cache.ids().filter(function (i) {
+        return _idsImagesOnDashboard.indexOf(i) < 0;
+      }), draw;
+
+    for (var i = _ids.length; i--;) {
+      draw = _cache.get(_ids[i]);
+      (_isOnDashboard(draw)) && _appendDraw(draw);
+    }
+
+  }
+
+  function _callSocketFor (area, notIds) {
+
+    _socketCallsInProgress++;
+    _isLoading = true;
+    _setSpinner(true);
+
+    console.log("chiama per", area, notIds);
+    app.Socket.emit("dashboard drag", {
+      "area": area,
+      "ids": notIds
+    });
+
+  }
+
   function _fillScreen () {	// OK
     // 1 - aggiorna le coordinate in px delle immagini in cache (e rimuove quelle non piu visibili)
     _deltaDragX = _deltaDragY = _deltaZoom = 0;
@@ -169,18 +237,41 @@
 
   }
 
+  function onSocketMessage (data) {
+console.log("ricevuto", data);
+    if (["end", "none", "error"].indexOf(data) >= 0) {
+      _socketCallsInProgress--;
+      if (_socketCallsInProgress === 0) {
+        _isLoading = false;
+        _setSpinner(false);
+      }
+    } else {
+      for (var draws = JSON.parse(data), i = draws.length; i--; ) {
+        if (_cache.exist(draws[i].id)) {
+          continue;
+        }
+        addDraw(draws[i]);
+      }
+    }
+    data = undefined;
+
+  }
+
   function _go2XYZ (x, y, z) {
 
-    z = z || 5; // TODO valore zoom default
+    z = z || 1; // TODO valore zoom default
     if (_currentGpsMapScale === 0 || _currentY === false || Math.abs(y - _currentY) > _config.maxDeltaDragYgps) {
       _updateGpsMapScaleForY(y);
     }
-    _updateDeltaVisibleCoords(z);
+    _initDomGroup();
     _updateCurrentCoords(x, y, z);
     _cache.reset();
     _idsImagesOnDashboard = [];
-    _initDomGroup();
-    //_fillScreen();
+    _fillScreen();
+
+  }
+
+  function _setSpinner (loading) {
 
   }
 
@@ -196,6 +287,7 @@
     z = z || _imageGroup.matrix.a;
     _deltaVisibleCoordX = app.width / z * _currentGpsMapScale;
     _deltaVisibleCoordY = app.height / z * _currentGpsMapScale;
+    console.log("aggiorna",_deltaVisibleCoordX, app.width, z, _currentGpsMapScale);
 
   }
 
@@ -254,7 +346,6 @@
     _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
-    _initDomGroup();
     _zoomRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     _zoomRect.classList.add("cloundote-dashboard__zoom-label-rect");
     _zoomRect.setAttribute("x", -8 * app.Param.pixelRatio);
@@ -300,7 +391,8 @@
     show: show,
     addDraw: addDraw,
     getCoords: getCoords,
-    go2Gps: go2Gps
+    go2Gps: go2Gps,
+    onSocketMessage: onSocketMessage
   };
 
 })(cloudnote);
