@@ -82,7 +82,8 @@
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {}, _spinner = {};
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
-  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
+  var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false, _touchDown = false;
+  var _cursorX = 0, _cursorY = 0;
 
   function _appendDraw (draw) {
 
@@ -315,7 +316,7 @@
 
     var _groupRect = _imageGroup.origin.getBoundingClientRect();
     _imageGroup.pxx = round(_groupRect.left, _decimals);
-    _imageGroup.pxy = round(_groupRect.top, _decimals);
+    _imageGroup.pxy = round(_groupRect.top - app.Param.headerSize, _decimals);
 
   }
 
@@ -355,6 +356,40 @@
 
   }
 
+  function _onTouchStart (e) {
+
+    if ((e.touches && e.touches.length > 1) || _touchDown || e.button > 0) return;
+    _touchDown = true;
+
+    //_tooltip.hide();
+    _svg.classList.add("cloudnote-dashboard__dragging");
+    _cursorX = app.Utils.getEventCoordX(e);
+    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+
+    _imageGroup.matrix = _imageGroup.tag.getCTM();
+
+  }
+
+  function _onTouchMove (e) {
+
+  }
+
+  function _onTouchEnd (e) {
+
+  }
+
+  function _onGestureStart (e) {
+
+  }
+
+  function _onTouchMove (e) {
+
+  }
+
+  function _onGestureEnd (e) {
+
+  }
+
   function _initDom () {
 
     _container = app.Utils.createDom("cloudnote-dashboard__container");
@@ -363,6 +398,7 @@
     _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
+
     _zoomRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     _zoomRect.classList.add("cloundote-dashboard__zoom-label-rect");
     _zoomRect.setAttribute("x", -8 * app.Param.pixelRatio);
@@ -378,18 +414,32 @@
     _zoomLabel.innerHTML = "100%";
     _svg.appendChild(_zoomRect);
     _svg.appendChild(_zoomLabel);
+
+    _svg.addEventListener(app.Param.eventStart, _onTouchStart, true);
+    _svg.addEventListener(app.Param.eventMove, _onTouchMove, true);
+    _svg.addEventListener(app.Param.eventEnd, _onTouchEnd, true);
+    if (app.Param.supportGesture) {
+
+      _svg.addEventListener("gesturestart", _onGestureStart, true);
+      _svg.addEventListener("gesturechange", _onGestureChange, true);
+      _svg.addEventListener("gestureend", _onGestureEnd, true);
+
+    }
     _container.appendChild(_svg);
+
     _showEditor = document.createElement("a");
     _showEditor.classList.add("cloudnote-dashboard__showeditor", "button");
     _showEditor.innerHTML = "Disegna";
     _showEditor.addEventListener(app.Param.eventStart, _openEditor);
     _container.appendChild(_showEditor);
+
     _spinner = app.Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
     spinner.classList.add("cloudnote-dashboard__spinner-image");
     spinner.src = "img/loading.svg";
     _spinner.appendChild(spinner);
     _container.appendChild(_spinner);
+
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 

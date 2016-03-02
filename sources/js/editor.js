@@ -90,8 +90,9 @@
     _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
     _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
     _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + (_config.toolsSide === "left" ? (_toolsWidth * app.Param.pixelRatio) : 0);
+    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
     _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
+    console.log(_savedDraw.x, _savedDraw.y);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
     _savedDraw.data = undefined;
@@ -295,36 +296,8 @@
     }
   }
 
-  function _getCoordX (e) {
-
-    if (typeof(e.layerX) === "undefined") {
-      if (e.type.indexOf("mouse") >= 0) {
-        return e.clientX - _toolsWidth;
-      } else {
-        return e.touches[0].clientX - _toolsWidth;
-      }
-    } else {
-      return e.layerX;
-    }
-
-  }
-
-  function _getCoordY (e) {
-
-    if (typeof(e.layerY) === "undefined") {
-      if (e.type.indexOf("mouse") >= 0) {
-        return e.clientY - app.Param.headerSize;
-      } else {
-        return e.touches[0].clientY - app.Param.headerSize;
-      }
-    } else {
-      return e.layerY;
-    }
-
-  }
-
   function _onTouchStart (e) {
-    console.log(e);
+
     e.preventDefault();
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
     if (app.Param.supportTouch) {
@@ -332,8 +305,8 @@
       _updateTouchForce();
     }
     _touchDown = true;
-    _cursorX = _getCoordX(e);
-    _cursorY = _getCoordY(e);
+    _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
+    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
@@ -367,8 +340,8 @@
     } else {
       _touchForce = 0;
     }
-    _cursorX = _getCoordX(e);
-    _cursorY = _getCoordY(e);
+    _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
+    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
     var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
 
     if (_tool.size < 25 && distance < 3) return;
@@ -390,8 +363,8 @@
     if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
     if (app.Param.supportTouch === false) {
-      _cursorX = _getCoordX(e);
-      _cursorY = _getCoordY(e);
+      _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
+      _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
       if (_cursorX !== _oldX) {
         _context.beginPath();
         _context.moveTo(_oldMidX, _oldMidY);

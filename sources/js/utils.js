@@ -112,6 +112,34 @@
 
   }
 
+  function getEventCoordX (e, offset) {
+
+    if (typeof(e.layerX) === "undefined") {
+      if (e.type.indexOf("mouse") >= 0) {
+        return e.clientX - (offset || 0);
+      } else {
+        return e.touches[0].clientX - (offset || 0);
+      }
+    } else {
+      return e.layerX;
+    }
+
+  }
+
+  function getEventCoordY (e, offset) {
+
+    if (typeof(e.layerY) === "undefined") {
+      if (e.type.indexOf("mouse") >= 0) {
+        return e.clientY - (offset || 0);
+      } else {
+        return e.touches[0].clientY - (offset || 0);
+      }
+    } else {
+      return e.layerY;
+    }
+
+  }
+
   function _initDom () {
 
     _overlaySpinner = createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
@@ -153,7 +181,9 @@
     arrayOrderNumberDown: arrayOrderNumberDown,
     setConfig: setConfig,
     createDom: createDom,
-    setSpinner: setSpinner
+    setSpinner: setSpinner,
+    getEventCoordX: getEventCoordX,
+    getEventCoordY: getEventCoordY
   };
 
 })(cloudnote);
