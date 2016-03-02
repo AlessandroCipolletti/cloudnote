@@ -225,15 +225,11 @@
   }
 
   function _fillScreen () {	// OK
-    // 1 - aggiorna le coordinate in px delle immagini in cache (e rimuove quelle non piu visibili)
+
     _deltaDragX = _deltaDragY = _deltaZoom = 0;
     _updateCache();
-    // 2° calcola la porzione da mostrare in base alle coordinate correnti, zoom e dimensioni schermo
-    var _area = _getVisibleArea();
-    // 3° visualizza subito quello che c'è già in cache
     _findInCache();
-    // 4° avvia trasferimenti di ciò che non è in cache e che deve comparire
-    _callSocketFor(_area, _cache.ids());
+    _callSocketFor(_getVisibleArea(), _cache.ids());
 
   }
 
@@ -303,6 +299,14 @@ console.log("ricevuto", data);
 
   }
 
+  function _updateGroupOrigin () {
+
+    var _groupRect = _imageGroup.origin.getBoundingClientRect();
+    _imageGroup.pxx = round(_groupRect.left, _decimals);
+    _imageGroup.pxy = round(_groupRect.top, _decimals);
+
+  }
+
   function _initDomGroup () {
 
     if (_imageGroup.tag) {
@@ -324,6 +328,7 @@ console.log("ricevuto", data);
     _imageGroup.origin = origin;
     _imageGroup.matrix = _imageGroup.tag.getCTM();
     _updateDeltaVisibleCoords();
+    _updateGroupOrigin();
 
   }
 
