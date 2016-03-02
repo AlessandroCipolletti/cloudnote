@@ -12,14 +12,13 @@
 
   function _initDom () {
 
-    _container = document.createElement("div");
-    _container.classList.add("cloudnote-module__container");
+    _container = app.Utils.createDom("cloudnote-module__container");
 
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 
   }
-  
+
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);

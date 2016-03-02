@@ -12,7 +12,8 @@
     gpsTimeoutTime: 25000,
     scalePrecision: true,
     maxDeltaDragYgps: 10,  // km
-    clickMargin: 6
+    clickMargin: 6,
+    tooltipSide: "right"
   };
 
   var _cache = (function () {
@@ -86,7 +87,7 @@
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
   var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _draggable = true, _touchDown = false;
   var _deltaDragX = 0, _deltaDragY = 0, _deltaZoom = 0, _deltaDragMax = 200;
-  var _canvasForClick = document.createElement("canvas"), _contextForClick = _canvasForClick.getContext("2d");
+  var _canvasForClick = document.createElement("canvas"), _contextForClick = _canvasForClick.getContext("2d"), _imageForClick = new Image();
 
   function _appendDraw (draw) {
 
@@ -379,22 +380,22 @@
     }
     _idsImagesOnScreen.sort(app.Utils.orderArrayStringUp);
 
-    var draw, selectedID = false;
+    var draw, selectedDraw = false;
     for (var i = 0, l = _idsImagesOnScreen.length; i < l; i++) {
 
       draw = _cache.get(_idsImagesOnScreen[i]);
       if (draw.pxx < x && draw.pxr > x && draw.pxy < y && draw.pxb > y) {
 
-        if (!selectedID) {
-          selectedID = draw.id;
+        if (!selectedDraw) {
+          selectedDraw = draw;
         }
         _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
         _canvasForClick.width = draw.pxw;
         _canvasForClick.height = draw.pxh;
-        _imageForDraw.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
-        _contextForClick.drawImage(_imageForDraw, 0, 0, draw.pxw, draw.pxh);
+        _imageForClick.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+        _contextForClick.drawImage(_imageForClick, 0, 0, draw.pxw, draw.pxh);
         if (_contextForClick.getImageData(x - draw.pxx, y - draw.pxy, 1, 1).data[3] > 0) {
-          selectedID = draw.id;
+          selectedDraw = draw;
           break;
         }
 
@@ -404,11 +405,12 @@
 
     _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
     _canvasForClick.width = _canvasForClick.height = 0;
-    _imageForDraw = new Image();
+    selectedDraw = undefined;
+    _imageForClick = new Image();
 
-    if (selectedID) {
-      console.log("clicked draw id", selectedID);
-      //_tooltip.show(selectedID, x, y);
+    if (selectedDraw) {
+      console.log("clicked draw id", selectedDraw.id);
+      //_tooltip.show(selectedDraw);
     }
 
   }
@@ -568,6 +570,7 @@
     _config.maxDeltaDragYgps = _config.maxDeltaDragYgps * 1000 * 1000 * _config.px4mm; // from km to px
     _config.clickMargin = _config.clickMargin * app.Param.pixelRatio;
     app.Dashboard.Gps.init(_config);
+    app.Dashboard.Tooltip.init(_config);
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
