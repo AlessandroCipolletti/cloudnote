@@ -140,6 +140,37 @@
 
   }
 
+  function intToHex (n) {
+
+    n = n.toString(16);
+    return (n.length === 1 ? "0" + n : n);
+
+  }
+
+  function orderArrayNumberUp (a, b) {
+    return a - b;
+  }
+
+  function orderArrayNumberDown (a, b) {
+    return b - a;
+  }
+
+  function orderArrayStringDown (a, b) {
+
+    if (a < b) return +1;
+    if (a > b) return -1;
+    return 0;
+
+  }
+
+  function orderArrayStringUp (a, b) {
+
+    if (a > b) return +1;
+    if (a < b) return -1;
+    return 0;
+
+  }
+
   function _initDom () {
 
     _overlaySpinner = createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
@@ -183,7 +214,12 @@
     createDom: createDom,
     setSpinner: setSpinner,
     getEventCoordX: getEventCoordX,
-    getEventCoordY: getEventCoordY
+    getEventCoordY: getEventCoordY,
+    intToHex: intToHex,
+    orderArrayNumberUp: orderArrayNumberUp,
+    orderArrayNumberDown: orderArrayNumberDown,
+    orderArrayStringDown: orderArrayStringDown,
+    orderArrayStringUp: orderArrayStringUp
   };
 
 })(cloudnote);

@@ -82,9 +82,11 @@
   }
   var PI = Math.PI;
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {}, _spinner = {};
-  var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
+  var _currentX = 0, _currentY = 0, _currentZ = 1, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
   var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _draggable = true, _touchDown = false;
+  var _deltaDragX = 0, _deltaDragY = 0, _deltaZoom = 0, _deltaDragMax = 200;
+  var _canvasForClick = document.createElement("canvas"), _contextForClick = _canvasForClick.getContext("2d");
 
   function _appendDraw (draw) {
 
@@ -161,7 +163,7 @@
   }
 
   function _isOnScreen (img) {
-    return (img.pxr > 0 && img.pxx < XX && img.pxb > 0 && img.pxy < YY);
+    return (img.pxr > 0 && img.pxx < app.width && img.pxb > 0 && img.pxy < app.height);
   }
 
   function _isOnDashboard (img) {
@@ -184,12 +186,24 @@
   function _updateCache () {
 
     var ids = _cache.ids(), img, rect;
+    var isOnDashboard = _isOnDashboard,
+      isOnScreen = _isOnScreen,
+      R = round,
+      decimals = _decimals;
     _idsImagesOnScreen = [];
+
     for (var i = ids.length; i--;) {
 
       img = _cache.get(ids[i]);
-      img.onDashboard = _isOnDashboard(img);
-      img.onScreen = _isOnScreen(img);
+      rect = img.data.getBoundingClientRect();
+      img.pxx = R(rect.left, decimals);
+      img.pxy = R(rect.top, decimals);
+      img.pxw = R(rect.width, decimals);
+      img.pxh = R(rect.height, decimals);
+      img.pxr = img.pxx + img.pxw;
+      img.pxb = img.pxy + img.pxh;
+      img.onDashboard = isOnDashboard(img);
+      img.onScreen = isOnScreen(img);
       if (_idsImagesOnDashboard.indexOf(img.id) >= 0 && !img.onDashboard) {
         _removeDraw(img.id, false);
       }
@@ -199,6 +213,7 @@
       _cache.set(img.id, img);
 
     }
+    isOnDashboard = isOnScreen = decimals = R = undefined;
     _cacheNeedsUpdate = false;
 
   }
@@ -354,6 +369,71 @@
 
     _hide();
     app.Editor.show();
+
+  }
+
+  function _selectDrawAtPx (x, y) {
+
+    if (_cacheNeedsUpdate) {
+      _updateCache();
+    }
+    _idsImagesOnScreen.sort(app.Utils.orderArrayStringUp);
+
+    var draw, selectedID = false;
+    for (var i = 0, l = _idsImagesOnScreen.length; i < l; i++) {
+
+      draw = _cache.get(_idsImagesOnScreen[i]);
+      if (draw.pxx < x && draw.pxr > x && draw.pxy < y && draw.pxb > y) {
+
+        if (!selectedID) {
+          selectedID = draw.id;
+        }
+        _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
+        _canvasForClick.width = draw.pxw;
+        _canvasForClick.height = draw.pxh;
+        _imageForDraw.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+        _contextForClick.drawImage(_imageForDraw, 0, 0, draw.pxw, draw.pxh);
+        if (_contextForClick.getImageData(x - draw.pxx, y - draw.pxy, 1, 1).data[3] > 0) {
+          selectedID = draw.id;
+          break;
+        }
+
+      }
+
+    }
+
+    _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
+    _canvasForClick.width = _canvasForClick.height = 0;
+    _imageForDraw = new Image();
+
+    if (selectedID) {
+      console.log("clicked draw id", selectedID);
+      //_tooltip.show(selectedID, x, y);
+    }
+
+  }
+
+  function _drag (dx, dy, forceLoad) {
+
+    if (dx === 0 && dy === 0) return;
+    var scale = _imageGroup.matrix.a;
+    var deltaCoordX = round(dx / scale, _decimals);
+    var deltaCoordY = round(dy / scale, _decimals);
+    var newCoordX = round(_currentX - deltaCoordX, _decimals);
+    var newCoordY = round(_currentY + deltaCoordY, _decimals);
+    _deltaDragX += dx;
+    _deltaDragY += dy;
+
+    _imageGroup.matrix = _imageGroup.matrix.translate(deltaCoordX, deltaCoordY);
+    _imageGroup.updateMatrix();
+    _updateCurrentCoords(newCoordX, newCoordY, scale);
+    _updateGroupOrigin();
+
+    if (forceLoad || Math.abs(_deltaDragX) > _deltaDragMax || Math.abs(_deltaDragY) > _deltaDragMax) {
+      _fillScreen();
+    } else {
+      _cacheNeedsUpdate = true;
+    }
 
   }
 
