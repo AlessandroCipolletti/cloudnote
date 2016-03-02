@@ -137,10 +137,12 @@
   }
 
   function show () {
+    _setSpinner(_socketCallsInProgress > 0);
     app.Utils.fadeInElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
   function _hide () {
+    _setSpinner(false);
     app.Utils.fadeOutElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
@@ -173,7 +175,7 @@
       maxY: _maxVisibleCoordY,
       x: _currentX,
       y: _currentY
-    }
+    };
 
   }
 
@@ -186,7 +188,9 @@
       img = _cache.get(ids[i]);
       img.onDashboard = _isOnDashboard(img);
       img.onScreen = _isOnScreen(img);
-      (_idsImagesOnDashboard.indexOf(img.id) >= 0) && (!img.onDashboard) && _removeDraw(img.id, false);
+      if (_idsImagesOnDashboard.indexOf(img.id) >= 0 && !img.onDashboard) {
+        _removeDraw(img.id, false);
+      }
       if (img.onScreen) {
         _idsImagesOnScreen.push(img.id);
       }
@@ -205,7 +209,9 @@
 
     for (var i = _ids.length; i--;) {
       draw = _cache.get(_ids[i]);
-      (_isOnDashboard(draw)) && _appendDraw(draw);
+      if (_isOnDashboard(draw)) {
+        _appendDraw(draw);
+      }
     }
 
   }
@@ -378,10 +384,10 @@
     _showEditor.innerHTML = "Disegna";
     _showEditor.addEventListener(app.Param.eventStart, _openEditor);
     _container.appendChild(_showEditor);
-    _spinner = createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
+    _spinner = app.Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
     spinner.classList.add("cloudnote-dashboard__spinner-image");
-    spinner.src = "img/spinner.gif";
+    spinner.src = "img/loading.svg";
     _spinner.appendChild(spinner);
     _container.appendChild(_spinner);
     app.Param.container.appendChild(_container);
