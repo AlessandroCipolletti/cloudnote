@@ -31,3 +31,25 @@
   left: 1rem; /* 20px */
   z-index: 50;
 }
+
+.cloudnote-dashboard__spinner {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  width: 8rem;  /* 160px */
+  height: 8rem;
+  margin-left: -4rem;
+  border-radius: 1rem;
+  background-color: #333;
+  opacity: 0.8;
+  z-index: 500;
+}
+.cloudnote-dashboard__spinner-image {
+  position: absolute;
+  width: 4.5rem;	/* 90px */
+  height: 4.5rem;	/* 90px */
+  left: 50%;
+  top: 50%;
+  margin-top: -2.25rem;		/* -45px */
+  margin-left: -2.25rem;	/* -45px */
+}

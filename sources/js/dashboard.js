@@ -80,7 +80,7 @@
     return Math.round(n * m) / m;
   }
   var PI = Math.PI;
-  var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {};
+  var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {}, _spinner = {};
   var _currentX = 0, _currentY = 0, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
 
@@ -234,7 +234,8 @@
   }
 
   function onSocketMessage (data) {
-console.log("ricevuto", data);
+
+    console.log("ricevuto", data);
     if (["end", "none", "error"].indexOf(data) >= 0) {
       _socketCallsInProgress--;
       if (_socketCallsInProgress === 0) {
@@ -269,6 +270,12 @@ console.log("ricevuto", data);
 
   function _setSpinner (loading) {
 
+    if (loading) {
+      app.Utils.fadeInElements(_spinner);
+    } else {
+      app.Utils.fadeOutElements(_spinner);
+    }
+
   }
 
   function _updateGpsMapScaleForY (pxy) {
@@ -283,7 +290,6 @@ console.log("ricevuto", data);
     z = z || _imageGroup.matrix.a;
     _deltaVisibleCoordX = app.width / z * _currentGpsMapScale;
     _deltaVisibleCoordY = app.height / z * _currentGpsMapScale;
-    console.log("aggiorna",_deltaVisibleCoordX, app.width, z, _currentGpsMapScale);
 
   }
 
@@ -372,6 +378,12 @@ console.log("ricevuto", data);
     _showEditor.innerHTML = "Disegna";
     _showEditor.addEventListener(app.Param.eventStart, _openEditor);
     _container.appendChild(_showEditor);
+    _spinner = createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
+    var spinner = document.createElement("img");
+    spinner.classList.add("cloudnote-dashboard__spinner-image");
+    spinner.src = "img/spinner.gif";
+    _spinner.appendChild(spinner);
+    _container.appendChild(_spinner);
     app.Param.container.appendChild(_container);
     app.Main.addRotationHandler(_onRotate);
 
