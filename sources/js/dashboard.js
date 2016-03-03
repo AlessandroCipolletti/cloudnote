@@ -403,15 +403,14 @@
 
     }
 
+    if (selectedDraw) {
+      app.Dashboard.Tooltip.show(selectedDraw);
+    }
+
     _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
     _canvasForClick.width = _canvasForClick.height = 0;
     selectedDraw = undefined;
     _imageForClick = new Image();
-
-    if (selectedDraw) {
-      console.log("clicked draw id", selectedDraw.id);
-      //_tooltip.show(selectedDraw);
-    }
 
   }
 
@@ -486,7 +485,7 @@
 
       var cursorX = app.Utils.getEventCoordX(e);
       var cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
-      if (Math.abs(_clickX - cursorX) < _config.clickMargin && Math.abs(_clickY - cursorX) < _config.clickMargin) {
+      if (Math.abs(_clickX - cursorX) < _config.clickMargin && Math.abs(_clickY - cursorY) < _config.clickMargin) {
         _selectDrawAtPx(cursorX, cursorY);
       }
       _cursorX = _cursorY = 0;
@@ -570,12 +569,12 @@
     _config.maxDeltaDragYgps = _config.maxDeltaDragYgps * 1000 * 1000 * _config.px4mm; // from km to px
     _config.clickMargin = _config.clickMargin * app.Param.pixelRatio;
     app.Dashboard.Gps.init(_config);
-    app.Dashboard.Tooltip.init(_config);
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
     };
     _initDom();
+    app.Dashboard.Tooltip.init(_config, _container);
     _go2XYZ(0, 0, 0);
 
   }

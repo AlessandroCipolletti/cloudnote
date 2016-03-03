@@ -40,11 +40,12 @@
   height: 8rem;
   margin-left: -4rem;
   border-radius: 1.5rem;
-  z-index: 500;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .cloudnote-dashboard__spinner-image {
   position: absolute;
-  width: 80%;
-  height: 80%;
-  margin: 10%;
+  width: 70%;
+  height: 70%;
+  margin: 15%;
 }
