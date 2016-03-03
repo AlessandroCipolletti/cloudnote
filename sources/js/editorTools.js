@@ -59,6 +59,10 @@
     },
     save: function () {
       app.Editor.save();
+    },
+    exit: function () {
+      app.Editor.hide();
+      app.Dashboard.show();
     }
   };
 

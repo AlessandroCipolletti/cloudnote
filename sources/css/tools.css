@@ -29,10 +29,10 @@
 
 .cloudnote-editor-tools__tool {
   width: 7.5rem;  /* 150px */
-  height: 7.5rem; /* 150px */
-  min-height: 7.5rem; /* 150px */
+  height: 6rem; /* 120px */
+  min-height: 6rem; /* 120px */
   background-position: center;
-  background-size: 5.5rem 5.5rem; /* 110px */
+  background-size: 4.5rem 4.5rem; /* 90px */
   background-repeat: no-repeat;
 }
 .cloudnote-editor-tools__tool-selected {
