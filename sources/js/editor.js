@@ -19,7 +19,7 @@
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
-  var _savedDraw = {}, _currentUser = {};
+  var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
   var _tool = {
@@ -63,7 +63,8 @@
 
   function _saveToDashboard () {
 
-    _savedDraw.id = random(10000);
+    _currentFakeId += 10;
+    _savedDraw.id = _currentFakeId.toString();
     __save();
 
   }

@@ -554,7 +554,7 @@
     _spinner = app.Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
     spinner.classList.add("cloudnote-dashboard__spinner-image");
-    spinner.src = "img/loading.svg";
+    spinner.src = "img/spinner.gif";
     _spinner.appendChild(spinner);
     _container.appendChild(_spinner);
 
