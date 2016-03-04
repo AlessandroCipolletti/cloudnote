@@ -185,6 +185,20 @@
 
   }
 
+  function _removeDraw (id, del) {
+
+    console.log("rimuovo:" + id);
+    if (del) {
+      _cache.del(id);
+    }
+    _idsImagesOnDashboard.splice(_idsImagesOnDashboard.indexOf(id), 1);
+    var _oldDraw = document.getElementById(id);
+    if (_oldDraw) {
+      _imageGroup.tag.removeChild(_oldDraw);
+    }
+
+  }
+
   function _updateCache () {
 
     var ids = _cache.ids(), img, rect;

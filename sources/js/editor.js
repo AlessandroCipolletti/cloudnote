@@ -93,7 +93,6 @@
     _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
     _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
     _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
-    console.log(_savedDraw.x, _savedDraw.y);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
     _savedDraw.data = undefined;
