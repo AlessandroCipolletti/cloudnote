@@ -15,6 +15,16 @@
 
       _previewImage.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
 
+      /*
+      _title.innerHTML = "Titolo Disegno";
+      _userName.innerHTML = draw.user.name;
+      _userImage.style.backgroundImage = "url('https://graph.facebook.com/" + draw.user.fb.id + "/picture?type=large')";
+      _location.innerHTML = "Paris, France";
+      _likeTot.innerHTML = "421 Mi Piace";
+      _commentsTot.innerHTML = "32 Commenti";
+      _shareTot.innerHTML = "23 Condivisioni";
+      */
+
       app.Utils.fadeInElements(_overlay);
       _tooltip.classList.add("cloudnote-dashboard-tooltip__panel-visible");
 
@@ -52,6 +62,16 @@
     _previewImage.classList.add("cloudnote-dashboard-tooltip__preview");
     previewCont.appendChild(_previewImage);
     _tooltip.appendChild(previewCont);
+
+    var infoCont = app.Utils.createDom("cloudnote-dashboard-tooltip__info-container");
+    var infoBg = app.Utils.createDom("cloudnote-dashboard-tooltip__info-background");
+    var infoBox1 = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box");
+    var infoBox2 = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box");
+
+    infoCont.appendChild(infoBg);
+    infoCont.appendChild(infoBox1);
+    infoCont.appendChild(infoBox2);
+    _tooltip.appendChild(infoCont);
 
     container.appendChild(_overlay);
     container.appendChild(_tooltip);
