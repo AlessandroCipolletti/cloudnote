@@ -44,6 +44,8 @@
 
     _overlay = app.Utils.createDom("cloudnote-dashboard-tooltip__overlay", "displayNone", "fadeOut");
     _overlay.addEventListener(app.Param.eventStart, _hide);
+    var close = app.Utils.createDom("cloudnote-dashboard-tooltip__close");
+    _overlay.appendChild(close);
     _tooltip = app.Utils.createDom("cloudnote-dashboard-tooltip__panel");
 
     var previewCont = app.Utils.createDom("cloudnote-dashboard-tooltip__preview-container");

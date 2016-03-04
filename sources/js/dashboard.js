@@ -88,6 +88,7 @@
   var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _draggable = true, _touchDown = false;
   var _deltaDragX = 0, _deltaDragY = 0, _deltaZoom = 0, _deltaDragMax = 200;
   var _canvasForClick = document.createElement("canvas"), _contextForClick = _canvasForClick.getContext("2d"), _imageForClick = new Image();
+  var _svgOffset = {};
 
   function _appendDraw (draw) {
 
@@ -187,19 +188,19 @@
   function _updateCache () {
 
     var ids = _cache.ids(), img, rect;
-    var offset = _svg.getBoundingClientRect();
     var isOnDashboard = _isOnDashboard,
       isOnScreen = _isOnScreen,
       R = round,
-      decimals = _decimals;
+      decimals = _decimals,
+      svgOffset = _svgOffset;
     _idsImagesOnScreen = [];
 
     for (var i = ids.length; i--;) {
 
       img = _cache.get(ids[i]);
       rect = img.data.getBoundingClientRect();
-      img.pxx = R(rect.left - offset.left, decimals);
-      img.pxy = R(rect.top - offset.top, decimals);
+      img.pxx = R(rect.left - svgOffset.left, decimals);
+      img.pxy = R(rect.top - svgOffset.top, decimals);
       img.pxw = R(rect.width, decimals);
       img.pxh = R(rect.height, decimals);
       img.pxr = img.pxx + img.pxw;
@@ -215,7 +216,7 @@
       _cache.set(img.id, img);
 
     }
-    isOnDashboard = isOnScreen = decimals = R = offset = undefined;
+    isOnDashboard = isOnScreen = decimals = R = svgOffset = undefined;
     _cacheNeedsUpdate = false;
 
   }
@@ -559,6 +560,7 @@
     _container.appendChild(_spinner);
 
     app.Param.container.appendChild(_container);
+    _svgOffset = _svg.getBoundingClientRect();
     app.Main.addRotationHandler(_onRotate);
 
   }
