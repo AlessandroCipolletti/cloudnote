@@ -187,6 +187,7 @@
   function _updateCache () {
 
     var ids = _cache.ids(), img, rect;
+    var offset = _svg.getBoundingClientRect();
     var isOnDashboard = _isOnDashboard,
       isOnScreen = _isOnScreen,
       R = round,
@@ -197,8 +198,8 @@
 
       img = _cache.get(ids[i]);
       rect = img.data.getBoundingClientRect();
-      img.pxx = R(rect.left, decimals);
-      img.pxy = R(rect.top, decimals);
+      img.pxx = R(rect.left - offset.left, decimals);
+      img.pxy = R(rect.top - offset.top, decimals);
       img.pxw = R(rect.width, decimals);
       img.pxh = R(rect.height, decimals);
       img.pxr = img.pxx + img.pxw;
@@ -214,7 +215,7 @@
       _cache.set(img.id, img);
 
     }
-    isOnDashboard = isOnScreen = decimals = R = undefined;
+    isOnDashboard = isOnScreen = decimals = R = offset = undefined;
     _cacheNeedsUpdate = false;
 
   }
@@ -379,7 +380,6 @@
       _updateCache();
     }
     _idsImagesOnScreen.sort(app.Utils.orderArrayStringUp);
-
     var draw, selectedDraw = false;
     for (var i = 0, l = _idsImagesOnScreen.length; i < l; i++) {
 
