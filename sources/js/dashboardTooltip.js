@@ -65,12 +65,14 @@
 
     var infoCont = app.Utils.createDom("cloudnote-dashboard-tooltip__info-container");
     var infoBg = app.Utils.createDom("cloudnote-dashboard-tooltip__info-background");
-    var infoBox1 = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box");
-    var infoBox2 = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box");
+    var infoBoxDraw = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-draw");
+    var infoBoxUser = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-user");
+    var infoBoxRelated = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-related");
 
     infoCont.appendChild(infoBg);
-    infoCont.appendChild(infoBox1);
-    infoCont.appendChild(infoBox2);
+    infoCont.appendChild(infoBoxDraw);
+    infoCont.appendChild(infoBoxUser);
+    infoCont.appendChild(infoBoxRelated);
     _tooltip.appendChild(infoCont);
 
     container.appendChild(_overlay);
