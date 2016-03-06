@@ -79,6 +79,8 @@
     container.appendChild(_tooltip);
     app.Main.addRotationHandler(_onRotate);
 
+    //var promise = w.Main.templateManager.load(w.Param.pathTemplate + 'pagination.html', container, _paginations[type]);
+
   }
 
   function init (params, container) {

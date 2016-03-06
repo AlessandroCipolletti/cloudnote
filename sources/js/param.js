@@ -21,6 +21,7 @@
 
     _setConfig(params);
     param.appName = "gitart.co";
+    param.templatePath = "../tpl/";
 
     if (_config.testDebugFalse) {
       param.isDebug = false;

@@ -171,6 +171,45 @@
 
   }
 
+  function promiseXHR (protocol, url, headers) {
+
+    return new Promise(function (resolve, reject) {
+
+      var xhr = new XMLHttpRequest();
+      xhr.open(protocol, url, true);
+
+      if (headers instanceof Array) {
+        for (var i = 0; i < headers.length; i++) {
+          if (headers[i].key === 'overrideMimeType') {
+            xhr.overrideMimeType(headers[i].value);
+          } else {
+            xhr.setRequestHeader(headers[i].key, headers[i].value);
+          }
+        }
+      }
+
+      xhr.onreadystatechange = function () {
+
+        if (xhr.readyState === 4) {
+          if (xhr.status === 404) {
+            reject(xhr);
+          } else {
+            resolve(xhr);
+          }
+        }
+
+      };
+
+      try {
+        xhr.send();
+      } catch (e) {
+        reject(xhr);
+      }
+
+    });
+
+  }
+
   function _initDom () {
 
     _overlaySpinner = createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
@@ -219,7 +258,8 @@
     orderArrayNumberUp: orderArrayNumberUp,
     orderArrayNumberDown: orderArrayNumberDown,
     orderArrayStringDown: orderArrayStringDown,
-    orderArrayStringUp: orderArrayStringUp
+    orderArrayStringUp: orderArrayStringUp,
+    promiseXHR: promiseXHR
   };
 
 })(cloudnote);
