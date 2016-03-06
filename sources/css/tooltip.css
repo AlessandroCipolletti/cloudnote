@@ -33,6 +33,7 @@
   background-color: white;
   transition: transform 0.6s;
   z-index: 120;
+  overflow: hidden;
 }
 .cloudnote__DASHBOARD-TOOLTIP-RIGHT .cloudnote-dashboard-tooltip__panel {
   right: 0rem;
