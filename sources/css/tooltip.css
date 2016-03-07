@@ -156,6 +156,9 @@
 }
 .cloudnote-dashboard-tooltip__info-user {
   margin-left: 1rem;
+  width: 20rem;
+  display: flex;
+  flex-flow: column wrap;
 }
 .cloudnote-dashboard-tooltip__info-user-image {
   height: 6rem;
@@ -164,25 +167,46 @@
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  display: inline-block;
+  box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-user-name {
   font-size: 1.4rem;
   font-weight: 100;
   color: white;
-  display: inline-block;
-  top: 0px;
+  line-height: 2rem;
+  height: 2rem;
+  box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-user-follow {
   background-image: url("../img/follow.png");
+  background-position: center;
   width: 10rem;
   height: 4rem;
   background-size: contain;
   background-repeat: no-repeat;
+  box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-position {
-
+  background-image: url("../img/icons/position.png");
+  background-position: center;
+  background-size: auto 4rem;
+  background-repeat: no-repeat;
+  text-align: center;
+  min-width: 4rem;
+}
+.cloudnote-dashboard-tooltip__info-position p {
+  margin-top: 4.5rem;
+  line-height: 1.4rem;
+  color: white;
+  text-align: center;
 }
 .cloudnote-dashboard-tooltip__info-boutique {
   margin-right: 1rem;
+  margin-top: 0.5rem;
+  background-image: url("../img/boutique.png");
+  width: 12rem;
+  height: 5rem;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }

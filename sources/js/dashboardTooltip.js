@@ -5,7 +5,7 @@
   };
 
   var _container = {}, _overlay = {}, _tooltip = {}, _previewImage = new Image();
-  var _likeButton = {}, _drawComment = {}, _userImage = {}, _userName = {};
+  var _likeButton = {}, _drawComment = {}, _userImage = {}, _userName = {}, _drawPosition = {};
   var _selectedId = 0;
 
   function _onLikeClick () {
@@ -52,6 +52,7 @@
       _likeText.innerHTML = "123 Likes";
       _likeButton.src = "img/icons/likeOn.png";
       _drawComment.innerHTML = "<p>23 Comments</p>";
+      _drawPosition.innerHTML = "<p>30 rue Monge, Paris</p>";
 
       /*
       _title.innerHTML = "Titolo Disegno";
@@ -126,10 +127,12 @@
     drawUser.appendChild(_userImage);
     drawUser.appendChild(_userName);
     drawUser.appendChild(followButton);
-    var drawPosition = app.Utils.createDom("cloudnote-dashboard-tooltip__info-position");
+    _drawPosition = app.Utils.createDom("cloudnote-dashboard-tooltip__info-position");
+    _drawPosition.addEventListener(app.Param.eventStart, _onPositionClick);
     var drawBoutique = app.Utils.createDom("cloudnote-dashboard-tooltip__info-boutique");
+    drawBoutique.addEventListener(app.Param.eventStart, _onBoutiqueClick);
     infoBoxUser.appendChild(drawUser);
-    infoBoxUser.appendChild(drawPosition);
+    infoBoxUser.appendChild(_drawPosition);
     infoBoxUser.appendChild(drawBoutique);
 
     infoCont.appendChild(infoBg);
