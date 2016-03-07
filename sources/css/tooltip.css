@@ -89,6 +89,9 @@
   margin-bottom: 0.1rem;
   background-color: rgba(50, 50, 50, 0.75);
   z-index: 160;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .cloudnote-dashboard-tooltip__info-box-draw {
@@ -101,12 +104,76 @@
   height: 9rem;
 }
 
-.cloudnote-dashboard-tooltip__info-like {
+.cloudnote-dashboard-tooltip__info-box-draw > div {
+  border: solid 1px white;
+  height: 4rem;
+  color: white;
+  font-size: 1.5rem;
+}
+.cloudnote-dashboard-tooltip__info-box-user > div {
+  border: solid 1px white;
+  height: 6rem;
+  color: white;
+}
 
+
+
+.cloudnote-dashboard-tooltip__info-like {
+  margin-left: 2rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 .cloudnote-dashboard-tooltip__info-like-button {
-
+  width: 2.2rem; /* 44px */
+  height: 1.9rem; /* 38px */
+  margin-right: 1rem; /* 20px */
 }
 .cloudnote-dashboard-tooltip__info-like-text {
+  font-size: 1.5rem;
+}
+.cloudnote-dashboard-tooltip__info-comment {
+  background-image: url("../img/icons/comments.png");
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 2.2rem 1.9rem;
+  padding-left: 3.2rem;
+}
+.cloudnote-dashboard-tooltip__info-share {
+  background-image: url("../img/icons/share.png");
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 2.2rem 1.9rem;
+  padding-left: 3.2rem;
+  margin-right: 2rem;
+}
 
+.cloudnote-dashboard-tooltip__info-user {
+  margin-left: 2rem;
+}
+.cloudnote-dashboard-tooltip__info-user-image {
+  height: 6rem;
+  width: 6rem;
+  border-radius: 50%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.cloudnote-dashboard-tooltip__info-user-name {
+  font-size: 1.2rem;
+  color: white;
+  display: block;
+}
+.cloudnote-dashboard-tooltip__info-user-follow {
+  background-image: url("../img/follow.png");
+  width: 10rem;
+  height: 4rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.cloudnote-dashboard-tooltip__info-position {
+
+}
+.cloudnote-dashboard-tooltip__info-boutique {
+  margin-right: 2rem;
 }

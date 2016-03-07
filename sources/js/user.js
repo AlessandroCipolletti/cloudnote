@@ -129,8 +129,12 @@
   }
 
   function _hideLogin (e) {
-    e && e.preventDefault();
+
+    if (e) {
+      e.preventDefault();
+    }
     app.Utils.fadeOutElements(_loginPanel);
+
   }
 
   function _headerButtonClick (e) {
@@ -166,7 +170,7 @@
     _loginPanel.appendChild(overlay);
 
     _headerUserButton = app.Utils.createDom("cloudnote-user__header-button");
-    _headerUserButton.addEventListener(app.Param.eventStart, _headerButtonClick)
+    _headerUserButton.addEventListener(app.Param.eventStart, _headerButtonClick);
 
     app.Param.container.appendChild(_loginPanel);
     app.Header.addButton(_headerUserButton, "right");
