@@ -5,8 +5,37 @@
   };
 
   var _container = {}, _overlay = {}, _tooltip = {}, _previewImage = new Image();
+  var _likeButton = {};
   var _selectedId = 0;
 
+  function _onLikeClick () {
+
+  }
+
+  function _onCommentClick () {
+
+  }
+
+  function _onShareClick () {
+
+  }
+
+  function _onUserClick () {
+
+  }
+
+  function _onFollowClick () {
+
+  }
+
+  function _onPositionClick () {
+
+  }
+
+  function _onBoutiqueClick () {
+
+  }
+  
   function show (draw) {
 
     if (draw) {
@@ -68,6 +97,28 @@
     var infoBoxDraw = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-draw");
     var infoBoxUser = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-user");
     var infoBoxRelated = app.Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-related");
+
+    var drawLike = app.Utils.createDom("cloudnote-dashboard-tooltip__info-like");
+    _likeButton = new Image();
+    _likeButton.classList("cloudnote-dashboard-tooltip__info-like-button");
+    _likeButton.addEventListener(app.Param.eventStart, _onLikeClick);
+    _likeText = app.Utils.createDom("cloudnote-dashboard-tooltip__info-like-text");
+    drawLike.appendChild(_likeButton);
+    drawLike.appendChild(_likeText);
+    var drawComment = app.Utils.createDom("cloudnote-dashboard-tooltip__info-comment");
+    drawComment.addEventListener(app.Param.eventStart, _onCommentClick);
+    var drawShare = app.Utils.createDom("cloudnote-dashboard-tooltip__info-share");
+    drawShare.addEventListener(app.Param.eventStart, _onShareClick);
+    infoBoxDraw.appendChild(drawLike);
+    infoBoxDraw.appendChild(drawComment);
+    infoBoxDraw.appendChild(drawShare);
+
+    var drawUser = app.Utils.createDom("cloudnote-dashboard-tooltip__info-user");
+    var drawPosition = app.Utils.createDom("cloudnote-dashboard-tooltip__info-position");
+    var drawBoutique = app.Utils.createDom("cloudnote-dashboard-tooltip__info-boutique");
+    infoBoxUser.appendChild(drawUser);
+    infoBoxUser.appendChild(drawPosition);
+    infoBoxUser.appendChild(drawBoutique);
 
     infoCont.appendChild(infoBg);
     infoCont.appendChild(infoBoxDraw);
