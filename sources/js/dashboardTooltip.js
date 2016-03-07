@@ -45,12 +45,13 @@
       _previewImage.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
 
       //_userImage.style.backgroundImage = "url('https://graph.facebook.com/" + draw.user.fb.id + "/picture?type=large')";
-      _userImage.style.backgroundImage = "url('https://graph.facebook.com/" + app.User.getUserInfo().id + "/picture?type=large')";
-      _userName.innerHTML = draw.user.name;
+      _userImage.style.backgroundImage = "url('https://graph.facebook.com/" + app.User.getUserInfo().fb.id + "/picture?type=large')";
+      //_userName.innerHTML = draw.user.name;
+      _userName.innerHTML = app.User.getUserInfo().name;
 
       _likeText.innerHTML = "123 Likes";
-      _likeButton.src = "../img/icons/likeOn.png";
-      _drawComment.innerHTML = "23 Comments";
+      _likeButton.src = "img/icons/likeOn.png";
+      _drawComment.innerHTML = "<p>23 Comments</p>";
 
       /*
       _title.innerHTML = "Titolo Disegno";
@@ -111,7 +112,7 @@
     _drawComment = app.Utils.createDom("cloudnote-dashboard-tooltip__info-comment");
     _drawComment.addEventListener(app.Param.eventStart, _onCommentClick);
     var drawShare = app.Utils.createDom("cloudnote-dashboard-tooltip__info-share");
-    drawShare.innerHTML = "Share";
+    drawShare.innerHTML = "<p>Share</p>";
     drawShare.addEventListener(app.Param.eventStart, _onShareClick);
     infoBoxDraw.appendChild(drawLike);
     infoBoxDraw.appendChild(_drawComment);

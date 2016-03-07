@@ -119,14 +119,14 @@
 
 
 .cloudnote-dashboard-tooltip__info-like {
-  margin-left: 2rem;
+  margin-left: 1rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 .cloudnote-dashboard-tooltip__info-like-button {
-  width: 2.2rem; /* 44px */
-  height: 1.9rem; /* 38px */
+  width: 3.4rem;
+  height: 3.4rem;
   margin-right: 1rem; /* 20px */
 }
 .cloudnote-dashboard-tooltip__info-like-text {
@@ -136,20 +136,26 @@
   background-image: url("../img/icons/comments.png");
   background-repeat: no-repeat;
   background-position: left;
-  background-size: 2.2rem 1.9rem;
-  padding-left: 3.2rem;
+  background-size: 3.4rem 3.4rem;
+  padding-left: 4.4rem;
+  line-height: 100%;
+}
+.cloudnote-dashboard-tooltip__info-comment p {
+  line-height: 4rem;
 }
 .cloudnote-dashboard-tooltip__info-share {
   background-image: url("../img/icons/share.png");
   background-repeat: no-repeat;
   background-position: left;
-  background-size: 2.2rem 1.9rem;
-  padding-left: 3.2rem;
-  margin-right: 2rem;
+  background-size: 3.4rem 3.4rem;
+  padding-left: 4.4rem;
+  margin-right: 1rem;
 }
-
+.cloudnote-dashboard-tooltip__info-share p {
+  line-height: 4rem;
+}
 .cloudnote-dashboard-tooltip__info-user {
-  margin-left: 2rem;
+  margin-left: 1rem;
 }
 .cloudnote-dashboard-tooltip__info-user-image {
   height: 6rem;
@@ -158,11 +164,14 @@
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  display: inline-block;
 }
 .cloudnote-dashboard-tooltip__info-user-name {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 100;
   color: white;
-  display: block;
+  display: inline-block;
+  top: 0px;
 }
 .cloudnote-dashboard-tooltip__info-user-follow {
   background-image: url("../img/follow.png");
@@ -175,5 +184,5 @@
 
 }
 .cloudnote-dashboard-tooltip__info-boutique {
-  margin-right: 2rem;
+  margin-right: 1rem;
 }
