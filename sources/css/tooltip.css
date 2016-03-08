@@ -90,7 +90,7 @@
   background-color: rgba(50, 50, 50, 0.75);
   z-index: 160;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
 
@@ -105,26 +105,24 @@
 }
 
 .cloudnote-dashboard-tooltip__info-box-draw > div {
-  border: solid 1px white;
+  width: 15rem;
   height: 4rem;
   color: white;
   font-size: 1.5rem;
 }
 .cloudnote-dashboard-tooltip__info-box-user > div {
-  border: solid 1px white;
+  width: 19rem;
   height: 6rem;
   color: white;
 }
 
 
-
-.cloudnote-dashboard-tooltip__info-like {
-  margin-left: 1rem;
+.cloudnote-dashboard-tooltip__info-like, .cloudnote-dashboard-tooltip__info-comment, .cloudnote-dashboard-tooltip__info-share {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
-.cloudnote-dashboard-tooltip__info-like-button {
+.cloudnote-dashboard-tooltip__info-like-button, .cloudnote-dashboard-tooltip__info-comment img, .cloudnote-dashboard-tooltip__info-share img {
   width: 3.4rem;
   height: 3.4rem;
   margin-right: 1rem; /* 20px */
@@ -132,31 +130,8 @@
 .cloudnote-dashboard-tooltip__info-like-text {
   font-size: 1.5rem;
 }
-.cloudnote-dashboard-tooltip__info-comment {
-  background-image: url("../img/icons/comments.png");
-  background-repeat: no-repeat;
-  background-position: left;
-  background-size: 3.4rem 3.4rem;
-  padding-left: 4.4rem;
-  line-height: 100%;
-}
-.cloudnote-dashboard-tooltip__info-comment p {
-  line-height: 4rem;
-}
-.cloudnote-dashboard-tooltip__info-share {
-  background-image: url("../img/icons/share.png");
-  background-repeat: no-repeat;
-  background-position: left;
-  background-size: 3.4rem 3.4rem;
-  padding-left: 4.4rem;
-  margin-right: 1rem;
-}
-.cloudnote-dashboard-tooltip__info-share p {
-  line-height: 4rem;
-}
+
 .cloudnote-dashboard-tooltip__info-user {
-  margin-left: 1rem;
-  width: 20rem;
   display: flex;
   flex-flow: column wrap;
 }
@@ -164,31 +139,29 @@
   height: 6rem;
   width: 6rem;
   border-radius: 50%;
+  box-sizing: border-box;
+}
+.cloudnote-dashboard-tooltip__info-user-image, .cloudnote-dashboard-tooltip__info-user-follow, .cloudnote-dashboard-tooltip__info-boutique {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-user-name {
   font-size: 1.4rem;
   font-weight: 100;
-  color: white;
   line-height: 2rem;
   height: 2rem;
   box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-user-follow {
   background-image: url("../img/follow.png");
-  background-position: center;
   width: 10rem;
   height: 4rem;
-  background-size: contain;
-  background-repeat: no-repeat;
   box-sizing: border-box;
 }
 .cloudnote-dashboard-tooltip__info-position {
   background-image: url("../img/icons/position.png");
-  background-position: center;
+  background-position: center top;
   background-size: auto 4rem;
   background-repeat: no-repeat;
   text-align: center;
@@ -196,17 +169,14 @@
 }
 .cloudnote-dashboard-tooltip__info-position p {
   margin-top: 4.5rem;
-  line-height: 1.4rem;
+  line-height: 1.5rem;
+  font-size: 1.3rem;
   color: white;
   text-align: center;
 }
 .cloudnote-dashboard-tooltip__info-boutique {
-  margin-right: 1rem;
   margin-top: 0.5rem;
   background-image: url("../img/boutique.png");
   width: 12rem;
   height: 5rem;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
 }

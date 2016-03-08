@@ -5,7 +5,7 @@
   };
 
   var _container = {}, _overlay = {}, _tooltip = {}, _previewImage = new Image();
-  var _likeButton = {}, _drawComment = {}, _userImage = {}, _userName = {}, _drawPosition = {};
+  var _likeButton = {}, _commentText = {}, _userImage = {}, _userName = {}, _drawPosition = {};
   var _selectedId = 0;
 
   function _onLikeClick () {
@@ -51,7 +51,7 @@
 
       _likeText.innerHTML = "123 Likes";
       _likeButton.src = "img/icons/likeOn.png";
-      _drawComment.innerHTML = "<p>23 Comments</p>";
+      _commentText.innerHTML = "<p>23 Comments</p>";
       _drawPosition.innerHTML = "<p>30 rue Monge, Paris</p>";
 
       /*
@@ -110,13 +110,18 @@
     _likeText = app.Utils.createDom("cloudnote-dashboard-tooltip__info-like-text");
     drawLike.appendChild(_likeButton);
     drawLike.appendChild(_likeText);
-    _drawComment = app.Utils.createDom("cloudnote-dashboard-tooltip__info-comment");
-    _drawComment.addEventListener(app.Param.eventStart, _onCommentClick);
+    var drawComment = app.Utils.createDom("cloudnote-dashboard-tooltip__info-comment");
+    drawComment.addEventListener(app.Param.eventStart, _onCommentClick);
+    var commentIcon = document.createElement("img");
+    commentIcon.src = "img/icons/comments.png";
+    _commentText = document.createElement("p");
+    drawComment.appendChild(commentIcon);
+    drawComment.appendChild(_commentText);
     var drawShare = app.Utils.createDom("cloudnote-dashboard-tooltip__info-share");
-    drawShare.innerHTML = "<p>Share</p>";
+    drawShare.innerHTML = "<img src='img/icons/share.png'><p>Share</p>";
     drawShare.addEventListener(app.Param.eventStart, _onShareClick);
     infoBoxDraw.appendChild(drawLike);
-    infoBoxDraw.appendChild(_drawComment);
+    infoBoxDraw.appendChild(drawComment);
     infoBoxDraw.appendChild(drawShare);
 
     var drawUser = app.Utils.createDom("cloudnote-dashboard-tooltip__info-user");
