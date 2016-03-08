@@ -85,7 +85,7 @@
   var _container = {}, _svg = {}, _imageGroup = {}, _zoomLabel = {}, _zoomRect = {}, _showEditor = {}, _spinner = {};
   var _currentX = 0, _currentY = 0, _currentZ = 1, _currentGpsMapScale = 0, _deltaDragYgps = 0, _socketCallsInProgress = 0;
   var _decimals = 0, _cacheNeedsUpdate = false, _idsImagesOnDashboard = [], _isLoading = false;
-  var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _draggable = true, _touchDown = false;
+  var _cursorX = 0, _cursorY = 0, _clickX = 0, _clickY = 0, _currentScale = 1, _draggable = true, _touchDown = false;
   var _deltaDragX = 0, _deltaDragY = 0, _deltaZoom = 0, _deltaDragMax = 200;
   var _canvasForClick = document.createElement("canvas"), _contextForClick = _canvasForClick.getContext("2d"), _imageForClick = new Image();
   var _svgOffset = {};
@@ -513,13 +513,52 @@
 
   function _onGestureStart (e) {
 
+    var gestureX = app.Utils.getEventCoordX(e);
+    var gestureY = app.Utils.getEventCoordY(e);
+    var gestureScale = e.scale;
+
+    var gestureRotation = e.rotation;
+
+
+    console.log(gestureX, gestureY, gestureScale, gestureRotation);
+
   }
 
   function _onGestureChange (e) {
 
+    var gestureX = app.Utils.getEventCoordX(e);
+    var gestureY = app.Utils.getEventCoordY(e);
+    var gestureScale = e.scale;
+    var gestureRotation = e.rotation;
+
+    console.log(gestureX, gestureY, gestureScale, gestureRotation);
+
+
+    _imageGroup.matrix = _imageGroup.matrix.scale(_gestureScale);
+    _imageGroup.updateMatrix();
+    _updateGroupOrigin();
+
+    /*
+    var newp = _svg.createSVGPoint();
+    newp.x = _gestureX;
+    newp.y = _gestureY;
+    newp = newp.matrixTransform(_imageGroup.tag.getScreenCTM().inverse());
+    newp.x = round(newp.x);
+    newp.y = round(newp.y);
+    */
+
   }
 
   function _onGestureEnd (e) {
+
+    var gestureX = app.Utils.getEventCoordX(e);
+    var gestureY = app.Utils.getEventCoordY(e);
+    var gestureScale = e.scale;
+    var gestureRotation = e.rotation;
+
+    console.log(gestureX, gestureY, gestureScale, gestureRotation);
+    console.log(_imageGroup.matrix);
+    _currentScale = _currentScale * gestureScale;
 
   }
 
@@ -588,6 +627,7 @@
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
+      matrix = undefined;
     };
     _initDom();
     app.Dashboard.Tooltip.init(_config, _container);
