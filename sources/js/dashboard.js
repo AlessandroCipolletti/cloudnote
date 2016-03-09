@@ -339,7 +339,9 @@
 
     _currentX = x;
     _currentY = y;
-    _currentZ = z;
+    if (z) {
+      _currentZ = z;
+    }
     _minVisibleCoordX = x - _deltaVisibleCoordX;
     _maxVisibleCoordX = x + _deltaVisibleCoordX;
     _minVisibleCoordY = y - _deltaVisibleCoordY;
@@ -367,9 +369,9 @@
     var origin = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     origin.setAttributeNS(null, "x", 0);
     origin.setAttributeNS(null, "y", 0);
-    origin.setAttributeNS(null, "height", "1");
-    origin.setAttributeNS(null, "width", "1");
-    origin.setAttributeNS(null, "fill", "#FFF");
+    origin.setAttributeNS(null, "height", "10");
+    origin.setAttributeNS(null, "width", "10");
+    origin.setAttributeNS(null, "fill", "black");
     g.appendChild(origin);
     _svg.appendChild(g);
     _imageGroup.tag = g;
@@ -386,8 +388,10 @@
 
   function _openEditor () {
 
-    _hide();
-    app.Editor.show();
+    if (this.classList.contains("disabled") === false) {
+      _hide();
+      app.Editor.show();
+    }
 
   }
 
@@ -434,6 +438,7 @@
   function _drag (dx, dy, forceLoad) {
 
     if (dx === 0 && dy === 0) return;
+    console.log("drag", dx, dy);
     var scale = _imageGroup.matrix.a;
     var deltaCoordX = round(dx / scale, _decimals);
     var deltaCoordY = round(dy / scale, _decimals);
@@ -515,10 +520,28 @@
 
   function _updateMatrixForGesture (x, y, scale, rotation) {
 
-    console.log(x, y, scale, rotation);
-    _imageGroup.matrix.a = _imageGroup.matrix.d = Math.between(scale * _currentScale, _config.maxScale, _config.minScale);
+    console.log("gesture", x, y, scale, rotation);
+    _touchDown = false;
+    _cursorX = _cursorY = 0;
+    scale  = Math.between(scale * _currentScale, _config.maxScale, _config.minScale);
+    x = x - _imageGroup.pxx;
+    y = y - _imageGroup.pxy;
+    _imageGroup.matrix.a = _imageGroup.matrix.d = scale;
+    _imageGroup.matrix.e = x - scale * x; // qui invece di x e y rispetto allo schermo devo passare x e y rispetto all'origine dell'svg
+    _imageGroup.matrix.f = y - scale * y;
     _imageGroup.updateMatrix();
     _updateGroupOrigin();
+
+
+    _updateDeltaVisibleCoords(scale);
+    //_updateCurrentCoords(x, y);
+
+
+    if (scale < _config.maxScale) {
+      app.Utils.disableElements(_showEditor);
+    } else {
+      app.Utils.enableElements(_showEditor);
+    }
 
     /*
     var newp = _svg.createSVGPoint();
@@ -535,8 +558,6 @@
   function _onGestureStart (e) {
 
     e.preventDefault();
-    _touchDown = false;
-    _cursorX = _cursorY = 0;
     _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
 
   }
@@ -594,7 +615,7 @@
     _container.appendChild(_svg);
 
     _showEditor = document.createElement("a");
-    _showEditor.classList.add("cloudnote-dashboard__showeditor", "button");
+    _showEditor.classList.add("cloudnote-dashboard__showeditor", "button", "fadeIn");
     _showEditor.innerHTML = "Disegna";
     _showEditor.addEventListener(app.Param.eventStart, _openEditor);
     _container.appendChild(_showEditor);

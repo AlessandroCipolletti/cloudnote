@@ -29,7 +29,11 @@ html, body {
 }
 
 .disabled {
-  opacity: 0.3;
+  opacity: 0.3 !important;
+	cursor: auto !important;
+}
+.disabled a {
+	color: grey;
 }
 
 .displayNone {

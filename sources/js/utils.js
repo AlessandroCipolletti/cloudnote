@@ -79,6 +79,24 @@
     _iterable(els, _fadeOutEl);
   }
 
+  function _enableEl (el) {
+    el.classList.add("enabled");
+    el.classList.remove("disabled");
+  }
+
+  function _disableEl (el) {
+    el.classList.add("disabled");
+    el.classList.remove("enabled");
+  }
+
+  function enableElements (els) {
+    _iterable(els, _enableEl);
+  }
+
+  function disableElements (els) {
+    _iterable(els, _disableEl);
+  }
+
   function setConfig (params, config) {
 
     var key;
@@ -144,30 +162,6 @@
 
     n = n.toString(16);
     return (n.length === 1 ? "0" + n : n);
-
-  }
-
-  function orderArrayNumberUp (a, b) {
-    return a - b;
-  }
-
-  function orderArrayNumberDown (a, b) {
-    return b - a;
-  }
-
-  function orderArrayStringDown (a, b) {
-
-    if (a < b) return +1;
-    if (a > b) return -1;
-    return 0;
-
-  }
-
-  function orderArrayStringUp (a, b) {
-
-    if (a > b) return +1;
-    if (a < b) return -1;
-    return 0;
 
   }
 
@@ -248,6 +242,8 @@
     removeGlobalStatus: removeGlobalStatus,
     fadeInElements: fadeInElements,
     fadeOutElements: fadeOutElements,
+    enableElements: enableElements,
+    disableElements: disableElements,
     arrayOrderStringDown: arrayOrderStringDown,
     arrayOrderStringUp: arrayOrderStringUp,
     arrayOrderNumberUp: arrayOrderNumberUp,
@@ -258,10 +254,6 @@
     getEventCoordX: getEventCoordX,
     getEventCoordY: getEventCoordY,
     intToHex: intToHex,
-    orderArrayNumberUp: orderArrayNumberUp,
-    orderArrayNumberDown: orderArrayNumberDown,
-    orderArrayStringDown: orderArrayStringDown,
-    orderArrayStringUp: orderArrayStringUp,
     promiseXHR: promiseXHR
   };
 
