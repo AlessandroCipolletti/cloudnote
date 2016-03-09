@@ -233,6 +233,9 @@
     MATH.degrees = function (radians) {
       return radians / (MATH.PI / 180);
     };
+    MATH.between = function (a, b, c) {
+      return [a, b, c].sort(arrayOrderNumberUp)[1];
+    };
 
     _initDom();
 

@@ -13,7 +13,9 @@
     scalePrecision: true,
     maxDeltaDragYgps: 10,  // km
     clickMargin: 6,
-    tooltipSide: "right"
+    tooltipSide: "right",
+    maxScale: 1,
+    minScale: 0.1
   };
 
   var _cache = (function () {
@@ -511,30 +513,10 @@
 
   }
 
-  function _onGestureStart (e) {
+  function _updateMatrixForGesture (x, y, scale, rotation) {
 
-    var gestureX = app.Utils.getEventCoordX(e);
-    var gestureY = app.Utils.getEventCoordY(e);
-    var gestureScale = e.scale;
-
-    var gestureRotation = e.rotation;
-
-
-    console.log(gestureX, gestureY, gestureScale, gestureRotation);
-
-  }
-
-  function _onGestureChange (e) {
-
-    var gestureX = app.Utils.getEventCoordX(e);
-    var gestureY = app.Utils.getEventCoordY(e);
-    var gestureScale = e.scale;
-    var gestureRotation = e.rotation;
-
-    console.log(gestureX, gestureY, gestureScale, gestureRotation);
-
-
-    _imageGroup.matrix = _imageGroup.matrix.scale(_gestureScale);
+    console.log(x, y, scale, rotation);
+    _imageGroup.matrix.a = _imageGroup.matrix.d = Math.between(scale * _currentScale, _config.maxScale, _config.minScale);
     _imageGroup.updateMatrix();
     _updateGroupOrigin();
 
@@ -547,18 +529,30 @@
     newp.y = round(newp.y);
     */
 
+
+  }
+
+  function _onGestureStart (e) {
+
+    e.preventDefault();
+    _touchDown = false;
+    _cursorX = _cursorY = 0;
+    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+
+  }
+
+  function _onGestureChange (e) {
+
+    e.preventDefault();
+    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+
   }
 
   function _onGestureEnd (e) {
 
-    var gestureX = app.Utils.getEventCoordX(e);
-    var gestureY = app.Utils.getEventCoordY(e);
-    var gestureScale = e.scale;
-    var gestureRotation = e.rotation;
-
-    console.log(gestureX, gestureY, gestureScale, gestureRotation);
-    console.log(_imageGroup.matrix);
-    _currentScale = _currentScale * gestureScale;
+    e.preventDefault();
+    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+    _currentScale = _imageGroup.matrix.a;
 
   }
 
