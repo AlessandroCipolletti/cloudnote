@@ -13,6 +13,7 @@
 
       _selectTool("marker");
       app.Editor.setTool({
+        name: "marker",
         size: 15,
         forceFactor: 1.4,
         speedFactor: 0,
@@ -25,6 +26,7 @@
 
       _selectTool("pencil");
       app.Editor.setTool({
+        name: "pencil",
         size: 1,
         forceFactor: 4,
         speedFactor: 0,
@@ -37,8 +39,9 @@
 
       _selectTool("eraser");
       app.Editor.setTool({
+        name: "eraser",
         size: 20,
-        forceFactor: 2,
+        forceFactor: 3,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "destination-out"

@@ -15,14 +15,16 @@
     var m = d ? Math.pow(10, d) : 1;
     return Math.round(n * m) / m;
   };
-  var _container, _canvas, _context, _canvasWidth, _canvasHeight;
+  var _container, _canvas, _context, _eraserCursor, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
+  var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
   var _tool = {
+    name: "",
     size: 25,
     forceFactor: 2,
     speedFactor: 0,
@@ -299,14 +301,15 @@
   function _onTouchStart (e) {
 
     e.preventDefault();
+    e.stopPropagation();
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
     if (app.Param.supportTouch) {
       _touchEventObject = e.touches[0];
       _updateTouchForce();
     }
     _touchDown = true;
-    _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
-    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+    _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
@@ -318,6 +321,12 @@
     _context.lineWidth = _tool.size;
     _context.lineJoin = "round";
     _context.lineCap = "round";
+    if (_tool.name === "eraser") {
+      var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
+      style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
+      _eraserCursor.style.cssText = style;
+      _eraserCursor.classList.remove("displayNone");
+    }
     //_context.shadowBlur = 10;
     //_context.shadowColor = _tool.color;
     if (_tool.shape === "circle") {
@@ -331,7 +340,8 @@
   function _onTouchMove (e) {
 
     e.preventDefault();
-    if ((e.touches && e.touches.length > 1) || _touchDown === false) return;
+    e.stopPropagation();
+    if (_touchDown === false || (e.touches && e.touches.length > 1)) return;
     if (app.Param.supportTouch) {
       _touchEventObject = e.touches[0];
       if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
@@ -340,15 +350,22 @@
     } else {
       _touchForce = 0;
     }
-    _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
-    _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+    _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
     var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
+    var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
 
-    if (_tool.size < 25 && distance < 3) return;
+    if (_tool.name === "eraser") {
+      var style = "width: " + size + "px; height: " + size + "px; ";
+      style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
+      _eraserCursor.style.cssText = style;
+    } else if (_tool.size < 25 && distance < 3) {
+      return;
+    }
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();
-    _context.lineWidth = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
+    _context.lineWidth = size;
     _context.moveTo(midX, midY);
     _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
     _context.stroke();
@@ -360,11 +377,15 @@
 
   function _onTouchEnd (e) {
 
+    e.stopPropagation();
     if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
+    if (_tool.name === "eraser") {
+      _eraserCursor.classList.add("displayNone");
+    }
     if (app.Param.supportTouch === false) {
-      _cursorX = app.Utils.getEventCoordX(e, _config.toolsSide === "left" ? _toolsWidth : 0);
-      _cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
+      _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
       if (_cursorX !== _oldX) {
         _context.beginPath();
         _context.moveTo(_oldMidX, _oldMidY);
@@ -406,9 +427,14 @@
     _canvas = document.createElement("canvas");
     _context = _canvas.getContext("2d");
     _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
-    _canvas.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    _canvas.addEventListener(app.Param.eventMove, _onTouchMove, true);
-    _canvas.addEventListener(app.Param.eventEnd, _onTouchEnd, true);
+    _eraserCursor = app.Utils.createDom("cloudnote-editor__eraser-cursor", "displayNone");
+    _container.appendChild(_eraserCursor);
+    _canvas.addEventListener(app.Param.eventStart, _onTouchStart);
+    _canvas.addEventListener(app.Param.eventMove, _onTouchMove);
+    _canvas.addEventListener(app.Param.eventEnd, _onTouchEnd);
+    _eraserCursor.addEventListener(app.Param.eventStart, _onTouchStart);
+    _eraserCursor.addEventListener(app.Param.eventMove, _onTouchMove);
+    _eraserCursor.addEventListener(app.Param.eventEnd, _onTouchEnd);
 
     if (app.Param.supportGesture) {
 
@@ -438,8 +464,11 @@
   function init (params) {
 
     _config = app.Utils.setConfig(params, _config);
-    _toolsWidth *= app.Param.pixelRatio;
-    _colorsPickerHeight *= app.Param.pixelRatio;
+    _pixelRatio = app.Param.pixelRatio;
+    _toolsWidth *= _pixelRatio;
+    _colorsPickerHeight *= _pixelRatio;
+    _offsetLeft = (_config.toolsSide === "left" ? _toolsWidth : 0);
+    _offsetTop = app.Param.headerSize;
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _saveStep();

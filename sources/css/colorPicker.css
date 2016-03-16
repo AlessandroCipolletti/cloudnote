@@ -9,7 +9,7 @@
   left: 0rem;
   transition: transform 0.6s;
   transform: translate3d(0rem, calc(100% - 7.55rem), 0rem); /* 151px */
-  z-index: 80;
+  z-index: 110;
 }
 .cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-colorpicker__container {
   transform: translate3d(0rem, 0rem, 0rem);

@@ -130,9 +130,9 @@
 
   }
 
-  function getEventCoordX (e, offset) {
+  function getEventCoordX (e, offset, absolute) {
 
-    if (typeof(e.layerX) === "undefined") {
+    if (absolute || typeof(e.layerX) === "undefined") {
       if (e.type.indexOf("mouse") >= 0) {
         return e.clientX - (offset || 0);
       } else {
@@ -144,9 +144,9 @@
 
   }
 
-  function getEventCoordY (e, offset) {
+  function getEventCoordY (e, offset, absolute) {
 
-    if (typeof(e.layerY) === "undefined") {
+    if (absolute || typeof(e.layerY) === "undefined") {
       if (e.type.indexOf("mouse") >= 0) {
         return e.clientY - (offset || 0);
       } else {

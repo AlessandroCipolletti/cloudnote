@@ -30,3 +30,10 @@
 .cloudnote-editor__canvas.paper-lines {
   background-image: url("../img/paper/lines.png");
 }
+
+.cloudnote-editor__eraser-cursor {
+  border: solid 1px gray;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 70;
+}
