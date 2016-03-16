@@ -36,7 +36,13 @@
   background-repeat: no-repeat;
 }
 .cloudnote-editor-tools__tool-selected {
+  width: 7.1rem;  /* 142px */
+}
+.cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__tool-selected {
+  border-right: solid 0.2rem transparent;
+  border-left: solid 0.2rem gray;
+}
+.cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__tool-selected {
   border-right: solid 0.2rem gray;
   border-left: solid 0.2rem transparent;
-  width: 7.1rem;  /* 142px */
 }
