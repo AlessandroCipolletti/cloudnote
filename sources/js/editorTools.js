@@ -40,8 +40,8 @@
       _selectTool("eraser");
       app.Editor.setTool({
         name: "eraser",
-        size: 20,
-        forceFactor: 3,
+        size: 14,
+        forceFactor: 3.5,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "destination-out"

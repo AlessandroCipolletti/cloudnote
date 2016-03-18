@@ -290,12 +290,14 @@
   }
 
   function _updateTouchForce () {
+
     _touchForce = _touchEventObject.force;
     if (_touchForce > 0) {
       _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
     } else {
       _frameUpdateForce = false;
     }
+    
   }
 
   function _onTouchStart (e) {
