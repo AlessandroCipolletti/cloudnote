@@ -26,8 +26,8 @@
 
   }
 
-  app.Module = {
+  app.module("Module", {
     init: init
-  };
+  });
 
 })(cloudnote);

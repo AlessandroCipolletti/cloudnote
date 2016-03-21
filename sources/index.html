@@ -17,6 +17,34 @@
 		<script type="text/javascript">
 
 			var cloudnote = {};
+      cloudnote.NAME = "cloudnote";
+      cloudnote.module = function (name, module) {
+
+        var modules = name.split(".");
+        var parent = cloudnote;
+        var i = 0, l = 0;
+
+        if (modules[0] === parent.NAME) {
+          modules = modules.splice(1);
+        }
+
+        for (i = 0, l = modules.length; i < l; i++) {
+          if (i === l - 1) {
+            if (typeof(parent[modules[i]]) === "undefined") {
+              parent[modules[i]] = module;
+            } else {
+              for (var attr in module) {
+                parent[modules[i]][attr] = module[attr];
+              }
+            }
+          } else if (typeof(parent[modules[i]]) === "undefined") {
+            parent[modules[i]] = {};
+          }
+          parent = parent[modules[i]];
+        }
+
+      };
+
 			document.onreadystatechange = function () {
 				if (document.readyState === "complete") {
 					cloudnote.Main.init({
@@ -39,13 +67,15 @@
     <script type="text/javascript" src="js/header.js"></script>
     <script type="text/javascript" src="js/user.js"></script>
 
+    <script type="text/javascript" src="js/dashboardTooltip.js"></script>
     <script type="text/javascript" src="js/dashboard.js"></script>
     <script type="text/javascript" src="js/dashboardGPS.js"></script>
-    <script type="text/javascript" src="js/dashboardTooltip.js"></script>
 
+
+    <script type="text/javascript" src="js/editorTools.js"></script>
     <script type="text/javascript" src="js/editor.js"></script>
     <script type="text/javascript" src="js/editorColorPicker.js"></script>
-    <script type="text/javascript" src="js/editorTools.js"></script>
+
 
     <script type="text/javascript" src="js/main.js"></script>
 

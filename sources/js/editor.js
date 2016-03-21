@@ -93,8 +93,8 @@
     _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
     _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
     _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    _savedDraw.x = _savedDraw.minX - app.width / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
-    _savedDraw.y = _coords.y + (app.height / 2 - _savedDraw.minY);
+    _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
+    _savedDraw.y = _coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
     _savedDraw.data = undefined;
@@ -234,7 +234,7 @@
 
   function _clear () {
 
-    _context.clearRect(0, 0, app.width, app.height);
+    _context.clearRect(0, 0, app.WIDTH, app.HEIGHT);
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = -1;
 
   }
@@ -261,8 +261,8 @@
     if (_maxY === -1 || _maxY < (y + offset)) _maxY = y + offset;
     if (_minX < 0) _minX = 0;
     if (_minY < 0) _minY = 0;
-    if (_maxX > app.width) _maxX = app.width;
-    if (_maxY > app.height) _maxY = app.height;
+    if (_maxX > app.WIDTH) _maxX = app.WIDTH;
+    if (_maxY > app.HEIGHT) _maxY = app.HEIGHT;
     _oldX = x;
     _oldY = y;
 
@@ -297,7 +297,7 @@
     } else {
       _frameUpdateForce = false;
     }
-    
+
   }
 
   function _onTouchStart (e) {
@@ -413,8 +413,8 @@
 
   function _onRotate (e) {
 
-    _canvasWidth = app.width - _toolsWidth;
-    _canvasHeight = app.height - _colorsPickerHeight - app.Param.headerSize;
+    _canvasWidth = app.WIDTH - _toolsWidth;
+    _canvasHeight = app.HEIGHT - _colorsPickerHeight - app.Param.headerSize;
     _canvas.width = _canvasWidth;
     _canvas.height = _canvasHeight;
     canvasStyle = undefined;
@@ -478,7 +478,7 @@
 
   }
 
-  app.Editor = {
+  app.module("Editor", {
     init: init,
     show: show,
     hide: hide,
@@ -490,6 +490,6 @@
     changePaper: changePaper,
     addSubmoduleDom: addSubmoduleDom,
     onSocketMessage: onSocketMessage
-  };
+  });
 
 })(cloudnote);

@@ -191,9 +191,9 @@
 
   }
 
-  app.Editor.Tools = {
+  app.module("Editor.Tools", {
     init: init,
     toggleButton: toggleButton
-  };
+  });
 
 })(cloudnote);

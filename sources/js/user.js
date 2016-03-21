@@ -186,10 +186,10 @@
 
   }
 
-  app.User = {
+  app.module("User", {
     init: init,
     onSocketLogin: onSocketLogin,
     getUserInfo: getUserInfo
-  };
+  });
 
 })(cloudnote);

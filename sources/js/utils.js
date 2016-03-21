@@ -235,7 +235,7 @@
 
   }
 
-  app.Utils = {
+  app.module("Utils", {
     init: init,
     distance: distance,
     addGlobalStatus: addGlobalStatus,
@@ -255,6 +255,6 @@
     getEventCoordY: getEventCoordY,
     intToHex: intToHex,
     promiseXHR: promiseXHR
-  };
+  });
 
 })(cloudnote);

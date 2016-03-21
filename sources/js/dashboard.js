@@ -121,8 +121,8 @@
       }
       var _newDraw = document.createElementNS("http://www.w3.org/2000/svg", "image");
       _newDraw.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", draw.base64);
-      _newDraw.setAttribute("x", round(((draw.x - _currentX) * z + app.width / 2 - _imageGroup.pxx) / z, _decimals));
-      _newDraw.setAttribute("y", round(((_currentY - draw.y) * z + app.height / 2 - _imageGroup.pxy) / z, _decimals));
+      _newDraw.setAttribute("x", round(((draw.x - _currentX) * z + app.WIDTH / 2 - _imageGroup.pxx) / z, _decimals));
+      _newDraw.setAttribute("y", round(((_currentY - draw.y) * z + app.HEIGHT / 2 - _imageGroup.pxy) / z, _decimals));
       _newDraw.setAttribute("width", draw.w);
       _newDraw.setAttribute("height", draw.h);
       _newDraw.id = draw.id;
@@ -167,7 +167,7 @@
   }
 
   function _isOnScreen (img) {
-    return (img.pxr > 0 && img.pxx < app.width && img.pxb > 0 && img.pxy < app.height);
+    return (img.pxr > 0 && img.pxx < app.WIDTH && img.pxb > 0 && img.pxy < app.HEIGHT);
   }
 
   function _isOnDashboard (img) {
@@ -330,8 +330,8 @@
   function _updateDeltaVisibleCoords (z) {
 
     z = z || _imageGroup.matrix.a;
-    _deltaVisibleCoordX = app.width / z * _currentGpsMapScale;
-    _deltaVisibleCoordY = app.height / z * _currentGpsMapScale;
+    _deltaVisibleCoordX = app.WIDTH / z * _currentGpsMapScale;
+    _deltaVisibleCoordY = app.HEIGHT / z * _currentGpsMapScale;
 
   }
 
@@ -650,13 +650,13 @@
 
   }
 
-  app.Dashboard = {
+  app.module("Dashboard", {
     init: init,
     show: show,
     addDraw: addDraw,
     getCoords: getCoords,
     go2Gps: go2Gps,
     onSocketMessage: onSocketMessage
-  };
+  });
 
 })(cloudnote);

@@ -161,10 +161,10 @@
 
   }
 
-  app.Dashboard.Tooltip = {
+  app.module("Dashboard.Tooltip", {
     init: init,
     show: show,
     hide: hide
-  };
+  });
 
 })(cloudnote);

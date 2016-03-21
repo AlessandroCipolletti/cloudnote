@@ -151,9 +151,9 @@
 
   }
 
-  app.templateManager = {
+  app.module("templateManager", {
     init: init,
     load: load
-  };
+  });
 
 })(cloudnote);

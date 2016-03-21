@@ -159,11 +159,11 @@
 
   }
 
-  app.Dashboard.Gps = {
+  app.module("Dashboard.Gps", {
     init: init,
     pxy2scale: pxy2scale,
     currentGps2px: currentGps2px,
     coordGps2px: coordGps2px
-  };
+  });
 
 })(cloudnote);

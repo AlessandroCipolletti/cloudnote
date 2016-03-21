@@ -45,9 +45,9 @@
 
   }
 
-  app.Header = {
+  app.module("Header", {
     init: init,
     addButton: addButton
-  };
+  });
 
 })(cloudnote);

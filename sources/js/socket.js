@@ -65,10 +65,10 @@
 
   }
 
-  app.Socket = {
+  app.module("Socket", {
     init: init,
     emit: emit,
     isConnected: isConnected
-  };
+  });
 
 })(cloudnote);

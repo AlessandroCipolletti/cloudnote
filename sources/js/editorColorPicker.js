@@ -117,7 +117,7 @@
     button.classList.add("cloudnote-editor-colorpicker__random-selected");
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
-    var primaryColorNumber = Math.min(round((app.width - 500) / 110), _config.primaryColors.length);
+    var primaryColorNumber = Math.min(round((app.WIDTH - 500) / 110), _config.primaryColors.length);
     for (var i = 0; i < primaryColorNumber; i++) {
       primaryContainer.appendChild(_getColorButton(_config.primaryColors[i]));
     }
@@ -158,8 +158,8 @@
 
   }
 
-  app.Editor.ColorPicker = {
+  app.module("Editor.ColorPicker", {
     init: init
-  };
+  });
 
 })(cloudnote);

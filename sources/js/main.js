@@ -14,9 +14,9 @@
 
   function _onRotate (e) {
 
-    app.width = window.innerWidth;
-    app.height = window.innerHeight;
-    console.log("rotate:", app.width, app.height);
+    app.WIDTH = window.innerWidth;
+    app.HEIGHT = window.innerHeight;
+    console.log("rotate:", app.WIDTH, app.HEIGHT);
 
     if (_initialised) {
       for (var i in _rotationHandler) {
@@ -92,9 +92,9 @@
 
   }
 
-  app.Main = {
+  app.module("Main", {
     init: init,
     addRotationHandler: addRotationHandler
-  };
+  });
 
 })(cloudnote);

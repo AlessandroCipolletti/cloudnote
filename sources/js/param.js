@@ -58,6 +58,6 @@
 
   };
 
-  app.Param = param;
+  app.module("Param", param);
 
 })(cloudnote);
