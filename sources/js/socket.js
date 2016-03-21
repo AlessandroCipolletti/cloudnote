@@ -1,5 +1,9 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+
   var _config = {
 
   };
@@ -13,7 +17,9 @@
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    _config = Utils.setConfig(params, _config);
 
     function _onConnect () {
 
@@ -26,8 +32,8 @@
     }
 
     _socket = {
-      url: app.Param.socketUrl,
-      io: io(app.Param.socketUrl)
+      url: Param.socketUrl,
+      io: io(Param.socketUrl)
     };
 
     _socket.io.on("error", function () {

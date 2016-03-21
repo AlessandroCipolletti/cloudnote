@@ -1,5 +1,15 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Main = {};
+  var Tools = {};
+  var ColorPicker = {};
+  var Dashboard = {};
+  var User = {};
+  var Socket = {};
+
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
     tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "paper", "clear", "exit"],
@@ -37,15 +47,15 @@
   function __save () {
 
     _savedDraw.user = _currentUser;
-    app.Dashboard.addDraw(_savedDraw, true);
+    Dashboard.addDraw(_savedDraw, true);
     _savedDraw = undefined;
     _clear();
     _step = [];
     _currentStep = 0;
     _saveStep();
     hide();
-    app.Utils.setSpinner(false);
-    app.Dashboard.show();
+    Utils.setSpinner(false);
+    Dashboard.show();
 
   }
 
@@ -73,19 +83,19 @@
 
   function _saveToServer () {
 
-    _currentUser = app.User.getUserInfo();
+    _currentUser = User.getUserInfo();
     if (_currentUser.id) {
       _savedDraw.userId = _currentUser.id;
-      app.Socket.emit("editor save", _savedDraw);
+      Socket.emit("editor save", _savedDraw);
     }
 
   }
 
   function save () {
 
-    app.Utils.setSpinner(true);
+    Utils.setSpinner(true);
     _savedDraw = _saveLayer();
-    var _coords = app.Dashboard.getCoords();
+    var _coords = Dashboard.getCoords();
     var _tempCanvas = document.createElement("canvas");
     _tempCanvas.width = _savedDraw.data.width;
     _tempCanvas.height = _savedDraw.data.height;
@@ -106,7 +116,7 @@
     delete _savedDraw.minX;
     delete _savedDraw.minY;
     _tempCanvas = undefined;
-    if (app.Socket.isConnected()) {
+    if (Socket.isConnected()) {
       _saveToServer();
     } else {
       _saveToDashboard();
@@ -115,11 +125,11 @@
   }
 
   function show () {
-    app.Utils.fadeInElements(_container);
+    Utils.fadeInElements(_container);
   }
 
   function hide () {
-    app.Utils.fadeOutElements(_container);
+    Utils.fadeOutElements(_container);
   }
 
   function setTool (tool) {
@@ -158,13 +168,13 @@
     if (_step.length > _stepCacheLength)
       _step.splice(_stepCacheLength, _step.length);
     if (_step.length > 1) {
-      app.Editor.Tools.toggleButton("undo", true);
-      app.Editor.Tools.toggleButton("save", true);
+      Tools.toggleButton("undo", true);
+      Tools.toggleButton("save", true);
     } else {
-      app.Editor.Tools.toggleButton("undo", false);
-      app.Editor.Tools.toggleButton("save", false);
+      Tools.toggleButton("undo", false);
+      Tools.toggleButton("save", false);
     }
-    app.Editor.Tools.toggleButton("redo", false);
+    Tools.toggleButton("redo", false);
 
   }
 
@@ -178,12 +188,12 @@
       _clear();
       _restoreStep(step);
       if (!tot) {
-        app.Editor.Tools.toggleButton("undo", false);
-        app.Editor.Tools.toggleButton("save", false);
+        Tools.toggleButton("undo", false);
+        Tools.toggleButton("save", false);
       } else {
-        app.Editor.Tools.toggleButton("save", true);
+        Tools.toggleButton("save", true);
       }
-      app.Editor.Tools.toggleButton("redo", true);
+      Tools.toggleButton("redo", true);
 
     }
 
@@ -196,10 +206,10 @@
       var step = _step[_currentStep];
       _clear();
       _restoreStep(step);
-      app.Editor.Tools.toggleButton("undo", true);
-      app.Editor.Tools.toggleButton("save", true);
+      Tools.toggleButton("undo", true);
+      Tools.toggleButton("save", true);
       if (_currentStep <= 0) {
-        app.Editor.Tools.toggleButton("redo", false);
+        Tools.toggleButton("redo", false);
       }
     }
 
@@ -227,8 +237,8 @@
     _clear();
     //_draft = {};
     _saveStep();
-    app.Editor.Tools.toggleButton("redo", false);
-    app.Editor.Tools.toggleButton("save", false);
+    Tools.toggleButton("redo", false);
+    Tools.toggleButton("save", false);
 
   }
 
@@ -305,13 +315,13 @@
     e.preventDefault();
     e.stopPropagation();
     if ((e.touches && e.touches.length > 1) || _touchDown) return;
-    if (app.Param.supportTouch) {
+    if (Param.supportTouch) {
       _touchEventObject = e.touches[0];
       _updateTouchForce();
     }
     _touchDown = true;
-    _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
+    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
@@ -344,7 +354,7 @@
     e.preventDefault();
     e.stopPropagation();
     if (_touchDown === false || (e.touches && e.touches.length > 1)) return;
-    if (app.Param.supportTouch) {
+    if (Param.supportTouch) {
       _touchEventObject = e.touches[0];
       if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
         _updateTouchForce();
@@ -352,9 +362,9 @@
     } else {
       _touchForce = 0;
     }
-    _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
-    var distance = app.Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
+    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+    var distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
     var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
 
     if (_tool.name === "eraser") {
@@ -385,9 +395,9 @@
     if (_tool.name === "eraser") {
       _eraserCursor.classList.add("displayNone");
     }
-    if (app.Param.supportTouch === false) {
-      _cursorX = app.Utils.getEventCoordX(e, _offsetLeft, true);
-      _cursorY = app.Utils.getEventCoordY(e, _offsetTop, true);
+    if (Param.supportTouch === false) {
+      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
       if (_cursorX !== _oldX) {
         _context.beginPath();
         _context.moveTo(_oldMidX, _oldMidY);
@@ -414,7 +424,7 @@
   function _onRotate (e) {
 
     _canvasWidth = app.WIDTH - _toolsWidth;
-    _canvasHeight = app.HEIGHT - _colorsPickerHeight - app.Param.headerSize;
+    _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
     _canvas.width = _canvasWidth;
     _canvas.height = _canvasHeight;
     canvasStyle = undefined;
@@ -423,22 +433,22 @@
 
   function _initDom () {
 
-    _container = app.Utils.createDom("cloudnote-editor__container", "displayNone", "fadeOut");
-    _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
-    _container.style.top = app.Param.headerSize + "px";
+    _container = Utils.createDom("cloudnote-editor__container", "displayNone", "fadeOut");
+    _container.style.height = "calc(100% - " + Param.headerSize + "px)";
+    _container.style.top = Param.headerSize + "px";
     _canvas = document.createElement("canvas");
     _context = _canvas.getContext("2d");
     _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
-    _eraserCursor = app.Utils.createDom("cloudnote-editor__eraser-cursor", "displayNone");
+    _eraserCursor = Utils.createDom("cloudnote-editor__eraser-cursor", "displayNone");
     _container.appendChild(_eraserCursor);
-    _canvas.addEventListener(app.Param.eventStart, _onTouchStart);
-    _canvas.addEventListener(app.Param.eventMove, _onTouchMove);
-    _canvas.addEventListener(app.Param.eventEnd, _onTouchEnd);
-    _eraserCursor.addEventListener(app.Param.eventStart, _onTouchStart);
-    _eraserCursor.addEventListener(app.Param.eventMove, _onTouchMove);
-    _eraserCursor.addEventListener(app.Param.eventEnd, _onTouchEnd);
+    _canvas.addEventListener(Param.eventStart, _onTouchStart);
+    _canvas.addEventListener(Param.eventMove, _onTouchMove);
+    _canvas.addEventListener(Param.eventEnd, _onTouchEnd);
+    _eraserCursor.addEventListener(Param.eventStart, _onTouchStart);
+    _eraserCursor.addEventListener(Param.eventMove, _onTouchMove);
+    _eraserCursor.addEventListener(Param.eventEnd, _onTouchEnd);
 
-    if (app.Param.supportGesture) {
+    if (Param.supportGesture) {
 
       _canvas.addEventListener("gesturestart", _onGestureStart, true);
       _canvas.addEventListener("gesturechange", _onGestureChange, true);
@@ -447,15 +457,15 @@
     }
 
     _container.appendChild(_canvas);
-    app.Param.container.appendChild(_container);
-    app.Main.addRotationHandler(_onRotate);
+    Param.container.appendChild(_container);
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function _initSubModules () {
 
-    app.Editor.ColorPicker.init(_config);
-    app.Editor.Tools.init(_config);
+    ColorPicker.init(_config);
+    Tools.init(_config);
 
   }
 
@@ -465,12 +475,20 @@
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
-    _pixelRatio = app.Param.pixelRatio;
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    Tools = app.Editor.Tools;
+    ColorPicker = app.Editor.ColorPicker;
+    Dashboard = app.Dashboard;
+    User = app.User;
+    Socket = app.Socket;
+    _config = Utils.setConfig(params, _config);
+    _pixelRatio = Param.pixelRatio;
     _toolsWidth *= _pixelRatio;
     _colorsPickerHeight *= _pixelRatio;
     _offsetLeft = (_config.toolsSide === "left" ? _toolsWidth : 0);
-    _offsetTop = app.Param.headerSize;
+    _offsetTop = Param.headerSize;
     _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _saveStep();

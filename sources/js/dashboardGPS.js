@@ -1,5 +1,8 @@
 (function (app) {
 
+  // Dependencies
+  var Utils = {};
+
   _config = {
     px4mm: 1,
     gpsRefreshTime: 5000,
@@ -151,7 +154,8 @@
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Utils = app.Utils;
+    _config = Utils.setConfig(params, _config);
     _geoOptions.timeout = _config.gpsTimeoutTime;
     _WGS84.temp = _WGS84.r_minor / _WGS84.r_major;
     _WGS84.eccent = Math.sqrt(1.0 - (_WGS84.temp * _WGS84.temp));

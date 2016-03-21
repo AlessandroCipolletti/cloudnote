@@ -1,5 +1,12 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Main = {};
+  var Editor = {};
+  var Dashboard = {};
+
   var _config = {
     tools: [],
     toolsSide: "right"
@@ -12,7 +19,7 @@
     marker: function () {
 
       _selectTool("marker");
-      app.Editor.setTool({
+      Editor.setTool({
         name: "marker",
         size: 15,
         forceFactor: 1.4,
@@ -25,7 +32,7 @@
     pencil: function () {
 
       _selectTool("pencil");
-      app.Editor.setTool({
+      Editor.setTool({
         name: "pencil",
         size: 1,
         forceFactor: 4,
@@ -38,7 +45,7 @@
     eraser: function () {
 
       _selectTool("eraser");
-      app.Editor.setTool({
+      Editor.setTool({
         name: "eraser",
         size: 14,
         forceFactor: 3.5,
@@ -49,23 +56,23 @@
 
     },
     undo: function () {
-      app.Editor.undo();
+      Editor.undo();
     },
     redo: function () {
-      app.Editor.redo();
+      Editor.redo();
     },
     clear: function () {
-      app.Editor.clear();
+      Editor.clear();
     },
     paper: function () {
-      app.Editor.changePaper();
+      Editor.changePaper();
     },
     save: function () {
-      app.Editor.save();
+      Editor.save();
     },
     exit: function () {
-      app.Editor.hide();
-      app.Dashboard.show();
+      Editor.hide();
+      Dashboard.show();
     }
   };
 
@@ -171,20 +178,25 @@
   function _initDom () {
 
     if (_config.toolsSide === "right") {
-      app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
+      Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
     } else {
-      app.Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
+      Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
     }
-    _container = app.Utils.createDom("cloudnote-editor-tools__container");
-    _container.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    app.Editor.addSubmoduleDom(_container);
-    app.Main.addRotationHandler(_onRotate);
+    _container = Utils.createDom("cloudnote-editor-tools__container");
+    _container.addEventListener(Param.eventStart, _onTouchStart, true);
+    Editor.addSubmoduleDom(_container);
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    Editor = app.Editor;
+    Dashboard = app.Dashboard;
+    _config = Utils.setConfig(params, _config);
     _initDom();
     _initTools();
     (_toolsFunctions[_config.tools[0]])();

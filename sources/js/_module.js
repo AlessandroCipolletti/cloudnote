@@ -1,5 +1,10 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Main = {};
+
   var _config = {
 
   };
@@ -12,16 +17,19 @@
 
   function _initDom () {
 
-    _container = app.Utils.createDom("cloudnote-module__container");
+    _container = Utils.createDom("cloudnote-module__container");
 
-    app.Param.container.appendChild(_container);
-    app.Main.addRotationHandler(_onRotate);
+    Param.container.appendChild(_container);
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    _config = Utils.setConfig(params, _config);
     _initDom();
 
   }

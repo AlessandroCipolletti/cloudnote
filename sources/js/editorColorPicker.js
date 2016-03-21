@@ -1,5 +1,11 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Editor = {};
+  var Main = {};
+
   var _config = {
     primaryColors: []
   };
@@ -24,7 +30,7 @@
     if (_isOpen) {
       _hide();
     }
-    app.Editor.setTool({
+    Editor.setTool({
       color: _selectedValue,
       randomColor: false
     });
@@ -41,7 +47,7 @@
     if (_isOpen) {
       _hide();
     }
-    app.Editor.setTool({
+    Editor.setTool({
       color: "",
       randomColor: true
     });
@@ -50,14 +56,14 @@
 
   function _show () {
 
-    app.Utils.addGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
+    Utils.addGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = true;
 
   }
 
   function _hide () {
 
-    app.Utils.removeGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
+    Utils.removeGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
     _isOpen = false;
 
   }
@@ -143,16 +149,20 @@
 
   function _initDom () {
 
-    _container = app.Utils.createDom("cloudnote-editor-colorpicker__container");
-    _container.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    app.Editor.addSubmoduleDom(_container);
-    app.Main.addRotationHandler(_onRotate);
+    _container = Utils.createDom("cloudnote-editor-colorpicker__container");
+    _container.addEventListener(Param.eventStart, _onTouchStart, true);
+    Editor.addSubmoduleDom(_container);
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    Editor = app.Editor;
+    _config = Utils.setConfig(params, _config);
     _initDom();
     _initColorPicker();
 

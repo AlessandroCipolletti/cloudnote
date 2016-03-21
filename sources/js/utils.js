@@ -1,5 +1,8 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+
   var _overlaySpinner = {};
 
   function arrayOrderStringDown (a, b) {
@@ -31,11 +34,11 @@
   }
 
   function addGlobalStatus (status) {
-    app.Param.container.classList.add(status);
+    Param.container.classList.add(status);
   }
 
   function removeGlobalStatus (status) {
-    app.Param.container.classList.remove(status);
+    Param.container.classList.remove(status);
   }
 
   function _iterable (els, fn) {
@@ -211,15 +214,16 @@
     spinner.classList.add("cloudnote__overlay-spinner-image");
     spinner.src = "img/spinner.gif";
     _overlaySpinner.appendChild(spinner);
-    _overlaySpinner.addEventListener(app.Param.eventStart, function (e) {
+    _overlaySpinner.addEventListener(Param.eventStart, function (e) {
       e.preventDefault();
     });
-    app.Param.container.appendChild(_overlaySpinner);
+    Param.container.appendChild(_overlaySpinner);
 
   }
 
   function init () {
 
+    Param = app.Param;
     var MATH = Math;
     MATH.radians = function (degrees) {
       return degrees * MATH.PI / 180;

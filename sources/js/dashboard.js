@@ -6,6 +6,15 @@
 
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Main = {};
+  var Editor = {};
+  var Socket = {};
+  var Gps = {};
+  var Tooltip = {};
+
   var _config = {
     px4mm: 1,
     gpsRefreshTime: 5000,
@@ -97,7 +106,7 @@
     if (!draw || !draw.id || _idsImagesOnDashboard.indexOf(draw.id) >= 0) return false;
     console.log(["aggiungo", draw]);
     _idsImagesOnDashboard.push(draw.id);
-    _idsImagesOnDashboard = _idsImagesOnDashboard.sort(app.Utils.arrayOrderStringDown);
+    _idsImagesOnDashboard = _idsImagesOnDashboard.sort(Utils.arrayOrderStringDown);
     var index = _idsImagesOnDashboard.indexOf(draw.id) + 1;
     if (index < _idsImagesOnDashboard.length) {
       _imageGroup.tag.insertBefore(draw.data, document.getElementById(_idsImagesOnDashboard[index]));
@@ -146,12 +155,12 @@
 
   function show () {
     _setSpinner(_socketCallsInProgress > 0);
-    app.Utils.fadeInElements([_zoomLabel, _zoomRect, _showEditor]);
+    Utils.fadeInElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
   function _hide () {
     _setSpinner(false);
-    app.Utils.fadeOutElements([_zoomLabel, _zoomRect, _showEditor]);
+    Utils.fadeOutElements([_zoomLabel, _zoomRect, _showEditor]);
   }
 
   function getCoords () {
@@ -163,7 +172,7 @@
   }
 
   function go2Gps () {
-    app.Dashboard.Gps.currentGps2px(false, _go2XYZ);
+    Gps.currentGps2px(false, _go2XYZ);
   }
 
   function _isOnScreen (img) {
@@ -259,7 +268,7 @@
     _setSpinner(true);
 
     console.log("chiama per", area, notIds);
-    app.Socket.emit("dashboard drag", {
+    Socket.emit("dashboard drag", {
       "area": area,
       "ids": notIds
     });
@@ -313,16 +322,16 @@
   function _setSpinner (loading) {
 
     if (loading) {
-      app.Utils.fadeInElements(_spinner);
+      Utils.fadeInElements(_spinner);
     } else {
-      app.Utils.fadeOutElements(_spinner);
+      Utils.fadeOutElements(_spinner);
     }
 
   }
 
   function _updateGpsMapScaleForY (pxy) {
 
-    _currentGpsMapScale = app.Dashboard.Gps.pxy2scale(pxy);
+    _currentGpsMapScale = Gps.pxy2scale(pxy);
     _deltaDragYgps = 0;
 
   }
@@ -353,7 +362,7 @@
 
     var _groupRect = _imageGroup.origin.getBoundingClientRect();
     _imageGroup.pxx = round(_groupRect.left, _decimals);
-    _imageGroup.pxy = round(_groupRect.top - app.Param.headerSize, _decimals);
+    _imageGroup.pxy = round(_groupRect.top - Param.headerSize, _decimals);
 
   }
 
@@ -390,7 +399,7 @@
 
     if (this.classList.contains("disabled") === false) {
       _hide();
-      app.Editor.show();
+      Editor.show();
     }
 
   }
@@ -400,7 +409,7 @@
     if (_cacheNeedsUpdate) {
       _updateCache();
     }
-    _idsImagesOnScreen.sort(app.Utils.orderArrayStringUp);
+    _idsImagesOnScreen.sort(Utils.orderArrayStringUp);
     var draw, selectedDraw = false;
     for (var i = 0, l = _idsImagesOnScreen.length; i < l; i++) {
 
@@ -425,7 +434,7 @@
     }
 
     if (selectedDraw) {
-      app.Dashboard.Tooltip.show(selectedDraw);
+      Tooltip.show(selectedDraw);
     }
 
     _contextForClick.clearRect(0, 0, _canvasForClick.width, _canvasForClick.height);
@@ -467,8 +476,8 @@
 
       _touchDown = true;
       _svg.classList.add("cloudnote-dashboard__dragging");
-      _cursorX = _clickX = app.Utils.getEventCoordX(e);
-      _cursorY = _clickY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      _cursorX = _clickX = Utils.getEventCoordX(e);
+      _cursorY = _clickY = Utils.getEventCoordY(e, Param.headerSize);
       _imageGroup.matrix = _imageGroup.tag.getCTM();
 
     }
@@ -490,8 +499,8 @@
     if ((!e.touches || e.touches.length === 1) && _touchDown && _draggable) {
 
       _draggable = false;
-      var cursorX = app.Utils.getEventCoordX(e);
-      var cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      var cursorX = Utils.getEventCoordX(e);
+      var cursorY = Utils.getEventCoordY(e, Param.headerSize);
       var dx = cursorX - _cursorX;
       var dy = cursorY - _cursorY;
       requestAnimationFrame(__touchMove.bind({}, dx, dy, cursorX, cursorY));
@@ -505,8 +514,8 @@
     e.preventDefault();
     if ((!e.button) && (!e.touches || e.touches.length === 0) && _touchDown) {
 
-      var cursorX = app.Utils.getEventCoordX(e);
-      var cursorY = app.Utils.getEventCoordY(e, app.Param.headerSize);
+      var cursorX = Utils.getEventCoordX(e);
+      var cursorY = Utils.getEventCoordY(e, Param.headerSize);
       if (Math.abs(_clickX - cursorX) < _config.clickMargin && Math.abs(_clickY - cursorY) < _config.clickMargin) {
         _selectDrawAtPx(cursorX, cursorY);
       }
@@ -538,9 +547,9 @@
 
 
     if (scale < _config.maxScale) {
-      app.Utils.disableElements(_showEditor);
+      Utils.disableElements(_showEditor);
     } else {
-      app.Utils.enableElements(_showEditor);
+      Utils.enableElements(_showEditor);
     }
 
     /*
@@ -558,54 +567,54 @@
   function _onGestureStart (e) {
 
     e.preventDefault();
-    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+    _updateMatrixForGesture(Utils.getEventCoordX(e), Utils.getEventCoordY(e), e.scale, e.rotation);
 
   }
 
   function _onGestureChange (e) {
 
     e.preventDefault();
-    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+    _updateMatrixForGesture(Utils.getEventCoordX(e), Utils.getEventCoordY(e), e.scale, e.rotation);
 
   }
 
   function _onGestureEnd (e) {
 
     e.preventDefault();
-    _updateMatrixForGesture(app.Utils.getEventCoordX(e), app.Utils.getEventCoordY(e), e.scale, e.rotation);
+    _updateMatrixForGesture(Utils.getEventCoordX(e), Utils.getEventCoordY(e), e.scale, e.rotation);
     _currentScale = _imageGroup.matrix.a;
 
   }
 
   function _initDom () {
 
-    _container = app.Utils.createDom("cloudnote-dashboard__container");
-    _container.style.height = "calc(100% - " + app.Param.headerSize + "px)";
-    _container.style.top = app.Param.headerSize + "px";
+    _container = Utils.createDom("cloudnote-dashboard__container");
+    _container.style.height = "calc(100% - " + Param.headerSize + "px)";
+    _container.style.top = Param.headerSize + "px";
     _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     _svg.setAttribute("version", "1.1");
     _svg.classList.add("cloudnote-dashboard__svg");
 
     _zoomRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     _zoomRect.classList.add("cloundote-dashboard__zoom-label-rect");
-    _zoomRect.setAttribute("x", -8 * app.Param.pixelRatio);
-    _zoomRect.setAttribute("y", -8 * app.Param.pixelRatio);
-    _zoomRect.setAttribute("rx", 8 * app.Param.pixelRatio);
-    _zoomRect.setAttribute("ry", 8 * app.Param.pixelRatio);
-    _zoomRect.setAttribute("width", 60 * app.Param.pixelRatio);
-    _zoomRect.setAttribute("height", 50 * app.Param.pixelRatio);
+    _zoomRect.setAttribute("x", -8 * Param.pixelRatio);
+    _zoomRect.setAttribute("y", -8 * Param.pixelRatio);
+    _zoomRect.setAttribute("rx", 8 * Param.pixelRatio);
+    _zoomRect.setAttribute("ry", 8 * Param.pixelRatio);
+    _zoomRect.setAttribute("width", 60 * Param.pixelRatio);
+    _zoomRect.setAttribute("height", 50 * Param.pixelRatio);
     _zoomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
     _zoomLabel.classList.add("cloundote-dashboard__zoom-label");
-    _zoomLabel.setAttribute("x", 10 * app.Param.pixelRatio);
-    _zoomLabel.setAttribute("y", 25 * app.Param.pixelRatio);
+    _zoomLabel.setAttribute("x", 10 * Param.pixelRatio);
+    _zoomLabel.setAttribute("y", 25 * Param.pixelRatio);
     _zoomLabel.innerHTML = "100%";
     _svg.appendChild(_zoomRect);
     _svg.appendChild(_zoomLabel);
 
-    _svg.addEventListener(app.Param.eventStart, _onTouchStart, true);
-    _svg.addEventListener(app.Param.eventMove, _onTouchMove, true);
-    _svg.addEventListener(app.Param.eventEnd, _onTouchEnd, true);
-    if (app.Param.supportGesture) {
+    _svg.addEventListener(Param.eventStart, _onTouchStart, true);
+    _svg.addEventListener(Param.eventMove, _onTouchMove, true);
+    _svg.addEventListener(Param.eventEnd, _onTouchEnd, true);
+    if (Param.supportGesture) {
 
       _svg.addEventListener("gesturestart", _onGestureStart, true);
       _svg.addEventListener("gesturechange", _onGestureChange, true);
@@ -617,35 +626,42 @@
     _showEditor = document.createElement("a");
     _showEditor.classList.add("cloudnote-dashboard__showeditor", "button", "fadeIn");
     _showEditor.innerHTML = "Disegna";
-    _showEditor.addEventListener(app.Param.eventStart, _openEditor);
+    _showEditor.addEventListener(Param.eventStart, _openEditor);
     _container.appendChild(_showEditor);
 
-    _spinner = app.Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
+    _spinner = Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
     spinner.classList.add("cloudnote-dashboard__spinner-image");
     spinner.src = "img/spinner.gif";
     _spinner.appendChild(spinner);
     _container.appendChild(_spinner);
 
-    app.Param.container.appendChild(_container);
+    Param.container.appendChild(_container);
     _svgOffset = _svg.getBoundingClientRect();
-    app.Main.addRotationHandler(_onRotate);
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    Editor = app.Editor;
+    Socket = app.Socket;
+    Gps = app.Dashboard.Gps;
+    Tooltip = app.Dashboard.Tooltip;
+    _config = Utils.setConfig(params, _config);
     _config.maxDeltaDragYgps = _config.maxDeltaDragYgps * 1000 * 1000 * _config.px4mm; // from km to px
-    _config.clickMargin = _config.clickMargin * app.Param.pixelRatio;
-    app.Dashboard.Gps.init(_config);
+    _config.clickMargin = _config.clickMargin * Param.pixelRatio;
+    Gps.init(_config);
     _imageGroup.updateMatrix = function () {
       var matrix = _imageGroup.matrix;
       _imageGroup.tag.setAttribute("transform", "matrix(" + matrix.a + "," + matrix.b + "," + matrix.c + "," + matrix.d + "," + round(matrix.e, 4) + "," + round(matrix.f, 4) + ")");
       matrix = undefined;
     };
     _initDom();
-    app.Dashboard.Tooltip.init(_config, _container);
+    Tooltip.init(_config, _container);
     _go2XYZ(0, 0, 0);
 
   }

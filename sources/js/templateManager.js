@@ -1,5 +1,8 @@
 (function (app) {
 
+  // Dependencies
+  var Utils = {};
+
   var _config = {
 
   };
@@ -114,7 +117,7 @@
   function _loadFile (template) {
 
     if (typeof (cache[template]) === 'undefined') {
-      _cache[template] = app.Utils.promiseXHR("GET", template).then(function (xhr) {
+      _cache[template] = Utils.promiseXHR("GET", template).then(function (xhr) {
         return Promise.resolve(_compile(xhr.responseText));
       });
     }
@@ -147,7 +150,8 @@
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Utils = app.Utils;
+    _config = Utils.setConfig(params, _config);
 
   }
 

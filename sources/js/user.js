@@ -1,5 +1,12 @@
 (function (app) {
 
+  // Dependencies
+  var Param = {};
+  var Utils = {};
+  var Main = {};
+  var Socket = {};
+  var Header = {};
+
   var _config = {
     fbAppId: "",
     fbApiVersion: ""
@@ -32,7 +39,7 @@
 
     function testLogin () {
 
-      if (app.Param.isDebug) {
+      if (Param.isDebug) {
         _doLogin("fb", {
           email: "cipolletti.alessandro@gmail.com",
           first_name: "Alessandro",
@@ -70,7 +77,7 @@
         fjs.parentNode.insertBefore(js, fjs);
       }(document, "script", "facebook-jssdk"));
 
-      _facebookLoginButton.addEventListener(app.Param.eventStart, testLogin);
+      _facebookLoginButton.addEventListener(Param.eventStart, testLogin);
       testLogin();
 
     }
@@ -98,12 +105,12 @@
 
     }
 
-    if (app.Param.isDebug) {
+    if (Param.isDebug) {
       onSocketLogin(JSON.stringify({
         id: "5584332c21b3985708c33bf7"
       }));
     } else {
-      app.Socket.emit("user login", _userInfo);
+      Socket.emit("user login", _userInfo);
     }
 
   }
@@ -120,12 +127,12 @@
 
     }
     _hideLogin();
-    app.Utils.addGlobalStatus("cloudnode__USER-LOGGED");
+    Utils.addGlobalStatus("cloudnode__USER-LOGGED");
 
   }
 
   function _showLogin () {
-    app.Utils.fadeInElements(_loginPanel);
+    Utils.fadeInElements(_loginPanel);
   }
 
   function _hideLogin (e) {
@@ -133,7 +140,7 @@
     if (e) {
       e.preventDefault();
     }
-    app.Utils.fadeOutElements(_loginPanel);
+    Utils.fadeOutElements(_loginPanel);
 
   }
 
@@ -157,30 +164,36 @@
 
   function _initDom () {
 
-    _loginPanel = app.Utils.createDom("cloudnote-user__login-panel-container", "popup", "displayNone", "fadeOut");
-    var overlay = app.Utils.createDom("cloudnote-user__login-panel-overlay");
-    overlay.addEventListener(app.Param.eventStart, _hideLogin);
-    var panel = app.Utils.createDom("cloudnote-user__login-panel");
+    _loginPanel = Utils.createDom("cloudnote-user__login-panel-container", "popup", "displayNone", "fadeOut");
+    var overlay = Utils.createDom("cloudnote-user__login-panel-overlay");
+    overlay.addEventListener(Param.eventStart, _hideLogin);
+    var panel = Utils.createDom("cloudnote-user__login-panel");
     //var logo = document.createElement("div");
     //logo.classList.add("cloudnote-user__login-panel-logo");
     //panel.appendChild(logo);
-    _facebookLoginButton = app.Utils.createDom("cloudnote-user__login-panel-facebook");
+    _facebookLoginButton = Utils.createDom("cloudnote-user__login-panel-facebook");
     panel.appendChild(_facebookLoginButton);
     _loginPanel.appendChild(panel);
     _loginPanel.appendChild(overlay);
 
-    _headerUserButton = app.Utils.createDom("cloudnote-user__header-button");
-    _headerUserButton.addEventListener(app.Param.eventStart, _headerButtonClick);
+    _headerUserButton = Utils.createDom("cloudnote-user__header-button");
+    _headerUserButton.addEventListener(Param.eventStart, _headerButtonClick);
 
-    app.Param.container.appendChild(_loginPanel);
-    app.Header.addButton(_headerUserButton, "right");
-    app.Main.addRotationHandler(_onRotate);
+    Param.container.appendChild(_loginPanel);
+    Header.addButton(_headerUserButton, "right");
+    Main.addRotationHandler(_onRotate);
 
   }
 
   function init (params) {
 
-    _config = app.Utils.setConfig(params, _config);
+    Param = app.Param;
+    Utils = app.Utils;
+    Main = app.Main;
+    Socket = app.Socket;
+    Header = app.Header;
+
+    _config = Utils.setConfig(params, _config);
     _initDom();
     _facebook.init();
 
