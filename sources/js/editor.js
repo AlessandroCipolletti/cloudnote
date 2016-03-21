@@ -13,7 +13,9 @@
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
     tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "paper", "clear", "exit"],
-    toolsSide: "left"
+    toolsSide: "left",
+    colorsNumberWidth: 21,
+    colorsNumberHeight: 15
   };
 
   var PI = Math.PI;

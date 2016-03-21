@@ -7,7 +7,9 @@
   var Main = {};
 
   var _config = {
-    primaryColors: []
+    primaryColors: [],
+    colorsNumberWidth: 0,
+    colorsNumberHeight: 0
   };
 
   var _container, _isOpen = false;
@@ -17,6 +19,16 @@
     var m = d ? Math.pow(10, d) : 1;
     return Math.round(n * m) / m;
   };
+
+  function _intToHex (int) {
+
+    var hex = int.toString(16);
+    while (hex.length < 6) {
+      hex = "0" + hex;
+    }
+    return hex;
+
+  }
 
   function _selectColor (target) {
 
@@ -108,6 +120,7 @@
   function _initColorPicker () {
 
     var frame = document.createDocumentFragment();
+    var i = 0;
 
     var primaryContainer = document.createElement("div");
     primaryContainer.classList.add("cloudnote-editor-colorpicker__primary");
@@ -124,7 +137,7 @@
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
     var primaryColorNumber = Math.min(round((app.WIDTH - 500) / 110), _config.primaryColors.length);
-    for (var i = 0; i < primaryColorNumber; i++) {
+    for (i = 0; i < primaryColorNumber; i++) {
       primaryContainer.appendChild(_getColorButton(_config.primaryColors[i]));
     }
     buttonContainer = document.createElement("div");
@@ -133,7 +146,31 @@
     button.classList.add("cloudnote-editor-colorpicker__showhide");
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
+
     // TODO init secondary
+    var colorsColumns = (app.WIDTH > app.HEIGHT ? _config.colorsNumberWidth : _config.colorsNumberHeight);
+    var colorsRows = (app.WIDTH > app.HEIGHT ? _config.colorsNumberHeight : _config.colorsNumberWidth);
+    var maxInt = 256 * 256 * 256;
+    var columnIntUnit = round(maxInt / colorsColumns);
+    var columnBaseInt;
+    for (i = 1; i <= colorsColumns; i++) {
+
+      columnBaseInt = columnIntUnit * i;
+      _intToHex(columnBaseInt); // colore di base
+      // ora devo calcolare diversi colori simili a quelli di base di ogni colonna
+      // che siano sempre piu chiari tendenti al bianco
+      // penso di possa fare calcolando i valori interi rgb dei colori di base delle colonne
+      // e dividere ogni valore in 17 parti uguali
+      // 1* colore = r/17 + g/17 + b/17
+      // 2* colore = 2r/17 + 2g/17 + 2b/17
+      // ....
+
+    }
+    /*
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+    */
 
 
 
