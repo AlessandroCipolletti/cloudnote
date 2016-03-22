@@ -30,7 +30,7 @@
       r: parseInt(hex.substring(0, 2), 16),
       g: parseInt(hex.substring(2, 4), 16),
       b: parseInt(hex.substring(4, 6), 16)
-    }
+    };
 
   }
 
@@ -162,6 +162,7 @@
     primaryContainer.appendChild(buttonContainer);
 
     // TODO init secondary
+    debugger;
     var colorsColumns = (app.WIDTH > app.HEIGHT ? _config.colorsNumberWidth : _config.colorsNumberHeight);
     var colorsRows = (app.WIDTH > app.HEIGHT ? _config.colorsNumberHeight : _config.colorsNumberWidth);
     var maxInt = 256 * 256 * 256;
@@ -187,13 +188,6 @@
           _getColorButton(hex)
         );
       }
-      // ora devo calcolare diversi colori simili a quelli di base di ogni colonna
-      // che siano sempre piu chiari tendenti al bianco
-      // penso di possa fare calcolando i valori interi rgb dei colori di base delle colonne
-      // e dividere ogni valore in 17 parti uguali
-      // 1* colore = r/17 + g/17 + b/17
-      // 2* colore = 2r/17 + 2g/17 + 2b/17
-      // ....
 
     }
 
