@@ -33,13 +33,15 @@
 .cloudnote-editor-colorpicker__secondary {
   top: 7.5rem;  /* 150px */
   height: calc(100% - 7.5rem); /* 150px */
+  flex-flow: column wrap;
+  justify-content: space-between;
 }
 
 /* COLORS */
 .cloudnote-editor-colorpicker__color {
   width: 4rem;  /* 80px */
   height: 4rem; /* 80px */
-  margin: 1.75rem 1rem; /* 35px 40px */
+  margin: 1.75rem 1rem; /* 35px 20px */
   border-radius: 50%;
   box-shadow: 0rem -0.05rem 0.15rem 0rem rgba(50, 50, 50, 0.75), inset 0rem 0rem 0.15rem 0rem black;
 }

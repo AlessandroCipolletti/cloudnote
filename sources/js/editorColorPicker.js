@@ -20,6 +20,20 @@
     return Math.round(n * m) / m;
   };
 
+  function _rgbToHex (r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
+  function _hexToRgb (hex) {
+
+    return {
+      r: parseInt(hex.substring(0, 2), 16),
+      g: parseInt(hex.substring(2, 4), 16),
+      b: parseInt(hex.substring(4, 6), 16)
+    }
+
+  }
+
   function _intToHex (int) {
 
     var hex = int.toString(16);
@@ -120,7 +134,7 @@
   function _initColorPicker () {
 
     var frame = document.createDocumentFragment();
-    var i = 0;
+    var i = 0, hex;
 
     var primaryContainer = document.createElement("div");
     primaryContainer.classList.add("cloudnote-editor-colorpicker__primary");
@@ -152,11 +166,27 @@
     var colorsRows = (app.WIDTH > app.HEIGHT ? _config.colorsNumberHeight : _config.colorsNumberWidth);
     var maxInt = 256 * 256 * 256;
     var columnIntUnit = round(maxInt / colorsColumns);
-    var columnBaseInt;
+    var columnBaseInt, columnBaseHex, columnBaseRgb;
     for (i = 1; i <= colorsColumns; i++) {
 
       columnBaseInt = columnIntUnit * i;
-      _intToHex(columnBaseInt); // colore di base
+      columnBaseHex = _intToHex(columnBaseInt);
+      columnBaseRgb = _hexToRgb(columnBaseHex);
+      secondaryContainer.appendChild(_getColorButton("#" + columnBaseHex));
+      console.log("primo: #" + columnBaseHex);
+
+      for (var j = colorsRows; j > 0; j--) {
+
+        hex = _rgbToHex(
+          round(j * columnBaseRgb.r / colorsRows),
+          round(j * columnBaseRgb.g / colorsRows),
+          round(j * columnBaseRgb.b / colorsRows)
+        );
+        //console.log("secondo: " + hex);
+        secondaryContainer.appendChild(
+          _getColorButton(hex)
+        );
+      }
       // ora devo calcolare diversi colori simili a quelli di base di ogni colonna
       // che siano sempre piu chiari tendenti al bianco
       // penso di possa fare calcolando i valori interi rgb dei colori di base delle colonne
@@ -166,11 +196,6 @@
       // ....
 
     }
-    /*
-    function rgbToHex(r, g, b) {
-      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
-    */
 
 
 
