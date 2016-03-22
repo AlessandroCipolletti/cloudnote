@@ -133,7 +133,6 @@
   function _initColorPicker () {
 
     var frame = document.createDocumentFragment();
-    var i = 0, hex;
 
     var primaryContainer = document.createElement("div");
     primaryContainer.classList.add("cloudnote-editor-colorpicker__primary");
@@ -163,7 +162,7 @@
     // init secondary
     var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) * Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
     var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
-    for (i = 0; i < colorsNumber; i++) {
+    for (var i = 0; i < colorsNumber; i++) {
       secondaryContainer.appendChild(_getColorButton("#" + _intToHex(columnIntUnit * i)));
     }
     secondaryContainer.appendChild(_getColorButton("#fff"));
