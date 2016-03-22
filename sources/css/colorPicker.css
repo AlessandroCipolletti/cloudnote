@@ -19,31 +19,33 @@
 .cloudnote-editor-colorpicker__primary, .cloudnote-editor-colorpicker__secondary {
   display: flex;
   position: absolute;
+  justify-content: space-between;
   left: 0rem;
   width: 100%;
 }
 .cloudnote-editor-colorpicker__primary {
   flex-flow: row nowrap;
-  justify-content: space-between;
-}
-.cloudnote-editor-colorpicker__primary {
   height: 7.5rem; /* 150px */
   top: 0rem;
 }
 .cloudnote-editor-colorpicker__secondary {
+  flex-flow: column wrap;
   top: 7.5rem;  /* 150px */
   height: calc(100% - 7.5rem); /* 150px */
-  flex-flow: column wrap;
-  justify-content: space-between;
 }
 
 /* COLORS */
 .cloudnote-editor-colorpicker__color {
   width: 4rem;  /* 80px */
   height: 4rem; /* 80px */
-  margin: 1.75rem 1rem; /* 35px 20px */
   border-radius: 50%;
   box-shadow: 0rem -0.05rem 0.15rem 0rem rgba(50, 50, 50, 0.75), inset 0rem 0rem 0.15rem 0rem black;
+}
+.cloudnote-editor-colorpicker__primary .cloudnote-editor-colorpicker__color {
+  margin: 1.75rem 1rem; /* 35px 20px */
+}
+.cloudnote-editor-colorpicker__secondary .cloudnote-editor-colorpicker__color {
+  margin: 1.2rem; /* 20px */
 }
 .cloudnote-editor-colorpicker__color-selected::before {
   content: '';

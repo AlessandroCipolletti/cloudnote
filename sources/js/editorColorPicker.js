@@ -7,9 +7,7 @@
   var Main = {};
 
   var _config = {
-    primaryColors: [],
-    colorsNumberWidth: 0,
-    colorsNumberHeight: 0
+    primaryColors: []
   };
 
   var _container, _isOpen = false;
@@ -96,6 +94,7 @@
 
   function _onTouchStart (e) {
 
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0) return;
     var target = e.target;
     if (target.classList.contains("cloudnote-editor-colorpicker__color")) {
       if (target.classList.contains("cloudnote-editor-colorpicker__color-selected") === false) {
@@ -161,37 +160,13 @@
     buttonContainer.appendChild(button);
     primaryContainer.appendChild(buttonContainer);
 
-    // TODO init secondary
-    debugger;
-    var colorsColumns = (app.WIDTH > app.HEIGHT ? _config.colorsNumberWidth : _config.colorsNumberHeight);
-    var colorsRows = (app.WIDTH > app.HEIGHT ? _config.colorsNumberHeight : _config.colorsNumberWidth);
-    var maxInt = 256 * 256 * 256;
-    var columnIntUnit = round(maxInt / colorsColumns);
-    var columnBaseInt, columnBaseHex, columnBaseRgb;
-    for (i = 1; i <= colorsColumns; i++) {
-
-      columnBaseInt = columnIntUnit * i;
-      columnBaseHex = _intToHex(columnBaseInt);
-      columnBaseRgb = _hexToRgb(columnBaseHex);
-      secondaryContainer.appendChild(_getColorButton("#" + columnBaseHex));
-      console.log("primo: #" + columnBaseHex);
-
-      for (var j = colorsRows; j > 0; j--) {
-
-        hex = _rgbToHex(
-          round(j * columnBaseRgb.r / colorsRows),
-          round(j * columnBaseRgb.g / colorsRows),
-          round(j * columnBaseRgb.b / colorsRows)
-        );
-        //console.log("secondo: " + hex);
-        secondaryContainer.appendChild(
-          _getColorButton(hex)
-        );
-      }
-
+    // init secondary
+    var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) * Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
+    var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
+    for (i = 0; i < colorsNumber; i++) {
+      secondaryContainer.appendChild(_getColorButton("#" + _intToHex(columnIntUnit * i)));
     }
-
-
+    secondaryContainer.appendChild(_getColorButton("#fff"));
 
     frame.appendChild(primaryContainer);
     frame.appendChild(secondaryContainer);
