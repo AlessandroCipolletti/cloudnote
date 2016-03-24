@@ -1,0 +1,103 @@
+.cloudnote-messages__overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #FFA500;
+  opacity: 0;
+  transition: opacity 200ms;
+  display: none;
+  z-index: 750;
+}
+.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__overlay {
+  display: block;
+  opacity: 0.3;
+}
+
+.cloudnote-messages__panel {
+  width: auto;
+  height: auto;
+  padding: 1rem 3rem 1rem 7rem;
+  min-height: 6rem;
+  position: absolute;
+  top: 0rem;
+  left: 50%;
+  background-repeat: no-repeat;
+  background-position: 1rem calc(100% - 5rem);
+  background-size: 5rem 5rem;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%) translateY(-110%);
+  transition: transform 200ms;
+}
+.cloudnote-messages__panel-text {
+  font-size: 2rem;
+  color: white;
+  margin: auto;
+}
+.cloudnote-messages__panel-button-ok {
+  border: solid 1px white;
+}
+.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel,
+.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
+  transform: translateX(-50%) translateY(0rem);
+}
+.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
+  top: 5.05rem;
+  z-index: 250;
+  border-radius: 0 0 0.7rem 0.7rem;
+}
+.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
+  z-index: 1000;
+  width: 100%;
+}
+
+
+
+/* ALERT*/
+.cloudnote-messages__panel-alert {
+  background-color: #aaa;
+  /*
+  display flex per avere gli elementi in colonna al centro
+  tanto ci sono solo il p del messaggio e sotto il pulsante ok
+  */
+}
+.cloudnote-messages__panel-alert .cloudnote-messages__panel-button-ok {
+  width: 10rem;
+  height: 5rem;
+  margin: 1rem;
+}
+.cloudnote-messages__panel-alert .cloudnote-messages__panel-button-cancel,
+.cloudnote-messages__panel-alert .cloudnote-messages__panel-input {
+  display: none;
+}
+
+/* LOG manca icona */
+.cloudnote-messages__panel-log {
+  background-color: #4D82D6;
+}
+.cloudnote-messages__panel-log .cloudnote-messages__panel-button-ok,
+.cloudnote-messages__panel-log .cloudnote-messages__panel-button-cancel,
+.cloudnote-messages__panel-log .cloudnote-messages__panel-input {
+  display: none;
+}
+
+/* SUCCESS manca icona */
+.cloudnote-messages__panel-success {
+  background-color: #57BF57;
+}
+.cloudnote-messages__panel-success .cloudnote-messages__panel-button-ok,
+.cloudnote-messages__panel-success .cloudnote-messages__panel-button-cancel,
+.cloudnote-messages__panel-success .cloudnote-messages__panel-input {
+  display: none;
+}
+
+/* ERROR manca icona */
+.cloudnote-messages__panel-error {
+  background-color: #E1715B;
+}
+.cloudnote-messages__panel-error .cloudnote-messages__panel-button-ok,
+.cloudnote-messages__panel-error .cloudnote-messages__panel-button-cancel,
+.cloudnote-messages__panel-error .cloudnote-messages__panel-input {
+  display: none;
+}

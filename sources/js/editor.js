@@ -125,11 +125,17 @@
   }
 
   function show () {
+
+    Utils.addGlobalStatus("cloudnote__EDITOR-OPEN");
     Utils.fadeInElements(_container);
+
   }
 
   function hide () {
+
+    Utils.removeGlobalStatus("cloudnote__EDITOR-OPEN");
     Utils.fadeOutElements(_container);
+    
   }
 
   function setTool (tool) {
