@@ -9,15 +9,12 @@
     autoCloseDelay: 3000
   };
 
-  var _dom = {}, _overlay = {};
+  var _dom = {}, _overlay = {}, _message = {}, _confirmButton = {}, _cancelButton = {};
   var _stack = [];  // se arrivano più log allo stesso tempo, creo stack e li mostro uno alla volta
   var _isOpen = false, _autoCloseTimeout = false;
 
   function _setType (type) {
-    // chiamata da ogni tipo di funzione per settare il proprio tipo
-    // cosi usiamo un solo dom creato una sola volta, e tramite classe css tutti gli elementi inutili finiscono in display none
     _dom.className = "cloudnote-messages__panel cloudnote-messages__panel-" + type;
-
   }
 
   function _show (mandatory) {
@@ -65,7 +62,7 @@
       });
     } else {
       _setType(type);
-      // set msg
+      _message.innerHTML = msg;
       _show(mandatory);
     }
 
@@ -75,8 +72,8 @@
     _simpleMessage("alert", msg, true);
   }
 
-  function log (msg) {
-    _simpleMessage("log", msg, false);
+  function info (msg) {
+    _simpleMessage("info", msg, false);
   }
 
   function success (msg) {
@@ -88,14 +85,14 @@
   }
 
   function confirm (msg, mandatory, onConfirm, onCancel) {
-    // due pulsanti di conferma o annulla. con parametro per decidere se è bloccante o si puo' chiudere
+    // TODO due pulsanti di conferma o annulla. con parametro per decidere se è bloccante o si puo' chiudere
     _setType("confirm");
     mandatory = (typeOf(mandatory) === "undefined" ? true : mandatory);
 
   }
 
   function input (msg, mandatory, onConfirm, onCancel) {
-    // con campo di input. con parametro per decidere se è bloccante o si puo' chiudere
+    // TODO con campo di input. con parametro per decidere se è bloccante o si puo' chiudere
     _setType("input");
     mandatory = (typeOf(mandatory) === "undefined" ? false : mandatory);
 
@@ -111,6 +108,14 @@
 
     _dom = Utils.createDom("cloudnote-messages__panel");
     _overlay = Utils.createDom("cloudnote-messages__overlay");
+
+    _message = Utils.createDom("cloudnote-messages__panel-text");
+    _confirmButton = Utils.createDom("cloudnote-messages__panel-button-ok");
+    _cancelButton = Utils.createDom("cloudnote-messages__panel-button-cancel");
+    // aggiungere anche il campo input
+    _dom.appendChild(_message);
+    _dom.appendChild(_confirmButton);
+    _dom.appendChild(_cancelButton);
 
     Param.container.appendChild(_overlay);
     Param.container.appendChild(_dom);
@@ -131,7 +136,7 @@
   app.module("Messages", {
     init: init,
     alert: alert,
-    log: log,
+    info: info,
     success: success,
     error: error,
     confirm: confirm,
