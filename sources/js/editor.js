@@ -14,7 +14,8 @@
   var _config = {
     primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
     tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "clear", "paper", "exit"],
-    toolsSide: "left"
+    toolsSide: "left",
+    minPxToDraw: 3
   };
 
   var PI = Math.PI;
@@ -46,7 +47,7 @@
   };
 
   function __save () {
-    
+
     _savedDraw.user = _currentUser;
     Dashboard.addDraw(_savedDraw, true);
     _savedDraw = undefined;
@@ -319,20 +320,26 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if ((e.touches && e.touches.length > 1) || _touchDown) return;
+    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+    if ((e.touches && e.touches.length > 1) || _touchDown) {
+      _oldX = _oldMidX = _cursorX;
+      _oldY = _oldMidY = _cursorY;
+      return;
+    }
     if (Param.supportTouch) {
       _touchEventObject = e.touches[0];
       _updateTouchForce();
     }
     _touchDown = true;
-    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor) {
       _tool.color = _getRandomColor();
     }
     //_context.globalAlpha = 0.7;
     //_context.globalCompositeOperation = "lighter";
+    //_context.shadowBlur = 10;
+    //_context.shadowColor = _tool.color;
     _context.globalCompositeOperation = _tool.globalCompositeOperation;
     _context.strokeStyle = _tool.color;
     _context.lineWidth = _tool.size;
@@ -344,8 +351,6 @@
       _eraserCursor.style.cssText = style;
       _eraserCursor.classList.remove("displayNone");
     }
-    //_context.shadowBlur = 10;
-    //_context.shadowColor = _tool.color;
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
     }
@@ -358,7 +363,10 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (_touchDown === false || (e.touches && e.touches.length > 1)) return;
+    if (_touchDown === false || (e.touches && e.touches.length > 1)) {
+      _touchDown = false;
+      return;
+    }
     if (Param.supportTouch) {
       _touchEventObject = e.touches[0];
       if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
@@ -376,9 +384,10 @@
       var style = "width: " + size + "px; height: " + size + "px; ";
       style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
       _eraserCursor.style.cssText = style;
-    } else if (_tool.size < 25 && distance < 3) {
+    } else if (_tool.size < 25 && distance < _config.minPxToDraw) {
       return;
-    }
+    };
+
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     _context.beginPath();

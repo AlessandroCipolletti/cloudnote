@@ -21,7 +21,7 @@
       _selectTool("marker");
       Editor.setTool({
         name: "marker",
-        size: 10,
+        size: 8,
         forceFactor: 1.5,
         speedFactor: 0,
         shape: "circle",
