@@ -70,7 +70,7 @@
     if (el) {
       el.classList.add("fadeOut");
       el.classList.remove("fadeIn");
-      setTimeout(_doFadeOut.bind(el), 300);
+      setTimeout(_doFadeOut.bind(el), 400);
     }
   }
 

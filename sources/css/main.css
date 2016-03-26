@@ -45,11 +45,11 @@ html, body {
 
 .fadeIn {
   opacity: 1;
-	transition: opacity 300ms;
+	transition: opacity 400ms;
 }
 .fadeOut {
   opacity: 0;
-	transition: opacity 300ms;
+	transition: opacity 400ms;
 }
 .popup {
   z-index: 300;

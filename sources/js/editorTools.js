@@ -21,8 +21,8 @@
       _selectTool("marker");
       Editor.setTool({
         name: "marker",
-        size: 15,
-        forceFactor: 1.4,
+        size: 10,
+        forceFactor: 1.5,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "source-over"
