@@ -6,7 +6,7 @@
   var Main = {};
 
   var _config = {
-    autoCloseDelay: 3000
+    autoCloseDelay: 2500
   };
 
   var _dom = {}, _overlay = {}, _message = {}, _confirmButton = {}, _cancelButton = {};
@@ -19,6 +19,7 @@
 
   function _show (mandatory) {
 
+    _isOpen = true;
     if (mandatory) {
       Utils.addGlobalStatus("cloudnote__MESSAGE-MANDATORY-OPEN");
     } else {
@@ -30,13 +31,14 @@
 
   function _hide () {
 
+    _isOpen = false;
     Utils.removeGlobalStatus("cloudnote__MESSAGE-OPEN");
     Utils.removeGlobalStatus("cloudnote__MESSAGE-MANDATORY-OPEN");
     if (_autoCloseTimeout) {
       clearTimeout(_autoCloseTimeout);
       _autoCloseTimeout = false;
     }
-    setTimeout(_onHide, 300);
+    setTimeout(_onHide, 200);
 
   }
 
@@ -68,8 +70,21 @@
 
   }
 
-  function alert (msg) {
+  function _onAlertOk (callback) {
+
+    _confirmButton.removeEventListener(Param.eventStart, _onAlertOk);
+    _hide();
+    if (callback) {
+      callback();
+    }
+
+  }
+
+  function alert (msg, _callback) {
+
+    _confirmButton.addEventListener(Param.eventStart, _onAlertOk.bind({}, _callback));
     _simpleMessage("alert", msg, true);
+
   }
 
   function info (msg) {
@@ -111,7 +126,9 @@
 
     _message = Utils.createDom("cloudnote-messages__panel-text");
     _confirmButton = Utils.createDom("cloudnote-messages__panel-button-ok");
+    _confirmButton.innerHTML = "<p>OK</p>";
     _cancelButton = Utils.createDom("cloudnote-messages__panel-button-cancel");
+    _cancelButton.innerHTML = "<p>Cancel</p>";
     // aggiungere anche il campo input
     _dom.appendChild(_message);
     _dom.appendChild(_confirmButton);

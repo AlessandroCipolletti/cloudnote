@@ -9,6 +9,7 @@
   // Dependencies
   var Param = {};
   var Utils = {};
+  var Messages = {};
   var Main = {};
   var Editor = {};
   var Socket = {};
@@ -145,6 +146,7 @@
       delete draw.base64;
       draw.data = _newDraw;
       _appendDraw(draw);
+      Messages.success("Salvataggio riuscito");
       _newDraw = draw = undefined;
 
     }
@@ -646,6 +648,7 @@
 
     Param = app.Param;
     Utils = app.Utils;
+    Messages = app.Messages;
     Main = app.Main;
     Editor = app.Editor;
     Socket = app.Socket;

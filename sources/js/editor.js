@@ -3,6 +3,7 @@
   // Dependencies
   var Param = {};
   var Utils = {};
+  var Messages = {};
   var Main = {};
   var Tools = {};
   var ColorPicker = {};
@@ -45,7 +46,7 @@
   };
 
   function __save () {
-
+    
     _savedDraw.user = _currentUser;
     Dashboard.addDraw(_savedDraw, true);
     _savedDraw = undefined;
@@ -63,12 +64,10 @@
 
     data = JSON.parse(data);
     if (data.ok) {
-
       _savedDraw.id = data.id;
       __save();
-
     } else {
-      alert("errore salvataggio");
+      Messages.error("Salvataggio non riuscito");
     }
 
   }
@@ -135,7 +134,7 @@
 
     Utils.removeGlobalStatus("cloudnote__EDITOR-OPEN");
     Utils.fadeOutElements(_container);
-    
+
   }
 
   function setTool (tool) {
@@ -485,6 +484,7 @@
 
     Param = app.Param;
     Utils = app.Utils;
+    Messages = app.Messages;
     Main = app.Main;
     Tools = app.Editor.Tools;
     ColorPicker = app.Editor.ColorPicker;

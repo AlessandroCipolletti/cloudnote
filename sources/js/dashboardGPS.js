@@ -2,6 +2,7 @@
 
   // Dependencies
   var Utils = {};
+  var Messages = {};
 
   _config = {
     px4mm: 1,
@@ -119,7 +120,7 @@
   }
 
   function _geoError (err) {
-    alert("geolocalisation generic error");
+    Messages.error("geolocalisation generic error");
   }
 
   var _getPosition = _GEO ? function (force, callback, error) {
@@ -155,6 +156,7 @@
   function init (params) {
 
     Utils = app.Utils;
+    Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _geoOptions.timeout = _config.gpsTimeoutTime;
     _WGS84.temp = _WGS84.r_minor / _WGS84.r_major;

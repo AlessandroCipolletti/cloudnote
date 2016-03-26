@@ -4,7 +4,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #FFA500;
+  background-color: #8470ff;
   opacity: 0;
   transition: opacity 200ms;
   display: none;
@@ -17,56 +17,75 @@
 
 .cloudnote-messages__panel {
   width: auto;
-  height: auto;
-  padding: 1rem 3rem 1rem 7rem;
-  min-height: 6rem;
+  height: 2.5rem;
+  padding: 1.3rem 2rem 1rem 5.5rem;
   position: absolute;
-  top: 0rem;
+  top: 5.05rem;
   left: 50%;
   background-repeat: no-repeat;
-  background-position: 1rem calc(100% - 5rem);
-  background-size: 5rem 5rem;
+  background-position: 1.5rem 1.0rem;;
+  background-size: 2.5rem 2.5rem;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   transform: translateX(-50%) translateY(-110%);
   transition: transform 200ms;
 }
 .cloudnote-messages__panel-text {
-  font-size: 2rem;
+  font-size: 1.5rem;
+  line-height: 2.5rem;
+  height: 2.5rem;
   color: white;
   margin: auto;
+  white-space: nowrap;
 }
-.cloudnote-messages__panel-button-ok {
+.cloudnote-messages__panel-button-ok, .cloudnote-messages__panel-button-cancel {
   border: solid 1px white;
+  display: none;
+  align-items: center;
+  font-size: 2rem;
+  justify-content: space-around;
+  cursor: pointer;
 }
-.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel,
+
+.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
+  transform: translateX(-50%) translateY(0%);
+}
 .cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
-  transform: translateX(-50%) translateY(0rem);
+  transform: translateX(-50%) translateY(10rem);
 }
 .cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
-  top: 5.05rem;
   z-index: 250;
   border-radius: 0 0 0.7rem 0.7rem;
 }
 .cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
   z-index: 1000;
-  width: 100%;
 }
 
 
 
 /* ALERT*/
+.cloudnote-messages__panel.cloudnote-messages__panel-alert {
+  height: auto;
+  width: 100%;
+}
 .cloudnote-messages__panel-alert {
-  background-color: #aaa;
+  background-color: #eee;
   background-image: url("../img/icons/alert.png");
-  /*
-  display flex per avere gli elementi in colonna al centro
-  tanto ci sono solo il p del messaggio e sotto il pulsante ok
-  */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.cloudnote-messages__panel-alert .cloudnote-messages__panel-text {
+  color: black;
+  max-width: 85%;
+  margin: 0rem 2.5%;
 }
 .cloudnote-messages__panel-alert .cloudnote-messages__panel-button-ok {
-  width: 10rem;
-  height: 5rem;
-  margin: 1rem;
+  width: 8rem;
+  height: 4rem;
+  float: right;
+  border-color: black;
+  display: flex;
 }
 .cloudnote-messages__panel-alert .cloudnote-messages__panel-button-cancel,
 .cloudnote-messages__panel-alert .cloudnote-messages__panel-input {
