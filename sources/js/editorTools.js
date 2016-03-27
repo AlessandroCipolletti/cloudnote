@@ -175,7 +175,7 @@
     // do some stuff
   }
 
-  function _initDom () {
+  function _initDom (container) {
 
     if (_config.toolsSide === "right") {
       Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
@@ -184,12 +184,13 @@
     }
     _container = Utils.createDom("cloudnote-editor-tools__container");
     _container.addEventListener(Param.eventStart, _onTouchStart, true);
-    Editor.addSubmoduleDom(_container);
+    _initTools();
+    container.appendChild(_container);
     Main.addRotationHandler(_onRotate);
 
   }
 
-  function init (params) {
+  function init (params, container) {
 
     Param = app.Param;
     Utils = app.Utils;
@@ -197,8 +198,7 @@
     Editor = app.Editor;
     Dashboard = app.Dashboard;
     _config = Utils.setConfig(params, _config);
-    _initDom();
-    _initTools();
+    _initDom(container);
     (_toolsFunctions[_config.tools[0]])();
 
   }

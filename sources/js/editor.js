@@ -11,8 +11,10 @@
   var User = {};
   var Socket = {};
 
+  //primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
+
   var _config = {
-    primaryColors: ["#000000", "#808080", "#C0C0C0", "#6DF4FF", "#007AFF", "#0000FF", "#800080", "#000080", "#FFFF00", "#00FF00", "#4CD900", "#A08066","#F06A31", "#008000", "#FF0000", "#A52A2A", "#800000"],
+    primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
     tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "clear", "paper", "exit"],
     toolsSide: "left",
     minPxToDraw: 3
@@ -480,13 +482,9 @@
 
   function _initSubModules () {
 
-    ColorPicker.init(_config);
-    Tools.init(_config);
+    ColorPicker.init(_config, _container);
+    Tools.init(_config, _container);
 
-  }
-
-  function addSubmoduleDom (dom) {
-    _container.appendChild(dom);
   }
 
   function init (params) {
@@ -523,7 +521,6 @@
     redo: redo,
     clear: clear,
     changePaper: changePaper,
-    addSubmoduleDom: addSubmoduleDom,
     onSocketMessage: onSocketMessage
   });
 
