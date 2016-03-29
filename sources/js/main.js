@@ -7,10 +7,7 @@
   var _container = {};
   var _rotationHandler = [];
   var _initialised = false;
-
-  function addRotationHandler(handler) {
-    _rotationHandler.push(handler);
-  }
+  var _garbage = document.createElement("div");
 
   function _onRotate (e) {
 
@@ -67,6 +64,38 @@
 
   }
 
+  function addRotationHandler (handler) {
+    _rotationHandler.push(handler);
+  }
+
+  function loadTemplate (templateName, params, container, callback) {
+
+    var style = document.createElement("link");
+    style.setAttribute("id", "css-" + templateName);
+    style.setAttribute("rel", "stylesheet");
+    style.setAttribute("type", "text/css");
+    style.setAttribute("href", app.Param.cssPath + templateName + ".css");
+    document.head.appendChild(style);
+
+
+    return app.Utils.promiseXHR("GET", app.Param.templatePath + templateName + ".tpl").then(function (template) {
+
+      template = Handlebars.compile(template);
+      _garbage.insertAdjacentHTML('beforeend', template(params));
+      template = _garbage.removeChild(_garbage.firstChild);
+
+      if (container) {
+        container.appendChild(template);
+      }
+
+      if (callback) {
+        callback(template);
+      }
+
+    });
+
+  }
+
   function init (params) {
 
     app.Param.init(params);
@@ -77,8 +106,6 @@
     _onRotate();
 
     app.Utils.init();
-    app.templateManager.init();
-    app.Main.loadTemplate = app.templateManager.load;
 
     app.Messages.init();
     app.Socket.init();
@@ -97,6 +124,7 @@
 
   app.module("Main", {
     init: init,
+    loadTemplate: loadTemplate,
     addRotationHandler: addRotationHandler
   });
 

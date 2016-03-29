@@ -114,65 +114,11 @@
 
   }
 
-  var _getColorButton = (function () {
+  function _onRotate (e) {
+    // do some stuff
+  }
 
-    var button;
-
-    return function (color) {
-
-      button = document.createElement("div");
-      button.classList.add("cloudnote-editor-colorpicker__color");
-      button.setAttribute("data-color", color);
-      button.style.backgroundColor = color;
-      return button;
-
-    };
-
-  })();
-
-  function _initColorPicker () {
-
-    /*
-    var frame = document.createDocumentFragment();
-
-    var primaryContainer = document.createElement("div");
-    primaryContainer.classList.add("cloudnote-editor-colorpicker__primary");
-    var secondaryContainer = document.createElement("div");
-    secondaryContainer.classList.add("cloudnote-editor-colorpicker__secondary");
-
-    // init primary
-    var buttonContainer = document.createElement("div");
-    buttonContainer.classList.add("cloudnote-editor-colorpicker__random-container");
-    var button = document.createElement("div");
-    _randomButtom = button;
-    button.classList.add("cloudnote-editor-colorpicker__random");
-    button.classList.add("cloudnote-editor-colorpicker__random-selected");
-    buttonContainer.appendChild(button);
-    primaryContainer.appendChild(buttonContainer);
-    var primaryColorNumber = Math.min(round((app.WIDTH - 250 * Param.pixelRatio) / (55 * Param.pixelRatio)), _config.primaryColors.length);
-    for (i = 0; i < primaryColorNumber; i++) {
-      primaryContainer.appendChild(_getColorButton(_config.primaryColors[i]));
-    }
-    buttonContainer = document.createElement("div");
-    buttonContainer.classList.add("cloudnote-editor-colorpicker__showhide-container");
-    button = document.createElement("div");
-    button.classList.add("cloudnote-editor-colorpicker__showhide");
-    buttonContainer.appendChild(button);
-    primaryContainer.appendChild(buttonContainer);
-
-    // init secondary
-    var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) * Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
-    var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
-    for (var i = 0; i < colorsNumber; i++) {
-      secondaryContainer.appendChild(_getColorButton("#" + _intToHex(columnIntUnit * i)));
-    }
-    secondaryContainer.appendChild(_getColorButton("#fff"));
-
-    frame.appendChild(primaryContainer);
-    frame.appendChild(secondaryContainer);
-    _container.appendChild(frame);
-    */
-
+  function _initDom (moduleContainer) {
 
     var primaryColorNumber = Math.min(round((app.WIDTH - 250 * Param.pixelRatio) / (55 * Param.pixelRatio)), _config.primaryColors.length);
     var primaryColors = _config.primaryColors.splice(0, primaryColorNumber);
@@ -188,32 +134,27 @@
     Main.loadTemplate("editorColorPicker", {
       primaryColors: primaryColors,
       secondaryColors: secondaryColors
-    }, _container);
+    }, moduleContainer).then(function (templateDom) {
+      debugger;
+      _container = templateDom;
+      _randomButtom = _container.querySelector(".cloudnote-editor-colorpicker__random");
+      _container.addEventListener(Param.eventStart, _onTouchStart, true);
 
-  }
+    });
 
-  function _onRotate (e) {
-    // do some stuff
-  }
 
-  function _initDom (container) {
-
-    _container = Utils.createDom("cloudnote-editor-colorpicker__container");
-    _container.addEventListener(Param.eventStart, _onTouchStart, true);
-    _initColorPicker();
-    container.appendChild(_container);
     Main.addRotationHandler(_onRotate);
 
   }
 
-  function init (params, container) {
+  function init (params, moduleContainer) {
 
     Param = app.Param;
     Utils = app.Utils;
     Main = app.Main;
     Editor = app.Editor;
     _config = Utils.setConfig(params, _config);
-    _initDom(container);
+    _initDom(moduleContainer);
 
   }
 

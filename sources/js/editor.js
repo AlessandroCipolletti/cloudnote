@@ -386,7 +386,7 @@
       _eraserCursor.style.cssText = style;
     } else if (_tool.size < 25 && distance < _config.minPxToDraw) {
       return;
-    };
+    }
 
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;

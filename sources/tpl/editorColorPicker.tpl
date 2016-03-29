@@ -2,7 +2,7 @@
 
   <div class="cloudnote-editor-colorpicker__primary">
     <div class="cloudnote-editor-colorpicker__random-container">
-      <div class="cloudnote-editor-colorpicker__random cloudnote-editor-colorpicker__random-selected"
+      <div class="cloudnote-editor-colorpicker__random cloudnote-editor-colorpicker__random-selected"></div>
     </div>
     {{#each primaryColors}}
       <div class="cloudnote-editor-colorpicker__color" data-color="{{this}}" style="background-color: {{this}}"></div>
