@@ -64,6 +64,10 @@
 
   }
 
+  function _filterChildNodes (e) {
+    return (e.nodeName !== "#text");
+  }
+
   function addRotationHandler (handler) {
     _rotationHandler.push(handler);
   }
@@ -81,16 +85,25 @@
     return app.Utils.promiseXHR("GET", app.Param.templatePath + templateName + ".tpl").then(function (template) {
 
       template = Handlebars.compile(template);
-      _garbage.insertAdjacentHTML('beforeend', template(params));
-      template = _garbage.removeChild(_garbage.firstChild);
-
+      _garbage.insertAdjacentHTML("beforeend", template(params));
+      template = Array.prototype.filter.call(_garbage.childNodes, _filterChildNodes);
+      
       if (container) {
-        container.appendChild(template);
+        for (var i = 0, l = template.length; i < l; i++) {
+          container.appendChild(template[i]);
+        }
       }
 
       if (callback) {
-        callback(template);
+        if (template.length === 1) {
+          callback(template[0]);
+        } else {
+          callback(template);
+        }
       }
+
+      _garbage.innerHTML = "";
+      template = undefined;
 
     });
 

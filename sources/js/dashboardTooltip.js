@@ -11,35 +11,35 @@
   };
 
   var _container = {}, _overlay = {}, _tooltip = {}, _previewImage = new Image();
-  var _likeButton = {}, _commentText = {}, _userImage = {}, _userName = {}, _drawPosition = {};
+  var _likeButton = {}, _commentText = {}, _likeText = {}, _userImage = {}, _userName = {}, _drawPosition = {};
   var _selectedId = 0;
 
   function _onLikeClick () {
-
+    console.log("like");
   }
 
   function _onCommentClick () {
-
+    console.log("comment");
   }
 
   function _onShareClick () {
-
+    console.log("share");
   }
 
   function _onUserClick () {
-
+    console.log("user");
   }
 
   function _onFollowClick () {
-
+    console.log("follow");
   }
 
   function _onPositionClick () {
-
+    console.log("position");
   }
 
   function _onBoutiqueClick () {
-
+    console.log("boutique");
   }
 
   function show (draw) {
@@ -84,7 +84,7 @@
     // do some stuff
   }
 
-  function _initDom (container) {
+  function _initDom (moduleContainer) {
 
     if (_config.tooltipSide === "right") {
       Utils.addGlobalStatus("cloudnote__DASHBOARD-TOOLTIP-RIGHT");
@@ -92,82 +92,43 @@
       Utils.addGlobalStatus("cloudnote__DASHBOARD-TOOLTIP-LEFT");
     }
 
-    _overlay = Utils.createDom("cloudnote-dashboard-tooltip__overlay", "displayNone", "fadeOut");
-    _overlay.addEventListener(Param.eventStart, hide);
-    var close = Utils.createDom("cloudnote-dashboard-tooltip__close");
-    _overlay.appendChild(close);
-    _tooltip = Utils.createDom("cloudnote-dashboard-tooltip__panel");
+    Main.loadTemplate("dashboardTooltip", {
+      labelShare: "Share"
+    }, moduleContainer, function (templateDom) {
 
-    var previewCont = Utils.createDom("cloudnote-dashboard-tooltip__preview-container");
-    _previewImage.classList.add("cloudnote-dashboard-tooltip__preview");
-    previewCont.appendChild(_previewImage);
-    _tooltip.appendChild(previewCont);
+      _overlay = document.querySelector(".cloudnote-dashboard-tooltip__overlay");
+      _tooltip = document.querySelector(".cloudnote-dashboard-tooltip__panel");
+      _previewImage = document.querySelector(".cloudnote-dashboard-tooltip__preview");
+      _likeButton = document.querySelector(".cloudnote-dashboard-tooltip__info-like-button");
+      _likeText = document.querySelector(".cloudnote-dashboard-tooltip__info-like-text");
+      _commentText = document.querySelector(".cloudnote-dashboard-tooltip__info-comment-text");
+      _userImage = document.querySelector(".cloudnote-dashboard-tooltip__info-user-image");
+      _userName = document.querySelector(".cloudnote-dashboard-tooltip__info-user-name");
+      _drawPosition = document.querySelector(".cloudnote-dashboard-tooltip__info-position");
+      document.querySelector(".cloudnote-dashboard-tooltip__info-boutique").addEventListener(Param.eventStart, _onBoutiqueClick);
+      document.querySelector(".cloudnote-dashboard-tooltip__info-comment").addEventListener(Param.eventStart, _onCommentClick);
+      document.querySelector(".cloudnote-dashboard-tooltip__info-share").addEventListener(Param.eventStart, _onShareClick);
+      document.querySelector(".cloudnote-dashboard-tooltip__info-user-follow").addEventListener(Param.eventStart, _onFollowClick);
+      _overlay.addEventListener(Param.eventStart, hide);
+      _likeButton.addEventListener(Param.eventStart, _onLikeClick);
+      _drawPosition.addEventListener(Param.eventStart, _onPositionClick);
+      _userImage.addEventListener(Param.eventStart, _onUserClick);
+      _userName.addEventListener(Param.eventStart, _onUserClick);
 
-    var infoCont = Utils.createDom("cloudnote-dashboard-tooltip__info-container");
-    var infoBg = Utils.createDom("cloudnote-dashboard-tooltip__info-background");
-    var infoBoxDraw = Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-draw");
-    var infoBoxUser = Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-user");
-    var infoBoxRelated = Utils.createDom("cloudnote-dashboard-tooltip__info-box", "cloudnote-dashboard-tooltip__info-box-related");
+    });
 
-    var drawLike = Utils.createDom("cloudnote-dashboard-tooltip__info-like");
-    _likeButton = document.createElement("img");
-    _likeButton.classList.add("cloudnote-dashboard-tooltip__info-like-button");
-    _likeButton.addEventListener(Param.eventStart, _onLikeClick);
-    _likeText = Utils.createDom("cloudnote-dashboard-tooltip__info-like-text");
-    drawLike.appendChild(_likeButton);
-    drawLike.appendChild(_likeText);
-    var drawComment = Utils.createDom("cloudnote-dashboard-tooltip__info-comment");
-    drawComment.addEventListener(Param.eventStart, _onCommentClick);
-    var commentIcon = document.createElement("img");
-    commentIcon.src = "img/icons/comments.png";
-    _commentText = document.createElement("p");
-    drawComment.appendChild(commentIcon);
-    drawComment.appendChild(_commentText);
-    var drawShare = Utils.createDom("cloudnote-dashboard-tooltip__info-share");
-    drawShare.innerHTML = "<img src='img/icons/share.png'><p>Share</p>";
-    drawShare.addEventListener(Param.eventStart, _onShareClick);
-    infoBoxDraw.appendChild(drawLike);
-    infoBoxDraw.appendChild(drawComment);
-    infoBoxDraw.appendChild(drawShare);
-
-    var drawUser = Utils.createDom("cloudnote-dashboard-tooltip__info-user");
-    _userImage = Utils.createDom("cloudnote-dashboard-tooltip__info-user-image");
-    _userName = Utils.createDom("cloudnote-dashboard-tooltip__info-user-name");
-    var followButton = Utils.createDom("cloudnote-dashboard-tooltip__info-user-follow");
-    followButton.addEventListener(Param.eventStart, _onFollowClick);
-    drawUser.appendChild(_userImage);
-    drawUser.appendChild(_userName);
-    drawUser.appendChild(followButton);
-    _drawPosition = Utils.createDom("cloudnote-dashboard-tooltip__info-position");
-    _drawPosition.addEventListener(Param.eventStart, _onPositionClick);
-    var drawBoutique = Utils.createDom("cloudnote-dashboard-tooltip__info-boutique");
-    drawBoutique.addEventListener(Param.eventStart, _onBoutiqueClick);
-    infoBoxUser.appendChild(drawUser);
-    infoBoxUser.appendChild(_drawPosition);
-    infoBoxUser.appendChild(drawBoutique);
-
-    infoCont.appendChild(infoBg);
-    infoCont.appendChild(infoBoxDraw);
-    infoCont.appendChild(infoBoxUser);
-    infoCont.appendChild(infoBoxRelated);
-    _tooltip.appendChild(infoCont);
-
-    container.appendChild(_overlay);
-    container.appendChild(_tooltip);
     Main.addRotationHandler(_onRotate);
-
-    //var promise = w.Main.templateManager.load(w.Param.pathTemplate + 'pagination.html', container, _paginations[type]);
 
   }
 
-  function init (params, container) {
+  function init (params, moduleContainer) {
 
     Param = app.Param;
     Utils = app.Utils;
     Main = app.Main;
     User = app.User;
     _config = Utils.setConfig(params, _config);
-    _initDom(container);
+    _initDom(moduleContainer);
 
   }
 
