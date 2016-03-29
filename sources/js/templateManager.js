@@ -96,7 +96,12 @@
         debugger;
         container.appendChild(files.html);
         // ed aggiungere il css all'head
-        //
+        var style = document.createElement('style');
+        style.id = "css-" + templateName;
+        style.type = 'text/css';
+        style.textContent = files.css;
+        document.head.appendChild(style);
+        
         return files;
 
       });
