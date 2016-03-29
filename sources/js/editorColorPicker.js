@@ -134,8 +134,8 @@
     Main.loadTemplate("editorColorPicker", {
       primaryColors: primaryColors,
       secondaryColors: secondaryColors
-    }, moduleContainer).then(function (templateDom) {
-      
+    }, moduleContainer, function (templateDom) {
+
       _container = templateDom;
       _randomButtom = _container.querySelector(".cloudnote-editor-colorpicker__random");
       _container.addEventListener(Param.eventStart, _onTouchStart, true);
