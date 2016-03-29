@@ -189,9 +189,9 @@
 
         if (xhr.readyState === 4) {
           if (xhr.status === 404) {
-            reject(xhr);
+            resolve(false);
           } else {
-            resolve(xhr);
+            resolve(xhr.responseText);
           }
         }
 
