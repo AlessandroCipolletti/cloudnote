@@ -50,22 +50,17 @@
 
   function _loadTemplateFiles (templateName) {
 
-    if (_config.cache === false || typeof (_cache[templateName]) === "undefined") {
+    return Promise.all([
+      Utils.promiseXHR("GET", Param.templatePath + templateName + ".tpl"),
+      Utils.promiseXHR("GET", Param.cssPath + templateName + ".css")
+    ]).then(function (results) {
 
-      var files = {
-        tpl: Utils.promiseXHR("GET", Param.templatePath + templateName + ".tpl"),
-        css: Utils.promiseXHR("GET", Param.cssPath + templateName + ".css")
+      return {
+        tpl: results[0],
+        css: results[1]
       };
 
-      if (_config.cache) {
-        _cache[templateName] = files;
-      }
-
-      return files;
-
-    } else {
-      return _cache[templateName];
-    }
+    });
 
   }
 
@@ -79,7 +74,7 @@
   function load (templateName, params, container, callback) {
 
     // prima tappa: carico file js e css del template
-    var templatePromise = Promise.resolve(_loadTemplateFiles(templateName))
+    var templatePromise = _loadTemplateFiles(templateName)
     // seconda tappa: li compilo coi params
       .then(function (files) {
         debugger;
@@ -94,14 +89,14 @@
     if (container) {
       templatePromise.then(function (files) {
         debugger;
-        container.appendChild(files.html);
+        container.innerHTML = files.html;
         // ed aggiungere il css all'head
         var style = document.createElement('style');
         style.id = "css-" + templateName;
         style.type = 'text/css';
         style.textContent = files.css;
         document.head.appendChild(style);
-        
+
         return files;
 
       });

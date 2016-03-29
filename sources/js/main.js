@@ -77,8 +77,10 @@
     _onRotate();
 
     app.Utils.init();
-    app.Messages.init();
     app.templateManager.init();
+    app.Main.loadTemplate = app.templateManager.load;
+
+    app.Messages.init();
     app.Socket.init();
     app.Header.init();
     app.User.init({

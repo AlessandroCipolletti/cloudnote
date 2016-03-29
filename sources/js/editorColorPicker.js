@@ -132,6 +132,7 @@
 
   function _initColorPicker () {
 
+    /*
     var frame = document.createDocumentFragment();
 
     var primaryContainer = document.createElement("div");
@@ -170,6 +171,24 @@
     frame.appendChild(primaryContainer);
     frame.appendChild(secondaryContainer);
     _container.appendChild(frame);
+    */
+
+
+    var primaryColorNumber = Math.min(round((app.WIDTH - 250 * Param.pixelRatio) / (55 * Param.pixelRatio)), _config.primaryColors.length);
+    var primaryColors = _config.primaryColors.splice(0, primaryColorNumber);
+
+    var secondaryColors = [];
+    var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) * Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
+    var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
+    for (var i = 0; i < colorsNumber; i++) {
+      secondaryColors.push("#" + _intToHex(columnIntUnit * i));
+    }
+    secondaryColors.push("#FFF");
+
+    Main.loadTemplate("editorColorPicker", {
+      primaryColors: primaryColors,
+      secondaryColors: secondaryColors
+    }, _container);
 
   }
 
