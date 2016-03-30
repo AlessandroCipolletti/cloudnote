@@ -451,32 +451,33 @@
 
   function _initDom () {
 
-    _container = Utils.createDom("cloudnote-editor__container", "displayNone", "fadeOut");
-    _container.style.height = "calc(100% - " + Param.headerSize + "px)";
-    _container.style.top = Param.headerSize + "px";
-    _canvas = document.createElement("canvas");
-    _context = _canvas.getContext("2d");
-    _canvas.classList.add("cloudnote-editor__canvas", "paper-white");
-    _eraserCursor = Utils.createDom("cloudnote-editor__eraser-cursor", "displayNone");
-    _container.appendChild(_eraserCursor);
-    _canvas.addEventListener(Param.eventStart, _onTouchStart);
-    _canvas.addEventListener(Param.eventMove, _onTouchMove);
-    _canvas.addEventListener(Param.eventEnd, _onTouchEnd);
-    _eraserCursor.addEventListener(Param.eventStart, _onTouchStart);
-    _eraserCursor.addEventListener(Param.eventMove, _onTouchMove);
-    _eraserCursor.addEventListener(Param.eventEnd, _onTouchEnd);
+    Main.loadTemplate("editor", {
+      marginTop: Param.headerSize
+    }, Param.container, function (templateDom) {
 
-    if (Param.supportGesture) {
+      _container = templateDom;
+      _canvas = _container.querySelector(".cloudnote-editor__canvas");
+      _context = _canvas.getContext("2d");
+      _eraserCursor = _container.querySelector(".cloudnote-editor__eraser-cursor");
 
-      _canvas.addEventListener("gesturestart", _onGestureStart, true);
-      _canvas.addEventListener("gesturechange", _onGestureChange, true);
-      _canvas.addEventListener("gestureend", _onGestureEnd, true);
+      _canvas.addEventListener(Param.eventStart, _onTouchStart);
+      _canvas.addEventListener(Param.eventMove, _onTouchMove);
+      _canvas.addEventListener(Param.eventEnd, _onTouchEnd);
+      _eraserCursor.addEventListener(Param.eventStart, _onTouchStart);
+      _eraserCursor.addEventListener(Param.eventMove, _onTouchMove);
+      _eraserCursor.addEventListener(Param.eventEnd, _onTouchEnd);
+      if (Param.supportGesture) {
+        _canvas.addEventListener("gesturestart", _onGestureStart, true);
+        _canvas.addEventListener("gesturechange", _onGestureChange, true);
+        _canvas.addEventListener("gestureend", _onGestureEnd, true);
+      }
 
-    }
+      _initSubModules();
+      _onRotate();
+      _saveStep();
+      Main.addRotationHandler(_onRotate);
 
-    _container.appendChild(_canvas);
-    Param.container.appendChild(_container);
-    Main.addRotationHandler(_onRotate);
+    });
 
   }
 
@@ -504,10 +505,8 @@
     _colorsPickerHeight *= _pixelRatio;
     _offsetLeft = (_config.toolsSide === "left" ? _toolsWidth : 0);
     _offsetTop = Param.headerSize;
-    _initDom();
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
-    _saveStep();
-    _initSubModules();
+    _initDom();
 
   }
 

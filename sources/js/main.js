@@ -81,13 +81,12 @@
     style.setAttribute("href", app.Param.cssPath + templateName + ".css");
     document.head.appendChild(style);
 
-
     return app.Utils.promiseXHR("GET", app.Param.templatePath + templateName + ".tpl").then(function (template) {
 
       template = Handlebars.compile(template);
       _garbage.insertAdjacentHTML("beforeend", template(params));
       template = Array.prototype.filter.call(_garbage.childNodes, _filterChildNodes);
-      
+
       if (container) {
         for (var i = 0, l = template.length; i < l; i++) {
           container.appendChild(template[i]);
