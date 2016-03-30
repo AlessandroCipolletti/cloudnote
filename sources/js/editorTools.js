@@ -111,48 +111,6 @@
 
   }
 
-  function _getToolButton (tool, params) {
-
-    var button = document.createElement("div");
-    button.classList.add("cloudnote-editor-tools__tool");
-    button.classList.add("cloudnote-editor-tools__tool-" + tool);
-    if (params.selected) {
-      button.classList.add("cloudnote-editor-tools__tool-selected");
-    }
-    if (params.disabled) {
-      button.classList.add("disabled");
-    }
-    button.style.backgroundImage = "url('img/icons/" + tool + ".png')";
-    button.setAttribute("data-tool", tool);
-    return button;
-
-  }
-
-  function _initTools () {
-
-    var tool, params = {};
-    for (var i = 0, l = _config.tools.length; i < l; i++) {
-
-      tool = _config.tools[i];
-      params = {
-        selected: i === 0,
-        disabled: ["undo", "redo"].indexOf(tool) >= 0
-      };
-      _container.appendChild(_getToolButton(tool, params));
-    }
-    if (_config.tools.indexOf("undo") >= 0) {
-      _undoButton = _container.querySelector(".cloudnote-editor-tools__tool-undo");
-    }
-    if (_config.tools.indexOf("redo") >= 0) {
-      _redoButton = _container.querySelector(".cloudnote-editor-tools__tool-redo");
-    }
-    if (_config.tools.indexOf("save") >= 0) {
-      _saveButton = _container.querySelector(".cloudnote-editor-tools__tool-save");
-      toggleButton("save", false);
-    }
-
-  }
-
   function _onTouchStart (e) {
 
     var target = e.target;
@@ -175,22 +133,46 @@
     // do some stuff
   }
 
-  function _initDom (container) {
+  function _initDom (moduleContainer) {
 
     if (_config.toolsSide === "right") {
       Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
     } else {
       Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
     }
-    _container = Utils.createDom("cloudnote-editor-tools__container");
-    _container.addEventListener(Param.eventStart, _onTouchStart, true);
-    _initTools();
-    container.appendChild(_container);
+
+    var tools = [];
+    for (var i = 0, l = _config.tools.length; i < l; i++) {
+      tools.push({
+        name: _config.tools[i],
+        disabled: ["undo", "redo", "save"].indexOf(_config.tools[i]) >= 0
+      });
+    }
+
+    Main.loadTemplate("editorTools", {
+      tools: tools
+    }, moduleContainer, function (templateDom) {
+
+      _container = templateDom;
+      _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      if (_config.tools.indexOf("undo") >= 0) {
+        _undoButton = _container.querySelector(".cloudnote-editor-tools__tool-undo");
+      }
+      if (_config.tools.indexOf("redo") >= 0) {
+        _redoButton = _container.querySelector(".cloudnote-editor-tools__tool-redo");
+      }
+      if (_config.tools.indexOf("save") >= 0) {
+        _saveButton = _container.querySelector(".cloudnote-editor-tools__tool-save");
+      }
+      (_toolsFunctions[_config.tools[0]])();
+
+    });
+
     Main.addRotationHandler(_onRotate);
 
   }
 
-  function init (params, container) {
+  function init (params, moduleContainer) {
 
     Param = app.Param;
     Utils = app.Utils;
@@ -198,8 +180,7 @@
     Editor = app.Editor;
     Dashboard = app.Dashboard;
     _config = Utils.setConfig(params, _config);
-    _initDom(container);
-    (_toolsFunctions[_config.tools[0]])();
+    _initDom(moduleContainer);
 
   }
 

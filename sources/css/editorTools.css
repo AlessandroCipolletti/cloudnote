@@ -46,3 +46,31 @@
   border-right: solid 0.2rem gray;
   border-left: solid 0.2rem transparent;
 }
+
+.cloudnote-editor-tools__tool-marker {
+  background-image: url("../img/icons/marker.png");
+}
+.cloudnote-editor-tools__tool-pencil {
+  background-image: url("../img/icons/pencil.png");
+}
+.cloudnote-editor-tools__tool-eraser {
+  background-image: url("../img/icons/eraser.png");
+}
+.cloudnote-editor-tools__tool-undo {
+  background-image: url("../img/icons/undo.png");
+}
+.cloudnote-editor-tools__tool-redo {
+  background-image: url("../img/icons/redo.png");
+}
+.cloudnote-editor-tools__tool-save {
+  background-image: url("../img/icons/save.png");
+}
+.cloudnote-editor-tools__tool-clear {
+  background-image: url("../img/icons/clear.png");
+}
+.cloudnote-editor-tools__tool-paper {
+  background-image: url("../img/icons/paper.png");
+}
+.cloudnote-editor-tools__tool-exit {
+  background-image: url("../img/icons/exit.png");
+}
