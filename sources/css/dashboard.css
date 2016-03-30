@@ -3,7 +3,7 @@
 	left: 0rem;
 	width: 100%;
   z-index: 10;
-  display: block !important;
+  display: block;
 }
 
 .cloudnote-dashboard__svg {
