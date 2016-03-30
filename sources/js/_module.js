@@ -17,10 +17,15 @@
 
   function _initDom () {
 
-    _container = Utils.createDom("cloudnote-module__container");
+    Main.loadTemplate("module", {
+      param: ""
+    }, Param.container, function (templateDom) {
 
-    Param.container.appendChild(_container);
-    Main.addRotationHandler(_onRotate);
+      _container = templateDom;
+
+      Main.addRotationHandler(_onRotate);
+
+    });
 
   }
 
