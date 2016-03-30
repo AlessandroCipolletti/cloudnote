@@ -164,24 +164,19 @@
 
   function _initDom () {
 
-    _loginPanel = Utils.createDom("cloudnote-user__login-panel-container", "popup", "displayNone", "fadeOut");
-    var overlay = Utils.createDom("cloudnote-user__login-panel-overlay");
-    overlay.addEventListener(Param.eventStart, _hideLogin);
-    var panel = Utils.createDom("cloudnote-user__login-panel");
-    //var logo = document.createElement("div");
-    //logo.classList.add("cloudnote-user__login-panel-logo");
-    //panel.appendChild(logo);
-    _facebookLoginButton = Utils.createDom("cloudnote-user__login-panel-facebook");
-    panel.appendChild(_facebookLoginButton);
-    _loginPanel.appendChild(panel);
-    _loginPanel.appendChild(overlay);
-
     _headerUserButton = Utils.createDom("cloudnote-user__header-button");
     _headerUserButton.addEventListener(Param.eventStart, _headerButtonClick);
-
-    Param.container.appendChild(_loginPanel);
     Header.addButton(_headerUserButton, "right");
-    Main.addRotationHandler(_onRotate);
+
+    Main.loadTemplate("user", {}, Param.container, function (templateDom) {
+
+      _loginPanel = templateDom;
+      _facebookLoginButton = templateDom.querySelector(".cloudnote-user__login-panel-facebook");
+      templateDom.querySelector(".cloudnote-user__login-panel-overlay").addEventListener(Param.eventStart, _hideLogin);
+      Main.addRotationHandler(_onRotate);
+      _facebook.init();
+
+    });
 
   }
 
@@ -195,7 +190,6 @@
 
     _config = Utils.setConfig(params, _config);
     _initDom();
-    _facebook.init();
 
   }
 

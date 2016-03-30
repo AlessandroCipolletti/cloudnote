@@ -166,9 +166,9 @@
       }
       (_toolsFunctions[_config.tools[0]])();
 
+      Main.addRotationHandler(_onRotate);
+      
     });
-
-    Main.addRotationHandler(_onRotate);
 
   }
 
