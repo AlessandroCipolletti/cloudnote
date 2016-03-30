@@ -75,10 +75,8 @@
   function loadTemplate (templateName, params, container, callback) {
 
     var style = document.createElement("link");
-    style.setAttribute("id", "css-" + templateName);
-    style.setAttribute("rel", "stylesheet");
-    style.setAttribute("type", "text/css");
-    style.setAttribute("href", app.Param.cssPath + templateName + ".css");
+    style.rel = "stylesheet";
+    style.href = app.Param.cssPath + templateName + ".css";
     document.head.appendChild(style);
 
     return app.Utils.promiseXHR("GET", app.Param.templatePath + templateName + ".tpl").then(function (template) {
