@@ -121,22 +121,20 @@
 
   function _initDom () {
 
-    _dom = Utils.createDom("cloudnote-messages__panel");
-    _overlay = Utils.createDom("cloudnote-messages__overlay");
+    Main.loadTemplate("messages", {
+      labelOk: "OK",
+      labelCancel: "Cancel"
+    }, Param.container, function (templateDom) {
 
-    _message = Utils.createDom("cloudnote-messages__panel-text");
-    _confirmButton = Utils.createDom("cloudnote-messages__panel-button-ok");
-    _confirmButton.innerHTML = "<p>OK</p>";
-    _cancelButton = Utils.createDom("cloudnote-messages__panel-button-cancel");
-    _cancelButton.innerHTML = "<p>Cancel</p>";
-    // aggiungere anche il campo input
-    _dom.appendChild(_message);
-    _dom.appendChild(_confirmButton);
-    _dom.appendChild(_cancelButton);
+      _overlay = document.querySelector(".cloudnote-messages__overlay");
+      _dom = document.querySelector(".cloudnote-messages__panel");
+      _message = _dom.querySelector(".cloudnote-messages__panel-text");
+      _confirmButton = _dom.querySelector(".cloudnote-messages__panel-button-ok");
+      _cancelButton = _dom.querySelector(".cloudnote-messages__panel-button-cancel");
 
-    Param.container.appendChild(_overlay);
-    Param.container.appendChild(_dom);
-    Main.addRotationHandler(_onRotate);
+      Main.addRotationHandler(_onRotate);
+
+    });
 
   }
 
