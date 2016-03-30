@@ -590,57 +590,41 @@
 
   function _initDom () {
 
-    _container = Utils.createDom("cloudnote-dashboard__container");
-    _container.style.height = "calc(100% - " + Param.headerSize + "px)";
-    _container.style.top = Param.headerSize + "px";
-    _svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    _svg.setAttribute("version", "1.1");
-    _svg.classList.add("cloudnote-dashboard__svg");
+    Main.loadTemplate("dashboard", {
+      marginTop: Param.headerSize,
+      labelToDraw: "Disegna",
+      zoomRectBorderRadius: 8 * Param.pixelRatio,
+      zoomRectCoord: -8 * Param.pixelRatio,
+      zoomRectWidth: 60 * Param.pixelRatio,
+      zoomRectHeight: 50 * Param.pixelRatio,
+      zoomLabelX: 10 * Param.pixelRatio,
+      zoomLabelY: 25 * Param.pixelRatio
+    }, Param.container, function (templateDom) {
 
-    _zoomRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    _zoomRect.classList.add("cloundote-dashboard__zoom-label-rect");
-    _zoomRect.setAttribute("x", -8 * Param.pixelRatio);
-    _zoomRect.setAttribute("y", -8 * Param.pixelRatio);
-    _zoomRect.setAttribute("rx", 8 * Param.pixelRatio);
-    _zoomRect.setAttribute("ry", 8 * Param.pixelRatio);
-    _zoomRect.setAttribute("width", 60 * Param.pixelRatio);
-    _zoomRect.setAttribute("height", 50 * Param.pixelRatio);
-    _zoomLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    _zoomLabel.classList.add("cloundote-dashboard__zoom-label");
-    _zoomLabel.setAttribute("x", 10 * Param.pixelRatio);
-    _zoomLabel.setAttribute("y", 25 * Param.pixelRatio);
-    _zoomLabel.innerHTML = "100%";
-    _svg.appendChild(_zoomRect);
-    _svg.appendChild(_zoomLabel);
+      _container = templateDom;
+      _svg = templateDom.querySelector("svg");
+      _zoomRect = templateDom.querySelector(".cloudnote-dashboard__zoom-label-rect");
+      _zoomLabel = templateDom.querySelector(".cloudnote-dashboard__zoom-label");
+      _showEditor = templateDom.querySelector(".cloudnote-dashboard__showeditor");
+      _spinner = templateDom.querySelector(".cloudnote-dashboard__spinner");
 
-    _svg.addEventListener(Param.eventStart, _onTouchStart, true);
-    _svg.addEventListener(Param.eventMove, _onTouchMove, true);
-    _svg.addEventListener(Param.eventEnd, _onTouchEnd, true);
-    if (Param.supportGesture) {
+      _showEditor.addEventListener(Param.eventStart, _openEditor);
+      _svg.addEventListener(Param.eventStart, _onTouchStart, true);
+      _svg.addEventListener(Param.eventMove, _onTouchMove, true);
+      _svg.addEventListener(Param.eventEnd, _onTouchEnd, true);
+      if (Param.supportGesture) {
+        _svg.addEventListener("gesturestart", _onGestureStart, true);
+        _svg.addEventListener("gesturechange", _onGestureChange, true);
+        _svg.addEventListener("gestureend", _onGestureEnd, true);
+      }
 
-      _svg.addEventListener("gesturestart", _onGestureStart, true);
-      _svg.addEventListener("gesturechange", _onGestureChange, true);
-      _svg.addEventListener("gestureend", _onGestureEnd, true);
+      _svgOffset = _svg.getBoundingClientRect();
+      _onRotate();
+      _go2XYZ(0, 0, 0);
+      Tooltip.init(_config, _container);
+      Main.addRotationHandler(_onRotate);
 
-    }
-    _container.appendChild(_svg);
-
-    _showEditor = document.createElement("a");
-    _showEditor.classList.add("cloudnote-dashboard__showeditor", "button", "fadeIn");
-    _showEditor.innerHTML = "Disegna";
-    _showEditor.addEventListener(Param.eventStart, _openEditor);
-    _container.appendChild(_showEditor);
-
-    _spinner = Utils.createDom("cloudnote-dashboard__spinner", "displayNone", "fadeOut");
-    var spinner = document.createElement("img");
-    spinner.classList.add("cloudnote-dashboard__spinner-image");
-    spinner.src = "img/spinner.gif";
-    _spinner.appendChild(spinner);
-    _container.appendChild(_spinner);
-
-    Param.container.appendChild(_container);
-    _svgOffset = _svg.getBoundingClientRect();
-    Main.addRotationHandler(_onRotate);
+    });
 
   }
 
@@ -664,8 +648,6 @@
       matrix = undefined;
     };
     _initDom();
-    Tooltip.init(_config, _container);
-    _go2XYZ(0, 0, 0);
 
   }
 

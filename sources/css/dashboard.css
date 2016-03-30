@@ -3,6 +3,7 @@
 	left: 0rem;
 	width: 100%;
   z-index: 10;
+  display: block !important;
 }
 
 .cloudnote-dashboard__svg {
@@ -13,13 +14,13 @@
 	height: 100%;
 }
 
-.cloundote-dashboard__zoom-label-rect {
+.cloudnote-dashboard__zoom-label-rect {
   fill: white;
   stroke: #87cefa;
   stroke-width: 3;
   opacity: 0.85;
 }
-.cloundote-dashboard__zoom-label {
+.cloudnote-dashboard__zoom-label {
   fill: black;
   font-size: 1.7rem;  /* 34px */
   opacity: 0.7;
