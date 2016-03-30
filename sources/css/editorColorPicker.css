@@ -76,6 +76,9 @@
   margin-top: 3%;
   background-image: url("../img/icons/random.png");
 }
+.cloudnote-editor-colorpicker__random.cloudnote-editor-colorpicker__random-locked {
+  background-image: url("../img/icons/random-locked.png");
+}
 .cloudnote-editor-colorpicker__random-selected::before {
   content: '';
   display: inline-block;

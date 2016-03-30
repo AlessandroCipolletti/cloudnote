@@ -35,6 +35,7 @@
   var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
+  var _lastRandomColor = "";
   var _tool = {
     name: "",
     size: 25,
@@ -140,7 +141,7 @@
 
   function setTool (tool) {
     // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
-    // TODO: devo tener conto anche che potrebbe essere il righello o il picker
+    // TODO: devo tener conto anche che potrebbe essere il righello
     var key;
     for (key in tool) {
       if (typeof (_tool[key]) !== "undefined") {
@@ -333,8 +334,9 @@
     }
     _touchDown = true;
     _checkCoord(_cursorX, _cursorY);
-    if (_tool.randomColor) {
-      _tool.color = _getRandomColor();
+    if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
+      _lastRandomColor = _getRandomColor();
+      _tool.color = _lastRandomColor;
     }
     //_context.globalAlpha = 0.7;
     //_context.globalCompositeOperation = "lighter";

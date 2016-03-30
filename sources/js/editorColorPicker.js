@@ -12,7 +12,7 @@
 
   var _container, _isOpen = false;
   var _randomButtom = {};
-  var _selectedValue = "";
+  var _selectedValue = "random";
   var round = function (n, d) {
     var m = d ? Math.pow(10, d) : 1;
     return Math.round(n * m) / m;
@@ -45,6 +45,7 @@
   function _selectColor (target) {
 
     _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-selected");
+    _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-locked");
     var selected = _container.querySelector(".cloudnote-editor-colorpicker__color-selected");
     if (selected) {
       selected.classList.remove("cloudnote-editor-colorpicker__color-selected");
@@ -60,20 +61,26 @@
     });
   }
 
-  function _selectRandom () {
+  function _selectRandom (last) {
 
     var selected = _container.querySelector(".cloudnote-editor-colorpicker__color-selected");
     if (selected) {
       selected.classList.remove("cloudnote-editor-colorpicker__color-selected");
     }
+    if (last) {
+      _randomButtom.classList.add("cloudnote-editor-colorpicker__random-locked");
+      _selectedValue = "last-random";
+    } else {
+      _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-locked");
+      _selectedValue = "random";
+    }
     _randomButtom.classList.add("cloudnote-editor-colorpicker__random-selected");
-    _selectedValue = "random";
     if (_isOpen) {
       _hide();
     }
     Editor.setTool({
       color: "",
-      randomColor: true
+      randomColor: (last ? "last" : true)
     });
 
   }
@@ -101,9 +108,7 @@
         _selectColor(target);
       }
     } else if (target.classList.contains("cloudnote-editor-colorpicker__random")) {
-      if (_selectedValue !== "random") {
-        _selectRandom();
-      }
+      _selectRandom(_selectedValue === "random");
     } else if (target.classList.contains("cloudnote-editor-colorpicker__showhide")) {
       if (_isOpen) {
         _hide();

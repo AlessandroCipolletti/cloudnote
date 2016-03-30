@@ -47,8 +47,8 @@
       _selectTool("eraser");
       Editor.setTool({
         name: "eraser",
-        size: 14,
-        forceFactor: 3.5,
+        size: 12,
+        forceFactor: 5,
         speedFactor: 0,
         shape: "circle",
         globalCompositeOperation: "destination-out"
