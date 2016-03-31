@@ -18,7 +18,6 @@
 
     if (app.Param.supportOrientation) {
       var orientation = window.orientation;
-      console.log(_lastOrientation, orientation, _lastOrientation - orientation);
       e.deltaOrientation = _lastOrientation - orientation;
       _lastOrientation = orientation;
     } else {
