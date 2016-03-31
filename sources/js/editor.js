@@ -28,7 +28,6 @@
     return Math.round(n * m) / m;
   };
   var _container, _canvas, _context, _eraserCursor, _canvasWidth, _canvasHeight;
-  var _rotationCanvas = document.createElement("canvas"), _contextRotation = _rotationCanvas.getContext("2d");
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -442,44 +441,6 @@
 
   function _onRotate (e) {
 
-    _canvasWidth = app.WIDTH - _toolsWidth;
-    _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
-
-    if (app.Param.supportOrientation) {
-      //debugger;
-      //console.log(e.deltaOrientation);
-      if (Math.abs(e.deltaOrientation) === 180) {
-        _rotationCanvas.width = _canvas.width;
-        _rotationCanvas.height = _canvas.height;
-        var top = 0, left = 0;
-      } else {
-        _rotationCanvas.width = _canvasHeight;
-        _rotationCanvas.height = _canvasWidth;
-        var left = (_rotationCanvas.height - _canvas.width) / 2;
-        var top = (_rotationCanvas.width - _canvas.height) / 2;
-      }
-      top = left = 0;
-
-      if (e.deltaOrientation === -90 || e.deltaOrientation === 270) {
-        _contextRotation.translate(0, _rotationCanvas.height);
-      } else if (e.deltaOrientation === 90 || e.deltaOrientation === -270) {
-        _contextRotation.translate(_rotationCanvas.width, 0);
-      } else if (Math.abs(e.deltaOrientation) === 180) {
-        _contextRotation.translate(_rotationCanvas.width, _rotationCanvas.height);
-      }
-
-      _contextRotation.rotate(e.deltaOrientation * PI / 180);
-      _contextRotation.drawImage(_canvas, -left, top / 2, _canvas.width, _canvas.height);
-
-    }
-
-    _canvas.width = _canvasWidth;
-    _canvas.height = _canvasHeight;
-
-    if (app.Param.supportOrientation) {
-      _context.drawImage(_rotationCanvas, 0, 0, _rotationCanvas.width, _rotationCanvas.height);
-    }
-
   }
 
   function _initDom () {
@@ -508,8 +469,10 @@
       _initSubModules();
       _canvasWidth = app.WIDTH - _toolsWidth;
       _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
-      _canvas.width = _rotationCanvas.width = _canvasWidth;
-      _canvas.height = _rotationCanvas.height = _canvasHeight;
+      _canvas.width = _canvasWidth;
+      _canvas.height = _canvasHeight;
+      _canvas.style.width = _canvasWidth + "px";
+      _canvas.style.height = _canvasHeight + "px";
       _saveStep();
       Main.addRotationHandler(_onRotate);
 

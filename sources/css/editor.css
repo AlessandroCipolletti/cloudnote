@@ -6,10 +6,10 @@
 }
 
 .cloudnote-editor__canvas {
-  width: calc(100% - 7.55rem);  /* 151px */
-  height: calc(100% - 7.55rem); /* 151px */
   position: absolute;
+  box-shadow: 0px 0px 15px rgba(0, 50, 50, 0.7);
   top: 0rem;
+  left: 7.55rem;
   z-index: 60;
 }
 
