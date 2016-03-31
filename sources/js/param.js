@@ -42,6 +42,7 @@
     param.scale = 1 / param.pixelRatio;
     param.supportTouch = ("ontouchstart" in window);
     param.supportGesture = ("ongesturechange" in window);
+    param.supportOrientation = ("orientation" in window);
 
     if (param.supportTouch) {
 

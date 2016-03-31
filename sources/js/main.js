@@ -7,6 +7,7 @@
   var _container = {};
   var _rotationHandler = [];
   var _initialised = false;
+  var _lastOrientation = window.orientation || 0;
   var _garbage = document.createElement("div");
 
   function _onRotate (e) {
@@ -15,9 +16,18 @@
     app.HEIGHT = window.innerHeight;
     console.log("rotate:", app.WIDTH, app.HEIGHT);
 
+    if (app.Param.supportOrientation) {
+      var orientation = window.orientation;
+      console.log(_lastOrientation, orientation, _lastOrientation - orientation);
+      e.deltaOrientation = _lastOrientation - orientation;
+      _lastOrientation = orientation;
+    } else {
+      e.deltaOrientation = 0;
+    }
+
     if (_initialised) {
       for (var i in _rotationHandler) {
-        _rotationHandler[i]();
+        _rotationHandler[i](e);
       }
     }
 
@@ -113,7 +123,8 @@
     _setConfig(params);
     _initDom();
     _initViewport();
-    _onRotate();
+    app.WIDTH = window.innerWidth;
+    app.HEIGHT = window.innerHeight;
 
     app.Utils.init();
 
@@ -128,7 +139,6 @@
     app.Editor.init();
 
     _initialised = true;
-    _onRotate(); // this calls also all modules' rotate hadlers
 
   }
 
