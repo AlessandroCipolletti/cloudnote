@@ -8,17 +8,25 @@
     px4mm: 1,
     gpsRefreshTime: 5000,
     gpsTimeoutTime: 25000,
-    scalePrecision: true
+    scalePrecision: true,
+    watchPosition: false,
+    watchDuration: 10000
   };
 
-  var PI = Math.PI, _lastPosition = false, _GEO = navigator.geolocation, _scaleFactor;
+  var PI = Math.PI;
+  var _lastPosition = false;
+  var _geoWatchId = false;
+  var _gpsGlobalStatus = "cloudnote__GPS-ON";
+  var _GEO = navigator.geolocation, _scaleFactor;
+
   var _WGS84 = {
     r_major: 6378137000,
     r_minor: 6356752314.245179,
     f: 298.257223563,
-  }, _geoOptions = {
+  };
+  var _geoOptions = {
     enableHighAccuracy: true,
-    timeout: 25000,
+    timeout: 15000,
     maximumAge: 0
   };
 
@@ -103,37 +111,53 @@
 
   }
 
-  function _geoCallback (callback) {
+  function _geoError (err) {
+    console.log(err);
+    Messages.error("Geolocalisation error");
+  }
 
-    return function (position) {
+  function _startWatchPosition (callback, error) {
 
-      _lastPosition = position;
-      LAT.push(position.coords.latitude);
-      LON.push(position.coords.longitude);
-      console.log("GPS - lat:", position.coords.latitude, "lon:", position.coords.longitude);
-      if (callback) {
-        callback(position);
-      }
-
-    };
+    _GEO.getCurrentPosition(callback, error, _geoOptions);
+    _clearWatchPosition();
+    _geoWatchId = _GEO.watchPosition(callback, error, _geoOptions);
+    setTimeout(_clearWatchPosition, _config.watchDuration);
+    Utils.addGlobalStatus(_gpsGlobalStatus);
 
   }
 
-  function _geoError (err) {
-    Messages.error("geolocalisation generic error");
+  function _clearWatchPosition () {
+
+    if (_geoWatchId) {
+      _GEO.clearWatch(_geoWatchId);
+      _geoWatchId = false;
+      Utils.removeGlobalStatus(_gpsGlobalStatus);
+    }
+
+  }
+
+  function _getCurrentPosition (callback, error) {
+
+    Utils.addGlobalStatus(_gpsGlobalStatus);
+    _GEO.getCurrentPosition(callback, error, _geoOptions);
+    setTimeout(function () {
+      Utils.removeGlobalStatus(_gpsGlobalStatus);
+    }, 2500);
+
   }
 
   var _getPosition = _GEO ? function (force, callback, error) {
+      if (_config.watchPosition) {
+        _startWatchPosition(callback, error);
+      } else if (force || !_positionIsValid()) {
+        _getCurrentPosition(callback, error, _geoOptions);
+      } else {
+        callback(_lastPosition);
+      }
 
-    if (force || !_positionIsValid()) {
-      _GEO.getCurrentPosition(_geoCallback(callback), error || _geoError, _geoOptions);
-    } else {
-      callback(_lastPosition);
-    }
-
-  } : function (force, callback, error) {
-    (error || _geoError)();
-  };
+    } : function (force, callback, error) {
+      error();
+    };
 
   function pxy2scale (pxy) {
     return _scaleFactor(_mm2lat(pxy / _config.px4mm));
@@ -146,11 +170,18 @@
   function currentGps2px (forceRefresh, callback, error) {
 
     if (!callback) return;
-    _getPosition(forceRefresh || false, function (position) {
+    _getPosition(forceRefresh, function (position) {
+      debugger;
+      _lastPosition = position;
+      console.log("GPS - lat:", position.coords.latitude, "lon:", position.coords.longitude);
       var px = _gps2px(position);
       callback(px.x, px.y);
-    }, error || emptyFN);
+    }, error || _geoError);
 
+  }
+
+  function setConfig (params) {
+    _config = Utils.setConfig(params, _config);
   }
 
   function init (params) {
@@ -167,6 +198,7 @@
 
   app.module("Dashboard.Gps", {
     init: init,
+    setConfig: setConfig,
     pxy2scale: pxy2scale,
     currentGps2px: currentGps2px,
     coordGps2px: coordGps2px
