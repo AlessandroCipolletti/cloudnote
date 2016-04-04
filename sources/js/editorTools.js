@@ -25,7 +25,8 @@
         forceFactor: 1.5,
         speedFactor: 0,
         shape: "circle",
-        globalCompositeOperation: "source-over"
+        globalCompositeOperation: "source-over",
+        cursor: false
       });
 
     },
@@ -38,7 +39,8 @@
         forceFactor: 4,
         speedFactor: 0,
         shape: "circle",
-        globalCompositeOperation: "source-over"
+        globalCompositeOperation: "source-over",
+        cursor: false
       });
 
     },
@@ -51,7 +53,8 @@
         forceFactor: 5,
         speedFactor: 0,
         shape: "circle",
-        globalCompositeOperation: "destination-out"
+        globalCompositeOperation: "destination-out",
+        cursor: true
       });
 
     },
@@ -167,7 +170,7 @@
       (_toolsFunctions[_config.tools[0]])();
 
       Main.addRotationHandler(_onRotate);
-      
+
     });
 
   }

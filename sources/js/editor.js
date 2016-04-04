@@ -20,14 +20,11 @@
 
   var PI = Math.PI;
   var PI2 = PI * 2;
-  var random = function (n) {
-    return Math.random() * n | 0;
-  };
   var round = function (n, d) {
     var m = d ? Math.pow(10, d) : 1;
     return Math.round(n * m) / m;
   };
-  var _container, _canvas, _context, _eraserCursor, _canvasWidth, _canvasHeight;
+  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -44,8 +41,17 @@
     color: "",
     randomColor: true,
     shape: "circle",
-    globalCompositeOperation: ""
+    globalCompositeOperation: "",
+    cursor: false
   };
+
+  function random (n, float) {
+    if (float) {
+      return Math.random() * n;
+    } else {
+      return Math.random() * n | 0;
+    }
+  }
 
   function __save () {
 
@@ -297,11 +303,11 @@
   function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
     if (alpha === false || typeof(alpha) === "undefined") {
-      return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
+      return "rgb(" + random(256) + ", " + random(256) + ", " + random(256) + ")";
     } else if (alpha === true) {
-      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", 0.7)";
+      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", 0.7)";
     } else if (typeof(alpha) === "number") {
-      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", " + alpha + ")";
+      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", " + alpha + ")";
     }
 
   }
@@ -338,7 +344,7 @@
       _lastRandomColor = _getRandomColor();
       _tool.color = _lastRandomColor;
     }
-    //_context.globalAlpha = 0.7;
+    _context.globalAlpha = 1;
     //_context.globalCompositeOperation = "lighter";
     //_context.shadowBlur = 10;
     //_context.shadowColor = _tool.color;
@@ -347,11 +353,11 @@
     _context.lineWidth = _tool.size;
     _context.lineJoin = "round";
     _context.lineCap = "round";
-    if (_tool.name === "eraser") {
+    if (_tool.cursor) {
       var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
       style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
-      _eraserCursor.style.cssText = style;
-      _eraserCursor.classList.remove("displayNone");
+      _toolCursor.style.cssText = style;
+      _toolCursor.classList.remove("displayNone");
     }
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
@@ -377,15 +383,16 @@
     } else {
       _touchForce = 0;
     }
+
     _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
     _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
     var distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
     var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
 
-    if (_tool.name === "eraser") {
+    if (_tool.cursor) {
       var style = "width: " + size + "px; height: " + size + "px; ";
       style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
-      _eraserCursor.style.cssText = style;
+      _toolCursor.style.cssText = style;
     } else if (_tool.size < 25 && distance < _config.minPxToDraw) {
       return;
     }
@@ -408,8 +415,8 @@
     e.stopPropagation();
     if (_touchDown === false || (e.touches && e.touches.length)) return;
     _touchDown = false;
-    if (_tool.name === "eraser") {
-      _eraserCursor.classList.add("displayNone");
+    if (_tool.cursor) {
+      _toolCursor.classList.add("displayNone");
     }
     if (Param.supportTouch === false) {
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
@@ -452,14 +459,13 @@
       _container = templateDom;
       _canvas = templateDom.querySelector(".cloudnote-editor__canvas");
       _context = _canvas.getContext("2d");
-      _eraserCursor = templateDom.querySelector(".cloudnote-editor__eraser-cursor");
-
+      _toolCursor = templateDom.querySelector(".cloudnote-editor__tool-cursor");
       _canvas.addEventListener(Param.eventStart, _onTouchStart);
       _canvas.addEventListener(Param.eventMove, _onTouchMove);
       _canvas.addEventListener(Param.eventEnd, _onTouchEnd);
-      _eraserCursor.addEventListener(Param.eventStart, _onTouchStart);
-      _eraserCursor.addEventListener(Param.eventMove, _onTouchMove);
-      _eraserCursor.addEventListener(Param.eventEnd, _onTouchEnd);
+      _toolCursor.addEventListener(Param.eventStart, _onTouchStart);
+      _toolCursor.addEventListener(Param.eventMove, _onTouchMove);
+      _toolCursor.addEventListener(Param.eventEnd, _onTouchEnd);
       if (Param.supportGesture) {
         _canvas.addEventListener("gesturestart", _onGestureStart, true);
         _canvas.addEventListener("gesturechange", _onGestureChange, true);

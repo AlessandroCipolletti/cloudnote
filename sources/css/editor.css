@@ -31,7 +31,7 @@
   background-image: url("../img/paper/lines.png");
 }
 
-.cloudnote-editor__eraser-cursor {
+.cloudnote-editor__tool-cursor {
   border: solid 1px gray;
   border-radius: 50%;
   position: absolute;
