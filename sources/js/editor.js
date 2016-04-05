@@ -22,10 +22,6 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var round = function (n, d) {
-    var m = d ? MATH.pow(10, d) : 1;
-    return MATH.round(n * m) / m;
-  };
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight;
   var _touchDown = false;
   var _currentPaper = "white";
@@ -53,6 +49,11 @@
     } else {
       return MATH.random() * n | 0;
     }
+  }
+
+  function round (n, d) {
+    var m = d ? MATH.pow(10, d) : 1;
+    return MATH.round(n * m) / m;
   }
 
   function __save () {
@@ -308,9 +309,9 @@
 
   function _particles (x, y, alpha) {
 
-    _context.globalAlpha = alpha + 0.05;
+    _context.globalAlpha = alpha;
     _context.fillStyle = _tool.color;
-    for (var i = 13; i--; ) {
+    for (var i = 16; i--; ) {
       var angle = random(PI2, true);
       var radius = random(_tool.size) + 1;
       _context.fillRect(
@@ -338,18 +339,25 @@
   }
 
   function _curverParticlesLine (midX, midY, delta) {
-    // TODO aggiungere la differenza da _forceFactor un pochino alla volta
-    var deltaCoord = 1 / delta;
-    var deltaForce = (_touchForce - _oldTouchForce) / delta;
-    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
-    for (var i = 0; i <= 1; i = i + deltaCoord) {
+
+    delta = 1 / delta;
+    var deltaForce = _touchForce - _oldTouchForce;
+    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY, maxI = delta + 1;
+    for (var i = 0; i <= maxI; i = i + delta) {
       _particles(
         _getQuadraticBezierValue(i, oldMidX, oldX, midX),
         _getQuadraticBezierValue(i, oldMidY, oldY, midY),
-        _touchForce + deltaForce
+        _oldTouchForce + deltaForce * i
       );
     }
-    oldX = oldMidX = oldY = oldMidY = deltaCoord = deltaForce = undefined;
+    /*
+    _particles(
+      _getQuadraticBezierValue(1, oldMidX, oldX, midX),
+      _getQuadraticBezierValue(1, oldMidY, oldY, midY),
+      _touchForce
+    );
+    */
+    oldX = oldMidX = oldY = oldMidY = maxI = deltaForce = undefined;
 
   }
 
@@ -384,7 +392,7 @@
 
   function _updateTouchForce () {
 
-    _touchForce = _touchEventObject.force;
+    _touchForce = MATH.max(round(_touchEventObject.force, 4), 0.05);
     if (_touchForce > 0) {
       _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
     } else {
@@ -404,11 +412,7 @@
       _oldY = _oldMidY = _cursorY;
       return;
     }
-    if (Param.supportTouch) {
-      _touchEventObject = e.touches[0];
-      _updateTouchForce();
-    }
-    _oldTouchForce = _touchForce;
+    _oldTouchForce = _touchForce = 0;
     _touchDown = true;
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
@@ -454,7 +458,7 @@
         _updateTouchForce();
       }
     } else {
-      _touchForce = 0;
+      _touchForce = 0.5;
     }
 
     _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
@@ -485,6 +489,7 @@
     }
     _oldMidX = midX;
     _oldMidY = midY;
+    _oldTouchForce = _touchForce;
     _checkCoord(_cursorX, _cursorY);
 
   }
