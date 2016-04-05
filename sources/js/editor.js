@@ -342,15 +342,15 @@
 
     delta = 1 / delta;
     var deltaForce = _touchForce - _oldTouchForce;
-    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY, maxI = delta + 1;
-    for (var i = 0; i <= maxI; i = i + delta) {
+    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
+    for (var i = 0; i <= 1; i = i + delta) {
       _particles(
         _getQuadraticBezierValue(i, oldMidX, oldX, midX),
         _getQuadraticBezierValue(i, oldMidY, oldY, midY),
         _oldTouchForce + deltaForce * i
       );
     }
-    oldX = oldMidX = oldY = oldMidY = maxI = deltaForce = undefined;
+    oldX = oldMidX = oldY = oldMidY = deltaForce = undefined;
 
   }
 
