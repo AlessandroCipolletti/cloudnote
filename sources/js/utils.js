@@ -33,6 +33,10 @@
     return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
   }
 
+  function angle (x1, y1, x2, y2) {
+    return Math.atan2(x2 - x1, y2 - y1);
+  }
+
   function addGlobalStatus (status) {
     Param.container.classList.add(status);
   }
@@ -242,6 +246,7 @@
   app.module("Utils", {
     init: init,
     distance: distance,
+    angle: angle,
     addGlobalStatus: addGlobalStatus,
     removeGlobalStatus: removeGlobalStatus,
     fadeInElements: fadeInElements,

@@ -1,6 +1,7 @@
 (function (app) {
 
   // Dependencies
+  var MATH = Math;
   var Param = {};
   var Utils = {};
   var Messages = {};
@@ -18,11 +19,11 @@
     minPxToDraw: 3
   };
 
-  var PI = Math.PI;
+  var PI = MATH.PI;
   var PI2 = PI * 2;
   var round = function (n, d) {
-    var m = d ? Math.pow(10, d) : 1;
-    return Math.round(n * m) / m;
+    var m = d ? MATH.pow(10, d) : 1;
+    return MATH.round(n * m) / m;
   };
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight;
   var _touchDown = false;
@@ -47,9 +48,9 @@
 
   function random (n, float) {
     if (float) {
-      return Math.random() * n;
+      return MATH.random() * n;
     } else {
-      return Math.random() * n | 0;
+      return MATH.random() * n | 0;
     }
   }
 
@@ -295,19 +296,66 @@
 
     _context.beginPath();
     _context.fillStyle = _tool.color;
+    _context.strokeStyle = _tool.color;
+    _context.globalAlpha = 1;
+    _context.lineJoin = "round";
+    _context.lineCap = "round";
     _context.arc(x, y, _tool.size / 2, 0, PI2, true);
     _context.fill();
+
+  }
+
+  function _particles (x, y) {
+
+    _context.globalAlpha = _touchForce + 0.05;
+    _context.fillStyle = _tool.color;
+    for (var i = 10; i--; ) {
+      var angle = random(PI2, true);
+      var radius = random(_tool.size) + 1;
+      _context.fillRect(
+        x + radius * MATH.cos(angle),
+        y + radius * MATH.sin(angle),
+        1,
+        1
+      );
+    }
+
+  }
+
+  function _curvedCircleLine (midX, midY, size) {
+
+    _context.beginPath();
+    _context.lineWidth = size;
+    _context.moveTo(midX, midY);
+    _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
+    _context.stroke();
+
+  }
+
+  function _curverParticlesLine (midX, midY, size) {
+    // TODO
+  }
+
+  function _particlesLine () {
+
+    var size2 = _tool.size / 2, oldX = _oldX, oldY = _oldY;
+  	var distance = Utils.distance(oldX, oldY, _cursorX, _cursorY);
+  	var angle = Utils.angle(oldX, oldY, _cursorX, _cursorY);
+  	for (var z = 0; z <= distance; z = z + size2) {
+  		_particles(oldX + (MATH.sin(angle) * z) - size2, oldY + (MATH.cos(angle) * z) - size2);
+  	}
+    size2 = oldX = oldY = undefined;
 
   }
 
   function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
     if (alpha === false || typeof(alpha) === "undefined") {
-      return "rgb(" + random(256) + ", " + random(256) + ", " + random(256) + ")";
+      return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
     } else if (alpha === true) {
-      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", 0.7)";
+      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", 0.7)";
     } else if (typeof(alpha) === "number") {
-      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", " + alpha + ")";
+      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", " + alpha + ")";
     }
 
   }
@@ -344,24 +392,26 @@
       _lastRandomColor = _getRandomColor();
       _tool.color = _lastRandomColor;
     }
-    _context.globalAlpha = 1;
-    //_context.globalCompositeOperation = "lighter";
-    //_context.shadowBlur = 10;
-    //_context.shadowColor = _tool.color;
-    _context.globalCompositeOperation = _tool.globalCompositeOperation;
-    _context.strokeStyle = _tool.color;
-    _context.lineWidth = _tool.size;
-    _context.lineJoin = "round";
-    _context.lineCap = "round";
+
     if (_tool.cursor) {
       var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
       style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
       _toolCursor.style.cssText = style;
       _toolCursor.classList.remove("displayNone");
     }
+
+    _context.globalCompositeOperation = _tool.globalCompositeOperation;
+    _context.lineWidth = _tool.size;
+    //_context.globalCompositeOperation = "lighter";
+    //_context.shadowBlur = 10;
+    //_context.shadowColor = _tool.color;
+
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
+    } else if (_tool.shape === "particles") {
+      _particles(_cursorX, _cursorY);
     }
+
     _oldMidX = _cursorX;
     _oldMidY = _cursorY;
 
@@ -387,23 +437,26 @@
     _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
     _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
     var distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
-    var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? Math.min(distance, _tool.size * _tool.speedFactor) : 0);
+    var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
+
+    if (size < 25 && distance < _config.minPxToDraw) {
+      return;
+    }
 
     if (_tool.cursor) {
       var style = "width: " + size + "px; height: " + size + "px; ";
       style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
       _toolCursor.style.cssText = style;
-    } else if (_tool.size < 25 && distance < _config.minPxToDraw) {
-      return;
     }
 
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
-    _context.beginPath();
-    _context.lineWidth = size;
-    _context.moveTo(midX, midY);
-    _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
-    _context.stroke();
+    if (_tool.shape === "circle") {
+      _curvedCircleLine(midX, midY, size);
+    } else if (_tool.shape === "particles") {
+      //_curverParticlesLine(midX, midY, size);
+      _particlesLine();
+    }
     _oldMidX = midX;
     _oldMidY = midY;
     _checkCoord(_cursorX, _cursorY);

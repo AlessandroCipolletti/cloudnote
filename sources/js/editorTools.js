@@ -35,10 +35,10 @@
       _selectTool("pencil");
       Editor.setTool({
         name: "pencil",
-        size: 1,
-        forceFactor: 4,
+        size: 3,
+        forceFactor: 0,
         speedFactor: 0,
-        shape: "circle",
+        shape: "particles",
         globalCompositeOperation: "source-over",
         cursor: false
       });
