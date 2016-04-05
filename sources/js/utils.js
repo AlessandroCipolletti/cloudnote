@@ -2,48 +2,50 @@
 
   // Dependencies
   var Param = {};
-
+  var Utils = {};
+  
   var _overlaySpinner = {};
+  var MATH = Math;
 
-  function arrayOrderStringDown (a, b) {
+  Utils.arrayOrderStringDown = function (a, b) {
 
     if (a < b) return +1;
     if (a > b) return -1;
     return 0;
 
-  }
+  };
 
-  function arrayOrderStringUp (a, b) {
+  Utils.arrayOrderStringUp = function (a, b) {
 
     if (a > b) return +1;
     if (a < b) return -1;
     return 0;
 
-  }
+  };
 
-  function arrayOrderNumberUp (a, b) {
+  Utils.arrayOrderNumberUp = function (a, b) {
     return a - b;
-  }
+  };
 
-  function arrayOrderNumberDown (a, b) {
+  Utils.arrayOrderNumberDown = function (a, b) {
     return b - a;
-  }
+  };
 
-  function distance (x1, y1, x2, y2) {
-    return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
-  }
+  Utils.distance = function (x1, y1, x2, y2) {
+    return MATH.round(MATH.sqrt(MATH.pow(x2 - x1, 2) + MATH.pow(y2 - y1, 2)));
+  };
 
-  function angle (x1, y1, x2, y2) {
-    return Math.atan2(x2 - x1, y2 - y1);
-  }
+  Utils.angle = function (x1, y1, x2, y2) {
+    return MATH.atan2(x2 - x1, y2 - y1);
+  };
 
-  function addGlobalStatus (status) {
+  Utils.addGlobalStatus = function (status) {
     Param.container.classList.add(status);
-  }
+  };
 
-  function removeGlobalStatus (status) {
+  Utils.removeGlobalStatus = function (status) {
     Param.container.classList.remove(status);
-  }
+  };
 
   function _iterable (els, fn) {
     if (els.length) {
@@ -78,13 +80,13 @@
     }
   }
 
-  function fadeInElements (els) {
+  Utils.fadeInElements = function (els) {
     _iterable(els, _fadeInEl);
-  }
+  };
 
-  function fadeOutElements (els) {
+  Utils.fadeOutElements = function (els) {
     _iterable(els, _fadeOutEl);
-  }
+  };
 
   function _enableEl (el) {
     el.classList.add("enabled");
@@ -96,15 +98,15 @@
     el.classList.remove("enabled");
   }
 
-  function enableElements (els) {
+  Utils.enableElements = function (els) {
     _iterable(els, _enableEl);
-  }
+  };
 
-  function disableElements (els) {
+  Utils.disableElements = function (els) {
     _iterable(els, _disableEl);
-  }
+  };
 
-  function setConfig (params, config) {
+  Utils.setConfig = function (params, config) {
 
     var key;
     for (key in params) {
@@ -114,30 +116,29 @@
     }
     return config;
 
-  }
+  };
 
-  function createDom () {
+  Utils.createDom = function () {
 
     var dom = document.createElement("div");
     for (var i in arguments) {
       dom.classList.add(arguments[i]);
     }
-
     return dom;
 
-  }
+  };
 
-  function setSpinner (loading) {
+  Utils.setSpinner = function (loading) {
 
     if (loading) {
-      fadeInElements(_overlaySpinner);
+      Utils.fadeInElements(_overlaySpinner);
     } else {
-      fadeOutElements(_overlaySpinner);
+      Utils.fadeOutElements(_overlaySpinner);
     }
 
-  }
+  };
 
-  function getEventCoordX (e, offset, absolute) {
+  Utils.getEventCoordX = function (e, offset, absolute) {
 
     if (absolute || typeof(e.layerX) === "undefined") {
       if (e.type.indexOf("mouse") >= 0) {
@@ -149,9 +150,9 @@
       return e.layerX;
     }
 
-  }
+  };
 
-  function getEventCoordY (e, offset, absolute) {
+  Utils.getEventCoordY = function (e, offset, absolute) {
 
     if (absolute || typeof(e.layerY) === "undefined") {
       if (e.type.indexOf("mouse") >= 0) {
@@ -163,16 +164,16 @@
       return e.layerY;
     }
 
-  }
+  };
 
-  function intToHex (n) {
+  Utils.intToHex = function (n) {
 
     n = n.toString(16);
     return (n.length === 1 ? "0" + n : n);
 
-  }
+  };
 
-  function promiseXHR (protocol, url, headers) {
+  Utils.promiseXHR = function (protocol, url, headers) {
 
     return new Promise(function (resolve, reject) {
 
@@ -209,11 +210,11 @@
 
     });
 
-  }
+  };
 
   function _initDom () {
 
-    _overlaySpinner = createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
+    _overlaySpinner = Utils.createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
     spinner.classList.add("cloudnote__overlay-spinner-image");
     spinner.src = "img/spinner.gif";
@@ -225,10 +226,9 @@
 
   }
 
-  function init () {
+  Utils.init = function () {
 
     Param = app.Param;
-    var MATH = Math;
     MATH.radians = function (degrees) {
       return degrees * MATH.PI / 180;
     };
@@ -241,29 +241,8 @@
 
     _initDom();
 
-  }
+  };
 
-  app.module("Utils", {
-    init: init,
-    distance: distance,
-    angle: angle,
-    addGlobalStatus: addGlobalStatus,
-    removeGlobalStatus: removeGlobalStatus,
-    fadeInElements: fadeInElements,
-    fadeOutElements: fadeOutElements,
-    enableElements: enableElements,
-    disableElements: disableElements,
-    arrayOrderStringDown: arrayOrderStringDown,
-    arrayOrderStringUp: arrayOrderStringUp,
-    arrayOrderNumberUp: arrayOrderNumberUp,
-    arrayOrderNumberDown: arrayOrderNumberDown,
-    setConfig: setConfig,
-    createDom: createDom,
-    setSpinner: setSpinner,
-    getEventCoordX: getEventCoordX,
-    getEventCoordY: getEventCoordY,
-    intToHex: intToHex,
-    promiseXHR: promiseXHR
-  });
+  app.module("Utils", Utils);
 
 })(cloudnote);
