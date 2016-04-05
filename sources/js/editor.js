@@ -16,7 +16,8 @@
     primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
     tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "clear", "paper", "exit"],
     toolsSide: "left",
-    minPxToDraw: 3
+    minPxToDraw: 3,
+    hightPerformance: true
   };
 
   var PI = MATH.PI;
@@ -309,7 +310,7 @@
 
     _context.globalAlpha = _touchForce + 0.05;
     _context.fillStyle = _tool.color;
-    for (var i = 10; i--; ) {
+    for (var i = 13; i--; ) {
       var angle = random(PI2, true);
       var radius = random(_tool.size) + 1;
       _context.fillRect(
@@ -332,8 +333,25 @@
 
   }
 
-  function _curverParticlesLine (midX, midY, size) {
-    // TODO
+  function _getQuadraticBezierValue (t, p1, p2, p3) {
+
+    var iT = 1 - t;
+    return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
+
+  }
+
+  function _curverParticlesLine (midX, midY, delta) {
+    // TODO aggiungere la differenza da _forceFactor un pochino alla volta
+    delta = 1 / delta;
+    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
+    for (var i = 0; i <= 1; i = i + delta) {
+      _particles(
+        _getQuadraticBezierValue(i, oldMidX, oldX, midX),
+        _getQuadraticBezierValue(i, oldMidY, oldY, midY)
+      );
+    }
+    oldX = oldMidX = oldY = oldMidY = undefined;
+
   }
 
   function _particlesLine () {
@@ -454,8 +472,11 @@
     if (_tool.shape === "circle") {
       _curvedCircleLine(midX, midY, size);
     } else if (_tool.shape === "particles") {
-      //_curverParticlesLine(midX, midY, size);
-      _particlesLine();
+      if (_config.hightPerformance) {
+        _curverParticlesLine(midX, midY, distance / size);
+      } else {
+        _particlesLine();
+      }
     }
     _oldMidX = midX;
     _oldMidY = midY;
