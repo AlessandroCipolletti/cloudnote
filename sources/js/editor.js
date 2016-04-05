@@ -31,7 +31,7 @@
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
-  var _frameUpdateForce = false, _touchForce = 0, _touchEventObject = {};
+  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
   var _lastRandomColor = "";
@@ -306,9 +306,9 @@
 
   }
 
-  function _particles (x, y) {
+  function _particles (x, y, alpha) {
 
-    _context.globalAlpha = _touchForce + 0.05;
+    _context.globalAlpha = alpha + 0.05;
     _context.fillStyle = _tool.color;
     for (var i = 13; i--; ) {
       var angle = random(PI2, true);
@@ -316,8 +316,7 @@
       _context.fillRect(
         x + radius * MATH.cos(angle),
         y + radius * MATH.sin(angle),
-        1,
-        1
+        1, 1
       );
     }
 
@@ -334,35 +333,40 @@
   }
 
   function _getQuadraticBezierValue (t, p1, p2, p3) {
-
     var iT = 1 - t;
     return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
-
   }
 
   function _curverParticlesLine (midX, midY, delta) {
     // TODO aggiungere la differenza da _forceFactor un pochino alla volta
-    delta = 1 / delta;
+    var deltaCoord = 1 / delta;
+    var deltaForce = (_touchForce - _oldTouchForce) / delta;
     var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
-    for (var i = 0; i <= 1; i = i + delta) {
+    for (var i = 0; i <= 1; i = i + deltaCoord) {
       _particles(
         _getQuadraticBezierValue(i, oldMidX, oldX, midX),
-        _getQuadraticBezierValue(i, oldMidY, oldY, midY)
+        _getQuadraticBezierValue(i, oldMidY, oldY, midY),
+        _touchForce + deltaForce
       );
     }
-    oldX = oldMidX = oldY = oldMidY = undefined;
+    oldX = oldMidX = oldY = oldMidY = deltaCoord = deltaForce = undefined;
 
   }
 
-  function _particlesLine () {
+  function _particlesLine (delta) {
 
+    var deltaForce = (_touchForce - _oldTouchForce) / delta;
     var size2 = _tool.size / 2, oldX = _oldX, oldY = _oldY;
   	var distance = Utils.distance(oldX, oldY, _cursorX, _cursorY);
   	var angle = Utils.angle(oldX, oldY, _cursorX, _cursorY);
   	for (var z = 0; z <= distance; z = z + size2) {
-  		_particles(oldX + (MATH.sin(angle) * z) - size2, oldY + (MATH.cos(angle) * z) - size2);
+  		_particles(
+        oldX + (MATH.sin(angle) * z) - size2,
+        oldY + (MATH.cos(angle) * z) - size2,
+        _touchForce + deltaForce
+      );
   	}
-    size2 = oldX = oldY = undefined;
+    size2 = oldX = oldY = deltaForce = distance = angle = undefined;
 
   }
 
@@ -404,6 +408,7 @@
       _touchEventObject = e.touches[0];
       _updateTouchForce();
     }
+    _oldTouchForce = _touchForce;
     _touchDown = true;
     _checkCoord(_cursorX, _cursorY);
     if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
@@ -427,7 +432,7 @@
     if (_tool.shape === "circle") {
       _circle(_cursorX, _cursorY);
     } else if (_tool.shape === "particles") {
-      _particles(_cursorX, _cursorY);
+      _particles(_cursorX, _cursorY, _touchForce);
     }
 
     _oldMidX = _cursorX;
@@ -475,7 +480,7 @@
       if (_config.hightPerformance) {
         _curverParticlesLine(midX, midY, distance / size);
       } else {
-        _particlesLine();
+        _particlesLine(distance / size);
       }
     }
     _oldMidX = midX;
