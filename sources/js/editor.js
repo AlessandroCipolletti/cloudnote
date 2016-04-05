@@ -350,13 +350,6 @@
         _oldTouchForce + deltaForce * i
       );
     }
-    /*
-    _particles(
-      _getQuadraticBezierValue(1, oldMidX, oldX, midX),
-      _getQuadraticBezierValue(1, oldMidY, oldY, midY),
-      _touchForce
-    );
-    */
     oldX = oldMidX = oldY = oldMidY = maxI = deltaForce = undefined;
 
   }
