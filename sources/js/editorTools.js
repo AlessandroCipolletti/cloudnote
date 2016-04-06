@@ -35,7 +35,7 @@
       _selectTool("pencil");
       Editor.setTool({
         name: "pencil",
-        size: 3,
+        size: 2,
         forceFactor: 0,
         speedFactor: 0,
         shape: "particles",

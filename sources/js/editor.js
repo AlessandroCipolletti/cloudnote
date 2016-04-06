@@ -311,13 +311,15 @@
 
     _context.globalAlpha = alpha;
     _context.fillStyle = _tool.color;
-    for (var i = 16; i--; ) {
-      var angle = random(PI2, true);
-      var radius = random(_tool.size) + 1;
+    var angle = 0, radius = 0, w = 0;
+    for (var i = 10; i--; ) {
+      angle = random(PI2, true);
+      radius = random(_tool.size) + 1;
+      w = random(2) + 1;
       _context.fillRect(
         x + radius * MATH.cos(angle),
         y + radius * MATH.sin(angle),
-        1, 1
+        w, (w === 2 ? 1 : random(2) + 1)
       );
     }
 
@@ -341,13 +343,14 @@
   function _curverParticlesLine (midX, midY, delta) {
 
     delta = 1 / delta;
-    var deltaForce = _touchForce - _oldTouchForce;
+    var baseForce = MATH.min(_oldTouchForce,  0.75);
+    var deltaForce = MATH.min(_touchForce, 0.75) - baseForce;
     var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
     for (var i = 0; i <= 1; i = i + delta) {
       _particles(
         _getQuadraticBezierValue(i, oldMidX, oldX, midX),
         _getQuadraticBezierValue(i, oldMidY, oldY, midY),
-        _oldTouchForce + deltaForce * i
+        baseForce + deltaForce * i
       );
     }
     oldX = oldMidX = oldY = oldMidY = deltaForce = undefined;
@@ -374,18 +377,18 @@
   function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
     if (alpha === false || typeof(alpha) === "undefined") {
-      return "rgb(" + random(255) + ", " + random(255) + ", " + random(255) + ")";
+      return "rgb(" + random(256) + ", " + random(256) + ", " + random(256) + ")";
     } else if (alpha === true) {
-      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", 0.7)";
+      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", 0.7)";
     } else if (typeof(alpha) === "number") {
-      return "rgba(" + random(255) + ", " + random(255) + ", " + random(255) + ", " + alpha + ")";
+      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", " + alpha + ")";
     }
 
   }
 
   function _updateTouchForce () {
 
-    _touchForce = MATH.max(round(_touchEventObject.force, 4), 0.05);
+    _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
     if (_touchForce > 0) {
       _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
     } else {
@@ -475,7 +478,7 @@
       _curvedCircleLine(midX, midY, size);
     } else if (_tool.shape === "particles") {
       if (_config.hightPerformance) {
-        _curverParticlesLine(midX, midY, distance / size);
+        _curverParticlesLine(midX, midY, distance / (size - 0.3));
       } else {
         _particlesLine(distance / size);
       }
