@@ -3,7 +3,7 @@
   // Dependencies
   var Param = {};
   var Utils = {};
-  
+
   var _overlaySpinner = {};
   var MATH = Math;
 
@@ -236,7 +236,7 @@
       return radians / (MATH.PI / 180);
     };
     MATH.between = function (a, b, c) {
-      return [a, b, c].sort(arrayOrderNumberUp)[1];
+      return [a, b, c].sort(Utils.arrayOrderNumberUp)[1];
     };
 
     _initDom();
