@@ -68,11 +68,13 @@
     hide();
     Utils.setSpinner(false);
     Dashboard.show();
+    Messages.success("Salvataggio riuscito");
 
   }
 
   function onSocketMessage (data) {
 
+    //console.log("editor riceve: " + data);
     data = JSON.parse(data);
     if (data.ok) {
       _savedDraw.id = data.id;
@@ -96,6 +98,7 @@
     _currentUser = User.getUserInfo();
     if (_currentUser.id) {
       _savedDraw.userId = _currentUser.id;
+      console.log("save to server");
       Socket.emit("editor save", _savedDraw);
     }
 

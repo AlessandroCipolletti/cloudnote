@@ -146,7 +146,6 @@
       delete draw.base64;
       draw.data = _newDraw;
       _appendDraw(draw);
-      Messages.success("Salvataggio riuscito");
       _newDraw = draw = undefined;
 
     }
@@ -288,7 +287,6 @@
 
   function onSocketMessage (data) {
 
-    console.log("ricevuto", data);
     if (["end", "none", "error"].indexOf(data) >= 0) {
       _socketCallsInProgress--;
       if (_socketCallsInProgress === 0) {
@@ -449,7 +447,7 @@
   function _drag (dx, dy, forceLoad) {
 
     if (dx === 0 && dy === 0) return;
-    console.log("drag", dx, dy);
+    //console.log("drag", dx, dy);
     var scale = _imageGroup.matrix.a;
     var deltaCoordX = round(dx / scale, _decimals);
     var deltaCoordY = round(dy / scale, _decimals);
