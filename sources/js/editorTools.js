@@ -15,48 +15,47 @@
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
   var _container = {};
   var _undoButton = false, _redoButton = false, _saveButton = false;
+  var _toolsConfig = {
+    maker: {
+      name: "marker",
+      size: 8,
+      forceFactor: 1.5,
+      speedFactor: 0,
+      shape: "circle",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
+    pencil: {
+      name: "pencil",
+      size: 2,
+      forceFactor: 0,
+      speedFactor: 0,
+      shape: "particles",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
+    eraser: {
+      name: "eraser",
+      size: 12,
+      forceFactor: 5,
+      speedFactor: 0,
+      shape: "circle",
+      globalCompositeOperation: "destination-out",
+      cursor: true
+    }
+  };
   var _toolsFunctions = {
     marker: function () {
-
       _selectTool("marker");
-      Editor.setTool({
-        name: "marker",
-        size: 8,
-        forceFactor: 1.5,
-        speedFactor: 0,
-        shape: "circle",
-        globalCompositeOperation: "source-over",
-        cursor: false
-      });
-
+      Editor.setTool(_toolsConfig.maker);
     },
     pencil: function () {
-
       _selectTool("pencil");
-      Editor.setTool({
-        name: "pencil",
-        size: 2,
-        forceFactor: 0,
-        speedFactor: 0,
-        shape: "particles",
-        globalCompositeOperation: "source-over",
-        cursor: false
-      });
-
+      Editor.setTool(_toolsConfig.pencil);
     },
     eraser: function () {
-
       _selectTool("eraser");
-      Editor.setTool({
-        name: "eraser",
-        size: 12,
-        forceFactor: 5,
-        speedFactor: 0,
-        shape: "circle",
-        globalCompositeOperation: "destination-out",
-        cursor: true
-      });
-
+      Editor.setTool(_toolsConfig.eraser);
     },
     undo: function () {
       Editor.undo();
@@ -78,6 +77,10 @@
       Dashboard.show();
     }
   };
+
+  function getToolConfig (tool) {
+    return _toolsConfig[tool] || {};
+  }
 
   function toggleButton (tool, enabled) {
 
@@ -189,7 +192,8 @@
 
   app.module("Editor.Tools", {
     init: init,
-    toggleButton: toggleButton
+    toggleButton: toggleButton,
+    getToolConfig: getToolConfig
   });
 
 })(cloudnote);

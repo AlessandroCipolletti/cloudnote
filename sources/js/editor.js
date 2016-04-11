@@ -22,7 +22,7 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight;
+  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasNetwork, _contextNetwork;
   var _touchDown = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -297,29 +297,29 @@
 
   }
 
-  function _circle (x, y) {
+  function _circle (context, x, y, tool) {
 
-    _context.beginPath();
-    _context.fillStyle = _tool.color;
-    _context.strokeStyle = _tool.color;
-    _context.globalAlpha = 1;
-    _context.lineJoin = "round";
-    _context.lineCap = "round";
-    _context.arc(x, y, _tool.size / 2, 0, PI2, true);
-    _context.fill();
+    context.beginPath();
+    context.fillStyle = tool.color;
+    context.strokeStyle = tool.color;
+    context.globalAlpha = 1;
+    context.lineJoin = "round";
+    context.lineCap = "round";
+    context.arc(x, y, tool.size / 2, 0, PI2, true);
+    context.fill();
 
   }
 
-  function _particles (x, y, alpha) {
+  function _particles (context, x, y, alpha, tool) {
 
-    _context.globalAlpha = alpha;
-    _context.fillStyle = _tool.color;
+    context.globalAlpha = alpha;
+    context.fillStyle = tool.color;
     var angle = 0, radius = 0, w = 0;
     for (var i = 10; i--; ) {
       angle = random(PI2, true);
-      radius = random(_tool.size) + 1;
+      radius = random(tool.size) + 1;
       w = random(2) + 1;
-      _context.fillRect(
+      context.fillRect(
         x + radius * MATH.cos(angle),
         y + radius * MATH.sin(angle),
         w, (w === 2 ? 1 : random(2) + 1)
@@ -328,13 +328,13 @@
 
   }
 
-  function _curvedCircleLine (midX, midY, size) {
+  function _curvedCircleLine (context, midX, midY, size) {
 
-    _context.beginPath();
-    _context.lineWidth = size;
-    _context.moveTo(midX, midY);
-    _context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
-    _context.stroke();
+    context.beginPath();
+    context.lineWidth = size;
+    context.moveTo(midX, midY);
+    context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
+    context.stroke();
 
   }
 
@@ -343,7 +343,7 @@
     return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
   }
 
-  function _curverParticlesLine (midX, midY, delta) {
+  function _curverParticlesLine (context, midX, midY, delta, tool) {
 
     delta = 1 / delta;
     var baseForce = MATH.min(_oldTouchForce,  0.75);
@@ -351,26 +351,30 @@
     var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
     for (var i = 0; i <= 1; i = i + delta) {
       _particles(
+        context,
         _getQuadraticBezierValue(i, oldMidX, oldX, midX),
         _getQuadraticBezierValue(i, oldMidY, oldY, midY),
-        baseForce + deltaForce * i
+        baseForce + deltaForce * i,
+        tool
       );
     }
     oldX = oldMidX = oldY = oldMidY = deltaForce = undefined;
 
   }
 
-  function _particlesLine (delta) {
+  function _particlesLine (context, delta, tool) {
 
     var deltaForce = (_touchForce - _oldTouchForce) / delta;
-    var size2 = _tool.size / 2, oldX = _oldX, oldY = _oldY;
+    var size2 = tool.size / 2, oldX = _oldX, oldY = _oldY;
   	var distance = Utils.distance(oldX, oldY, _cursorX, _cursorY);
   	var angle = Utils.angle(oldX, oldY, _cursorX, _cursorY);
   	for (var z = 0; z <= distance; z = z + size2) {
   		_particles(
+        context,
         oldX + (MATH.sin(angle) * z) - size2,
         oldY + (MATH.cos(angle) * z) - size2,
-        _touchForce + deltaForce
+        _touchForce + deltaForce,
+        tool
       );
   	}
     size2 = oldX = oldY = deltaForce = distance = angle = undefined;
@@ -397,6 +401,58 @@
     } else {
       _frameUpdateForce = false;
     }
+
+  }
+
+  function _networkDraw (data) {
+
+    var tool = Tools.getToolConfig(data.tool);
+    var steps = data.steps;
+    _contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+
+    if (steps.length > 1) {
+      _stepStart(steps[0], tool);
+      for (var i = 1, l = steps.length - 1; i < l; i++) {
+        _stepMove(steps[i], tool);
+      }
+      _stepEnd(steps[steps.length - 1], tool);
+    } else {
+      if (steps[0].type === "start") {
+        _stepStart(steps[0], tool);
+      } else if (steps[0].type === "move") {
+        _stepMove(steps[0], tool);
+      } else {
+        _stepEnd([0], tool);
+      }
+    }
+    // TODO
+    // disegna il canvas network dentro il canvas base
+    // svuota il canvas network
+    data = steps = undefined;
+
+  }
+
+  function _stepStart (params, tool) {
+
+    if (params.x > _canvasWidth || params.y > _canvasHeight) {
+      return;
+    }
+    _checkCoord(params.x, params.y);
+    _contextNetwork.globalCompositeOperation = _tool.globalCompositeOperation;
+    _contextNetwork.lineWidth = _tool.size;
+    if (_tool.shape === "circle") {
+      _circle(_contextNetwork, params.x, params.y, tool);
+    } else if (_tool.shape === "particles") {
+      _particles(_contextNetwork, params.x, params.y, params.force, tool);
+    }
+
+  }
+
+  function _stepMove (params, tool) {
+
+  }
+
+  function _stepEnd (params, tool) {
 
   }
 
@@ -433,9 +489,9 @@
     //_context.shadowColor = _tool.color;
 
     if (_tool.shape === "circle") {
-      _circle(_cursorX, _cursorY);
+      _circle(_context, _cursorX, _cursorY, _tool);
     } else if (_tool.shape === "particles") {
-      _particles(_cursorX, _cursorY, _touchForce);
+      _particles(_context, _cursorX, _cursorY, _touchForce, _tool);
     }
 
     _oldMidX = _cursorX;
@@ -478,12 +534,12 @@
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
     if (_tool.shape === "circle") {
-      _curvedCircleLine(midX, midY, size);
+      _curvedCircleLine(_context, midX, midY, size);
     } else if (_tool.shape === "particles") {
       if (_config.hightPerformance) {
-        _curverParticlesLine(midX, midY, distance / (size - 0.3));
+        _curverParticlesLine(_context, midX, midY, distance / (size - 0.3), _tool);
       } else {
-        _particlesLine(distance / size);
+        _particlesLine(_context, distance / size, _tool);
       }
     }
     _oldMidX = midX;
@@ -542,6 +598,8 @@
       _container = templateDom;
       _canvas = templateDom.querySelector(".cloudnote-editor__canvas");
       _context = _canvas.getContext("2d");
+      _canvasNetwork = document.createElement("canvas");
+      _contextNetwork = _canvasNetwork.getContext("2d");
       _toolCursor = templateDom.querySelector(".cloudnote-editor__tool-cursor");
       _canvas.addEventListener(Param.eventStart, _onTouchStart);
       _canvas.addEventListener(Param.eventMove, _onTouchMove);
@@ -558,8 +616,8 @@
       _initSubModules();
       _canvasWidth = app.WIDTH - _toolsWidth;
       _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
-      _canvas.width = _canvasWidth;
-      _canvas.height = _canvasHeight;
+      _canvas.width = _canvasNetwork.width = _canvasWidth;
+      _canvas.height = _canvasNetwork.height = _canvasHeight;
       _canvas.style.width = _canvasWidth + "px";
       _canvas.style.height = _canvasHeight + "px";
       _saveStep();
