@@ -328,12 +328,12 @@
 
   }
 
-  function _curvedCircleLine (context, midX, midY, size) {
+  function _curvedCircleLine (context, size, fromX, fromY, midX, midY, toX, toY) {
 
     context.beginPath();
     context.lineWidth = size;
-    context.moveTo(midX, midY);
-    context.quadraticCurveTo(_oldX, _oldY, _oldMidX, _oldMidY);
+    context.moveTo(fromX, fromY);
+    context.quadraticCurveTo(midX, midY, toX, toY);
     context.stroke();
 
   }
@@ -343,41 +343,20 @@
     return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
   }
 
-  function _curverParticlesLine (context, midX, midY, delta, tool) {
+  function _curverParticlesLine (context, delta, touchForce, oldTouchForce, tool, fromX, fromY, midX, midY, toX, toY) {
 
     delta = 1 / delta;
-    var baseForce = MATH.min(_oldTouchForce,  0.75);
-    var deltaForce = MATH.min(_touchForce, 0.75) - baseForce;
-    var oldX = _oldX, oldY = _oldY, oldMidX = _oldMidX, oldMidY = _oldMidY;
+    var baseForce = MATH.min(oldTouchForce,  0.75);
+    var deltaForce = MATH.min(touchForce, 0.75) - baseForce;
     for (var i = 0; i <= 1; i = i + delta) {
       _particles(
         context,
-        _getQuadraticBezierValue(i, oldMidX, oldX, midX),
-        _getQuadraticBezierValue(i, oldMidY, oldY, midY),
+        _getQuadraticBezierValue(i, fromX, midX, toX),
+        _getQuadraticBezierValue(i, fromY, midY, toY),
         baseForce + deltaForce * i,
         tool
       );
     }
-    oldX = oldMidX = oldY = oldMidY = deltaForce = undefined;
-
-  }
-
-  function _particlesLine (context, delta, tool) {
-
-    var deltaForce = (_touchForce - _oldTouchForce) / delta;
-    var size2 = tool.size / 2, oldX = _oldX, oldY = _oldY;
-  	var distance = Utils.distance(oldX, oldY, _cursorX, _cursorY);
-  	var angle = Utils.angle(oldX, oldY, _cursorX, _cursorY);
-  	for (var z = 0; z <= distance; z = z + size2) {
-  		_particles(
-        context,
-        oldX + (MATH.sin(angle) * z) - size2,
-        oldY + (MATH.cos(angle) * z) - size2,
-        _touchForce + deltaForce,
-        tool
-      );
-  	}
-    size2 = oldX = oldY = deltaForce = distance = angle = undefined;
 
   }
 
@@ -434,21 +413,30 @@
 
   function _stepStart (params, tool) {
 
-    if (params.x > _canvasWidth || params.y > _canvasHeight) {
+    var x = params.x, y = params.y;
+    if (x > _canvasWidth || y > _canvasHeight) {
       return;
     }
-    _checkCoord(params.x, params.y);
+    _checkCoord(x, y);
     _contextNetwork.globalCompositeOperation = _tool.globalCompositeOperation;
     _contextNetwork.lineWidth = _tool.size;
     if (_tool.shape === "circle") {
-      _circle(_contextNetwork, params.x, params.y, tool);
+      _circle(_contextNetwork, x, y, tool);
     } else if (_tool.shape === "particles") {
-      _particles(_contextNetwork, params.x, params.y, params.force, tool);
+      _particles(_contextNetwork, x, y, params.force, tool);
     }
+    x = y = undefined;
 
   }
 
   function _stepMove (params, tool) {
+
+    if (_tool.shape === "circle") {
+      _curvedCircleLine(_contextNetwork, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    } else if (_tool.shape === "particles") {
+      _curverParticlesLine(_contextNetwork, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    }
+    _checkCoord(params.x, params.y);
 
   }
 
@@ -507,7 +495,7 @@
       _touchDown = false;
       return;
     }
-    if (Param.supportTouch) {
+    if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
       _touchEventObject = e.touches[0];
       if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
         _updateTouchForce();
@@ -533,19 +521,19 @@
 
     var midX = _oldX + _cursorX >> 1;
     var midY = _oldY + _cursorY >> 1;
+    var delta;
     if (_tool.shape === "circle") {
-      _curvedCircleLine(_context, midX, midY, size);
+      _curvedCircleLine(_context, size, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
     } else if (_tool.shape === "particles") {
-      if (_config.hightPerformance) {
-        _curverParticlesLine(_context, midX, midY, distance / (size - 0.3), _tool);
-      } else {
-        _particlesLine(_context, distance / size, _tool);
-      }
+      delta = distance / (size - 0.3);
+      _curverParticlesLine(_context, midX, midY, delta, _tool);
+      _curverParticlesLine(_context, delta, _touchForce, _oldTouchForce, _tool, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
     }
     _oldMidX = midX;
     _oldMidY = midY;
     _oldTouchForce = _touchForce;
     _checkCoord(_cursorX, _cursorY);
+    delta = midX = midY = undefined;
 
   }
 
