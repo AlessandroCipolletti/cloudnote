@@ -393,7 +393,7 @@
 
     var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
-    //_contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+    _contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
 
     if (steps.length > 1) {
       _stepStart(steps[0], tool);
@@ -410,6 +410,7 @@
         _stepEnd([0], tool);
       }
     }
+    _saveStep();
 
     _context.drawImage(_canvasNetwork, 0, 0, _canvasNetwork.width, _canvasNetwork.height);
     data = steps = undefined;
@@ -447,6 +448,7 @@
 
   function _stepEnd (params) {
     _curvedCircleLine(_contextNetwork, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    _checkCoord(_cursorX, _cursorY);
   }
 
   function _onTouchStart (e) {
@@ -549,12 +551,11 @@
     if (_tool.cursor) {
       _toolCursor.classList.add("displayNone");
     }
-    if (Param.supportTouch === false) {
-      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-      if (_cursorX !== _oldX) {
-        _curvedCircleLine(_context, _tool.size, _oldMidX, _oldMidY, _oldX, _oldY, _cursorX, _cursorY);
-      }
+    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+    if (_cursorX !== _oldX) {
+      _curvedCircleLine(_context, _tool.size, _oldMidX, _oldMidY, _oldX, _oldY, _cursorX, _cursorY);
+      _checkCoord(_cursorX, _cursorY);
     }
     _saveStep();
 
