@@ -23,7 +23,7 @@
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasNetwork, _contextNetwork;
-  var _touchDown = false;
+  var _touchDown = false, _coworking = true;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
@@ -77,7 +77,7 @@
     //console.log("editor riceve: " + data);
     data = JSON.parse(data);
     if (data.steps) {
-      _networkDrawStep(data);
+      _networkDrawSteps(data);
     } else if (data.ok) {
       _savedDraw.id = data.id;
       __save();
@@ -389,25 +389,25 @@
     // TODO in certi casi posso trasmettere il disegno intero (data base64) ed aggiungerlo intero all'editor
   }
 
-  function _networkDrawStep (data) {
+  function _networkDrawSteps (data) {
 
     var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
     _contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
 
     if (steps.length > 1) {
-      _stepStart(steps[0], tool);
+      _stepStart(_contextNetwork, steps[0], tool);
       for (var i = 1, l = steps.length - 1; i < l; i++) {
-        _stepMove(steps[i], tool);
+        _stepMove(_contextNetwork, steps[i], tool);
       }
-      _stepEnd(steps[steps.length - 1], tool);
+      _stepEnd(_contextNetwork, steps[steps.length - 1], tool);
     } else {
       if (steps[0].type === "start") {
-        _stepStart(steps[0], tool);
+        _stepStart(_contextNetwork, steps[0], tool);
       } else if (steps[0].type === "move") {
-        _stepMove(steps[0], tool);
+        _stepMove(_contextNetwork, steps[0], tool);
       } else {
-        _stepEnd([0], tool);
+        _stepEnd(_contextNetwork, steps[0], tool);
       }
     }
     _saveStep();
@@ -417,19 +417,22 @@
 
   }
 
-  function _stepStart (params, tool) {
+  function _stepStart (context, params, tool) {
 
     var x = params.x, y = params.y;
     if (x > _canvasWidth || y > _canvasHeight) {
       return;
     }
     _checkCoord(x, y);
-    _contextNetwork.globalCompositeOperation = _tool.globalCompositeOperation;
-    _contextNetwork.lineWidth = _tool.size;
-    if (_tool.shape === "circle") {
-      _circle(_contextNetwork, x, y, tool);
-    } else if (_tool.shape === "particles") {
-      _particles(_contextNetwork, x, y, params.force, tool);
+    context.globalCompositeOperation = tool.globalCompositeOperation;
+    context.lineWidth = tool.size;
+    //context.globalCompositeOperation = "lighter";
+    //context.shadowBlur = 10;
+    //context.shadowColor = _tool.color;
+    if (tool.shape === "circle") {
+      _circle(context, x, y, tool);
+    } else if (tool.shape === "particles") {
+      _particles(context, x, y, params.force, tool);
     }
     x = y = undefined;
 
@@ -451,46 +454,49 @@
     _checkCoord(_cursorX, _cursorY);
   }
 
-  function _onTouchStart (e) {
+  function _onTouchStart () {
 
-    e.preventDefault();
-    e.stopPropagation();
-    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-    if ((e.touches && e.touches.length > 1) || _touchDown) {
-      _oldX = _oldMidX = _cursorX;
-      _oldY = _oldMidY = _cursorY;
-      return;
-    }
-    _oldTouchForce = _touchForce = 0;
-    _touchDown = true;
-    _checkCoord(_cursorX, _cursorY);
-    if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
-      _lastRandomColor = _getRandomColor();
-      _tool.color = _lastRandomColor;
-    }
+    var style, params;
 
-    if (_tool.cursor) {
-      var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
-      style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
-      _toolCursor.style.cssText = style;
-      _toolCursor.classList.remove("displayNone");
-    }
+    return function (e) {
 
-    _context.globalCompositeOperation = _tool.globalCompositeOperation;
-    _context.lineWidth = _tool.size;
-    //_context.globalCompositeOperation = "lighter";
-    //_context.shadowBlur = 10;
-    //_context.shadowColor = _tool.color;
+      e.preventDefault();
+      e.stopPropagation();
+      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+      if ((e.touches && e.touches.length > 1) || _touchDown) {
+        _oldX = _oldMidX = _cursorX;
+        _oldY = _oldMidY = _cursorY;
+        return;
+      }
+      _oldTouchForce = _touchForce = 0;
+      _touchDown = true;
+      if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
+        _lastRandomColor = _getRandomColor();
+        _tool.color = _lastRandomColor;
+      }
 
-    if (_tool.shape === "circle") {
-      _circle(_context, _cursorX, _cursorY, _tool);
-    } else if (_tool.shape === "particles") {
-      _particles(_context, _cursorX, _cursorY, _touchForce, _tool);
-    }
+      if (_tool.cursor) {
+        style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
+        style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
+        _toolCursor.style.cssText = style;
+        _toolCursor.classList.remove("displayNone");
+      }
 
-    _oldMidX = _cursorX;
-    _oldMidY = _cursorY;
+      params = {
+        x: _cursorX,
+        y: _cursorY,
+        force: _touchForce
+      };
+      _stepStart(_context, params, _tool);
+      if (_coworking) {
+        _addCoworkingStep(params, _tool);
+      }
+
+      _oldMidX = _cursorX;
+      _oldMidY = _cursorY;
+
+    };
 
   }
 
