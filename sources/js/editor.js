@@ -76,10 +76,12 @@
 
     //console.log("editor riceve: " + data);
     data = JSON.parse(data);
-    if (data.ok) {
+    if (data.steps) {
+      _networkDrawStep(data);
+    } else if (data.ok) {
       _savedDraw.id = data.id;
       __save();
-    } else {
+    } else if (data.ok === false) {
       Messages.error("Salvataggio non riuscito");
     }
 
@@ -383,11 +385,15 @@
 
   }
 
-  function _networkDraw (data) {
+  function _networkDrawImage (data) {
+    // TODO in certi casi posso trasmettere il disegno intero (data base64) ed aggiungerlo intero all'editor
+  }
+
+  function _networkDrawStep (data) {
 
     var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
-    _contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+    //_contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
 
     if (steps.length > 1) {
       _stepStart(steps[0], tool);
@@ -404,9 +410,8 @@
         _stepEnd([0], tool);
       }
     }
-    // TODO
-    // disegna il canvas network dentro il canvas base
-    // svuota il canvas network
+
+    _context.drawImage(_canvasNetwork, 0, 0, _canvasNetwork.width, _canvasNetwork.height);
     data = steps = undefined;
 
   }
@@ -440,8 +445,8 @@
 
   }
 
-  function _stepEnd (params, tool) {
-
+  function _stepEnd (params) {
+    _curvedCircleLine(_contextNetwork, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
   }
 
   function _onTouchStart (e) {
@@ -526,7 +531,6 @@
       _curvedCircleLine(_context, size, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
     } else if (_tool.shape === "particles") {
       delta = distance / (size - 0.3);
-      _curverParticlesLine(_context, midX, midY, delta, _tool);
       _curverParticlesLine(_context, delta, _touchForce, _oldTouchForce, _tool, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
     }
     _oldMidX = midX;
@@ -549,10 +553,7 @@
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
       if (_cursorX !== _oldX) {
-        _context.beginPath();
-        _context.moveTo(_oldMidX, _oldMidY);
-        _context.quadraticCurveTo(_oldX, _oldY, _cursorX, _cursorY);
-        _context.stroke();
+        _curvedCircleLine(_context, _tool.size, _oldMidX, _oldMidY, _oldX, _oldY, _cursorX, _cursorY);
       }
     }
     _saveStep();
