@@ -37,9 +37,9 @@
       apiVersion: "v2.2"
     };
 
+    param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
-    param.pixelRatio = window.devicePixelRatio;
-    param.pixelRatio = 1;
+    param.pixelRatio = param.ios ? 2 : window.devicePixelRatio;
     param.scale = 1 / param.pixelRatio;
     param.supportTouch = ("ontouchstart" in window);
     param.supportGesture = ("ongesturechange" in window);

@@ -394,12 +394,11 @@
     //var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
     _contextCoworking.clearRect(0, 0, app.WIDTH, app.HEIGHT);
-    debugger;
     for (var i = 0, l = steps.length; i < l; i++) {
-      if (steps[i].type === "start") {
-        _stepStart(_contextCoworking, steps[i], data.tool);
-      } else if (steps[i].type === "move") {
+      if (steps[i].type === "move") {
         _stepMove(_contextCoworking, steps[i], data.tool);
+      } else if (steps[i].type === "start") {
+        _stepStart(_contextCoworking, steps[i], data.tool);
       } else {
         _stepEnd(_contextCoworking, steps[i], data.tool);
       }
