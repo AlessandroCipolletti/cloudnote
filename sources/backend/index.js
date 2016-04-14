@@ -138,6 +138,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 		socket.on("editor steps", function (data) {
 
 			socket.broadcast.to("coworking").emit("editor steps", data);
+      console.log("steps: " + JSON.parse(data).steps.length);
 
 		});
 

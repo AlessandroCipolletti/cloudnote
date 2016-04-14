@@ -404,7 +404,7 @@
       }
     }
     _saveStep();
-    
+
     _context.globalAlpha = 1;
     _context.drawImage(_canvasCoworking, 0, 0, _canvasCoworking.width, _canvasCoworking.height);
     data = steps = undefined;
@@ -582,6 +582,10 @@
       if (_tool.cursor) {
         _toolCursor.classList.add("displayNone");
       }
+      if (_coworking) {
+        _coworkingSendSteps();
+      }
+      return;
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
       if (_cursorX !== _oldX && _cursorY !== _oldY) {
@@ -599,9 +603,6 @@
         if (_coworking) {
           _coworkingSteps.push(params);
         }
-      }
-      if (_coworking) {
-        _coworkingSendSteps();
       }
       _saveStep();
 
