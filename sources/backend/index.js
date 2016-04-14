@@ -65,6 +65,9 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
 		log("Connection: " + socket.id);
 
+		socket.join("coworking");
+
+
 		socket.on("disconnect", function() {
 			log("Disconnect: " + socket.id);
 		});
@@ -76,7 +79,9 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
     socket.emittedDraws = [];
 
+
     socket.on("user login", function (data) {
+
   		var user = JSON.parse(data);
   		if (user.id) {	// aggiunta di un social ad un utente già esistente, o semplice login
   			// TODO aggiorno i dati che ho ricevuto a db
@@ -112,9 +117,12 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
           );
   			}
   		}
+
   	});
 
-    socket.on('editor save', function (data) {
+
+    socket.on("editor save", function (data) {
+
   		var draw = JSON.parse(data);
   		Draws.insert(draw, function(err, item) {
         log("new draw from " + socket.id + ". id: ", item._id);
@@ -123,13 +131,19 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
   				id: item._id
   			}));
   		});
+
   	});
 
 
+		socket.on("editor steps", function (data) {
+
+			socket.broadcast.to("coworking").emit("editor steps", data);
+
+		});
 
 
+    socket.on("dashboard drag", function (data) {
 
-    socket.on('dashboard drag', function (data) {
   		data = JSON.parse(data);
   		var _ids = data.ids;
   		var ids = [];
@@ -151,10 +165,10 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
     		}).limit(100),
         function (draws) {
     			if (draws) {
-            log("0 rows found");
+            log("drag: 0 rows found");
     				socket.emit("dashboard drag", "none");
           } else {
-    				log(draws.length + " rows found");
+    				log("drag: " + draws.length + " rows found");
     				draws.forEach(function (draw) {
     					if (socket.emittedDraws.indexOf(draw._id) < 0) {
                 socket.emittedDraws.push(draw._id);
@@ -186,7 +200,9 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
   				socket.emit("dashboard drag", "error");
         }
   		);
+
   	});
+
 
 	});
 

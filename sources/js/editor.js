@@ -391,23 +391,17 @@
 
   function _coworkingDrawSteps (data) {
 
-    var tool = Tools.getToolConfig(data.tool);
+    //var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
     _contextCoworking.clearRect(0, 0, app.WIDTH, app.HEIGHT);
-
-    if (steps.length > 1) {
-      _stepStart(_contextCoworking, steps[0], tool);
-      for (var i = 1, l = steps.length - 1; i < l; i++) {
-        _stepMove(_contextCoworking, steps[i], tool);
-      }
-      _stepEnd(_contextCoworking, steps[steps.length - 1], tool);
-    } else {
-      if (steps[0].type === "start") {
-        _stepStart(_contextCoworking, steps[0], tool);
-      } else if (steps[0].type === "move") {
-        _stepMove(_contextCoworking, steps[0], tool);
+    debugger;
+    for (var i = 0, l = steps.length; i < l; i++) {
+      if (steps[i].type === "start") {
+        _stepStart(_contextCoworking, steps[i], data.tool);
+      } else if (steps[i].type === "move") {
+        _stepMove(_contextCoworking, steps[i], data.tool);
       } else {
-        _stepEnd(_contextCoworking, steps[0], tool);
+        _stepEnd(_contextCoworking, steps[i], data.tool);
       }
     }
     _saveStep();
@@ -419,20 +413,17 @@
 
   function _coworkingSendSteps () {
 
-    // socket.emit
-    console.log(JSON.stringify({
-      speps: _coworkingSteps,
+    Socket.emit("editor steps", JSON.stringify({
+      steps: _coworkingSteps,
       tool: _tool
     }));
+    _coworkingSteps = [];
 
   }
 
   function _stepStart (context, params, tool) {
 
     var x = params.x, y = params.y;
-    if (x > _canvasWidth || y > _canvasHeight) {
-      return;
-    }
     _checkCoord(x, y);
     context.globalCompositeOperation = tool.globalCompositeOperation;
     context.lineWidth = tool.size;
@@ -450,9 +441,9 @@
 
   function _stepMove (context, params, tool) {
 
-    if (_tool.shape === "circle") {
+    if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
-    } else if (_tool.shape === "particles") {
+    } else if (tool.shape === "particles") {
       _curverParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
     _checkCoord(params.x, params.y);
@@ -494,6 +485,7 @@
       }
 
       params = {
+        type: "start",
         x: _cursorX,
         y: _cursorY,
         force: _touchForce
@@ -550,10 +542,11 @@
       midY = _oldY + _cursorY >> 1;
 
       params = {
+        type: "move",
         x: _cursorX,
         y: _cursorY,
         size: size,
-        delta: delta,
+        delta: distance / (size - 0.3),
         oldMidX: _oldMidX,
         oldMidY: _oldMidY,
         oldX: _oldX,
@@ -591,8 +584,9 @@
       }
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-      if (_cursorX !== _oldX) {
+      if (_cursorX !== _oldX && _cursorY !== _oldY) {
         params = {
+          type: "end",
           x: _cursorX,
           y: _cursorY,
           size: _tool.size,
