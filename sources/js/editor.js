@@ -22,8 +22,8 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasNetwork, _contextNetwork;
-  var _touchDown = false, _coworking = true;
+  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
+  var _touchDown = false, _coworking = true, _coworkingSteps = [];
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
@@ -77,7 +77,7 @@
     //console.log("editor riceve: " + data);
     data = JSON.parse(data);
     if (data.steps) {
-      _networkDrawSteps(data);
+      _coworkingDrawSteps(data);
     } else if (data.ok) {
       _savedDraw.id = data.id;
       __save();
@@ -385,35 +385,45 @@
 
   }
 
-  function _networkDrawImage (data) {
+  function _coworkingDrawImage (data) {
     // TODO in certi casi posso trasmettere il disegno intero (data base64) ed aggiungerlo intero all'editor
   }
 
-  function _networkDrawSteps (data) {
+  function _coworkingDrawSteps (data) {
 
     var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
-    _contextNetwork.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+    _contextCoworking.clearRect(0, 0, app.WIDTH, app.HEIGHT);
 
     if (steps.length > 1) {
-      _stepStart(_contextNetwork, steps[0], tool);
+      _stepStart(_contextCoworking, steps[0], tool);
       for (var i = 1, l = steps.length - 1; i < l; i++) {
-        _stepMove(_contextNetwork, steps[i], tool);
+        _stepMove(_contextCoworking, steps[i], tool);
       }
-      _stepEnd(_contextNetwork, steps[steps.length - 1], tool);
+      _stepEnd(_contextCoworking, steps[steps.length - 1], tool);
     } else {
       if (steps[0].type === "start") {
-        _stepStart(_contextNetwork, steps[0], tool);
+        _stepStart(_contextCoworking, steps[0], tool);
       } else if (steps[0].type === "move") {
-        _stepMove(_contextNetwork, steps[0], tool);
+        _stepMove(_contextCoworking, steps[0], tool);
       } else {
-        _stepEnd(_contextNetwork, steps[0], tool);
+        _stepEnd(_contextCoworking, steps[0], tool);
       }
     }
     _saveStep();
 
-    _context.drawImage(_canvasNetwork, 0, 0, _canvasNetwork.width, _canvasNetwork.height);
+    _context.drawImage(_canvasCoworking, 0, 0, _canvasCoworking.width, _canvasCoworking.height);
     data = steps = undefined;
+
+  }
+
+  function _coworkingSendSteps () {
+
+    // socket.emit
+    console.log(JSON.stringify({
+      speps: _coworkingSteps,
+      tool: _tool
+    }));
 
   }
 
@@ -438,25 +448,25 @@
 
   }
 
-  function _stepMove (params, tool) {
+  function _stepMove (context, params, tool) {
 
     if (_tool.shape === "circle") {
-      _curvedCircleLine(_contextNetwork, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+      _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     } else if (_tool.shape === "particles") {
-      _curverParticlesLine(_contextNetwork, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+      _curverParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
     _checkCoord(params.x, params.y);
 
   }
 
-  function _stepEnd (params) {
-    _curvedCircleLine(_contextNetwork, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
-    _checkCoord(_cursorX, _cursorY);
+  function _stepEnd (context, params) {
+    _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.x, params.x);
+    _checkCoord(params.x, params.y);
   }
 
-  function _onTouchStart () {
+  var _onTouchStart = (function () {
 
-    var style, params;
+    var style = "", params = {};
 
     return function (e) {
 
@@ -490,7 +500,7 @@
       };
       _stepStart(_context, params, _tool);
       if (_coworking) {
-        _addCoworkingStep(params, _tool);
+        _coworkingSteps.push(params);
       }
 
       _oldMidX = _cursorX;
@@ -498,74 +508,112 @@
 
     };
 
-  }
+  })();
 
-  function _onTouchMove (e) {
+  var _onTouchMove = (function () {
 
-    e.preventDefault();
-    e.stopPropagation();
-    if (_touchDown === false || (e.touches && e.touches.length > 1)) {
-      _touchDown = false;
-      return;
-    }
-    if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
-      _touchEventObject = e.touches[0];
-      if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
-        _updateTouchForce();
+    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
+
+    return function (e) {
+
+      e.preventDefault();
+      e.stopPropagation();
+      if (_touchDown === false || (e.touches && e.touches.length > 1)) {
+        _touchDown = false;
+        return;
       }
-    } else {
-      _touchForce = 0.5;
-    }
+      if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
+        _touchEventObject = e.touches[0];
+        if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
+          _updateTouchForce();
+        }
+      } else {
+        _touchForce = 0.5;
+      }
 
-    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-    var distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
-    var size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
+      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+      distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
+      size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
 
-    if (size < 25 && distance < _config.minPxToDraw) {
-      return;
-    }
+      if (size < 25 && distance < _config.minPxToDraw) {
+        return;
+      }
 
-    if (_tool.cursor) {
-      var style = "width: " + size + "px; height: " + size + "px; ";
-      style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
-      _toolCursor.style.cssText = style;
-    }
+      if (_tool.cursor) {
+        style = "width: " + size + "px; height: " + size + "px; ";
+        style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
+        _toolCursor.style.cssText = style;
+      }
 
-    var midX = _oldX + _cursorX >> 1;
-    var midY = _oldY + _cursorY >> 1;
-    var delta;
-    if (_tool.shape === "circle") {
-      _curvedCircleLine(_context, size, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
-    } else if (_tool.shape === "particles") {
-      delta = distance / (size - 0.3);
-      _curverParticlesLine(_context, delta, _touchForce, _oldTouchForce, _tool, _oldMidX, _oldMidY, _oldX, _oldY, midX, midY);
-    }
-    _oldMidX = midX;
-    _oldMidY = midY;
-    _oldTouchForce = _touchForce;
-    _checkCoord(_cursorX, _cursorY);
-    delta = midX = midY = undefined;
+      midX = _oldX + _cursorX >> 1;
+      midY = _oldY + _cursorY >> 1;
 
-  }
+      params = {
+        x: _cursorX,
+        y: _cursorY,
+        size: size,
+        delta: delta,
+        oldMidX: _oldMidX,
+        oldMidY: _oldMidY,
+        oldX: _oldX,
+        oldY: _oldY,
+        midX: midX,
+        midY: midY,
+        touchForce: _touchForce,
+        oldTouchForce: _oldTouchForce
+      };
+      _stepMove(_context, params, _tool);
+      if (_coworking) {
+        _coworkingSteps.push(params);
+      }
 
-  function _onTouchEnd (e) {
+      _oldMidX = midX;
+      _oldMidY = midY;
+      _oldTouchForce = _touchForce;
+      delta = midX = midY = undefined;
 
-    e.stopPropagation();
-    if (_touchDown === false || (e.touches && e.touches.length)) return;
-    _touchDown = false;
-    if (_tool.cursor) {
-      _toolCursor.classList.add("displayNone");
-    }
-    _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-    _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-    if (_cursorX !== _oldX) {
-      _curvedCircleLine(_context, _tool.size, _oldMidX, _oldMidY, _oldX, _oldY, _cursorX, _cursorY);
-      _checkCoord(_cursorX, _cursorY);
-    }
-    _saveStep();
+    };
 
-  }
+  })();
+
+  var _onTouchEnd = (function () {
+
+    var params = {};
+
+    return function (e) {
+
+      e.stopPropagation();
+      if (_touchDown === false || (e.touches && e.touches.length)) return;
+      _touchDown = false;
+      if (_tool.cursor) {
+        _toolCursor.classList.add("displayNone");
+      }
+      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+      if (_cursorX !== _oldX) {
+        params = {
+          x: _cursorX,
+          y: _cursorY,
+          size: _tool.size,
+          oldMidX: _oldMidX,
+          oldMidY: _oldMidY,
+          oldX: _oldX,
+          oldY: _oldY
+        };
+        _stepEnd(_context, params, _tool);
+        if (_coworking) {
+          _coworkingSteps.push(params);
+        }
+      }
+      if (_coworking) {
+        _coworkingSendSteps();
+      }
+      _saveStep();
+
+    };
+
+  })();
 
   function _onGestureStart (e) {
     _touchDown = false;
@@ -594,8 +642,8 @@
       _container = templateDom;
       _canvas = templateDom.querySelector(".cloudnote-editor__canvas");
       _context = _canvas.getContext("2d");
-      _canvasNetwork = document.createElement("canvas");
-      _contextNetwork = _canvasNetwork.getContext("2d");
+      _canvasCoworking = document.createElement("canvas");
+      _contextCoworking = _canvasCoworking.getContext("2d");
       _toolCursor = templateDom.querySelector(".cloudnote-editor__tool-cursor");
       _canvas.addEventListener(Param.eventStart, _onTouchStart);
       _canvas.addEventListener(Param.eventMove, _onTouchMove);
@@ -612,8 +660,8 @@
       _initSubModules();
       _canvasWidth = app.WIDTH - _toolsWidth;
       _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
-      _canvas.width = _canvasNetwork.width = _canvasWidth;
-      _canvas.height = _canvasNetwork.height = _canvasHeight;
+      _canvas.width = _canvasCoworking.width = _canvasWidth;
+      _canvas.height = _canvasCoworking.height = _canvasHeight;
       _canvas.style.width = _canvasWidth + "px";
       _canvas.style.height = _canvasHeight + "px";
       _saveStep();
