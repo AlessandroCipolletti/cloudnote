@@ -404,7 +404,8 @@
       }
     }
     _saveStep();
-
+    
+    _context.globalAlpha = 1;
     _context.drawImage(_canvasCoworking, 0, 0, _canvasCoworking.width, _canvasCoworking.height);
     data = steps = undefined;
 
