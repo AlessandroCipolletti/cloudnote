@@ -29,7 +29,7 @@
   };
 
   var _cache = (function () {
-    var _list = {}, _ids = [], _maxCacheSize = 100,	// forse sarebbe cool parametrizzare questo in base alle prestazioni locali
+    var _list = {}, _ids = [], _maxCacheSize = 100,  // forse sarebbe cool parametrizzare questo in base alle prestazioni locali
       _updateIds = function () {
         _ids = Object.keys(_list);
       },
@@ -276,7 +276,7 @@
 
   }
 
-  function _fillScreen () {	// OK
+  function _fillScreen () {  // OK
 
     _deltaDragX = _deltaDragY = _deltaZoom = 0;
     _updateCache();

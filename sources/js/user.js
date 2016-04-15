@@ -99,8 +99,8 @@
       delete data.updated_time;
       delete data.verified;
       _userInfo.name = data.name;
-			_userInfo.email = data.email;
-			_userInfo.locale = data.locale;
+      _userInfo.email = data.email;
+      _userInfo.locale = data.locale;
       _headerUserButton.style.backgroundImage = "url('http://graph.facebook.com/" + data.id + "/picture?type=large')";
 
     }
@@ -119,7 +119,7 @@
 
     var user = JSON.parse(data);
     if (user.id) {
-      if (user.new) {	// TODO: gli chiedo altre info in fase di registrazione, tipo nome d'arte
+      if (user.new) {  // TODO: gli chiedo altre info in fase di registrazione, tipo nome d'arte
 
       }
       _userInfo.id = user.id;

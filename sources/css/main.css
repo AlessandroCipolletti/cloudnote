@@ -1,15 +1,15 @@
 @font-face {
-	font-family: disegnato;
-	src: url('../font/font.ttf');
+  font-family: disegnato;
+  src: url('../font/font.ttf');
 }
 
 * {
-	margin: 0rem;
-	padding: 0rem;
-	font-family: disegnato !important;
-	letter-spacing: 0.05rem;
-	user-select: none;
-	opacity: 1;
+  margin: 0rem;
+  padding: 0rem;
+  font-family: disegnato !important;
+  letter-spacing: 0.05rem;
+  user-select: none;
+  opacity: 1;
 }
 
 html, body {
@@ -33,10 +33,10 @@ html, body {
 
 .disabled {
   opacity: 0.3 !important;
-	cursor: auto !important;
+  cursor: auto !important;
 }
 .disabled a {
-	color: grey;
+  color: grey;
 }
 
 .displayNone {
@@ -45,11 +45,11 @@ html, body {
 
 .fadeIn {
   opacity: 1;
-	transition: opacity 400ms;
+  transition: opacity 400ms;
 }
 .fadeOut {
   opacity: 0;
-	transition: opacity 400ms;
+  transition: opacity 400ms;
 }
 .popup {
   z-index: 300;
@@ -67,38 +67,38 @@ html, body {
 }
 .cloudnote__overlay-spinner-image {
   position: absolute;
-  width: 4.5rem;	/* 90px */
-  height: 4.5rem;	/* 90px */
+  width: 4.5rem;  /* 90px */
+  height: 4.5rem;  /* 90px */
   left: 50%;
   top: 50%;
-  margin-top: -2.25rem;		/* -45px */
-  margin-left: -2.25rem;	/* -45px */
+  margin-top: -2.25rem;    /* -45px */
+  margin-left: -2.25rem;  /* -45px */
 }
 
 .button {
-	font-size: 1.5rem;	/* 30px */
-	padding: 0.8rem 1rem;	/* 16px 20px */
-	border: solid 0.1rem #186f8f;
-	box-shadow: inset 0rem 0.1rem 0rem #7fd2f1, 0rem 0.1rem 0rem #fff;
+  font-size: 1.5rem;  /* 30px */
+  padding: 0.8rem 1rem;  /* 16px 20px */
+  border: solid 0.1rem #186f8f;
+  box-shadow: inset 0rem 0.1rem 0rem #7fd2f1, 0rem 0.1rem 0rem #fff;
   background-color:#3bb3e0;
-	cursor: pointer;
-	text-decoration:none;
-	color:#fff;
-	position: relative;
-	border-radius: 0.6rem;	/* 12px */
-	background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+  cursor: pointer;
+  text-decoration:none;
+  color:#fff;
+  position: relative;
+  border-radius: 0.6rem;  /* 12px */
+  background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
 }
 .button:active {
-	background-image: linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+  background-image: linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
 }
 .button.disabled:active {
-	background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+  background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
 }
 .button img {
-	height: 1.6rem;	/* 36px */
-	width: 1.6rem;	/* 36px */
-	margin: 0rem 0.6rem -0.5rem -0.3rem;
+  height: 1.6rem;  /* 36px */
+  width: 1.6rem;  /* 36px */
+  margin: 0rem 0.6rem -0.5rem -0.3rem;
 }

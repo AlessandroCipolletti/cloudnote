@@ -1,17 +1,17 @@
 .cloudnote-dashboard__container {
   position: absolute;
-	left: 0rem;
-	width: 100%;
+  left: 0rem;
+  width: 100%;
   z-index: 10;
   display: block;
 }
 
 .cloudnote-dashboard__svg {
   position: absolute;
-	top: 0rem;
-	left: 0rem;
-	width: 100%;
-	height: 100%;
+  top: 0rem;
+  left: 0rem;
+  width: 100%;
+  height: 100%;
 }
 
 .cloudnote-dashboard__zoom-label-rect {

@@ -63,7 +63,9 @@
 
   function emit (event, data) {
 
-    (typeof data === "object") && (data = JSON.stringify(data));
+    if (typeof data === "object") {
+      data = JSON.stringify(data);
+    }
     if (_socket.io.connected) {
       _socket.io.emit(event, data);
     } else {

@@ -1,7 +1,7 @@
 .cloudnote-editor__container {
   position: absolute;
-	left: 0rem;
-	width: 100%;
+  left: 0rem;
+  width: 100%;
   z-index: 50;
 }
 
