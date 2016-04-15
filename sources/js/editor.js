@@ -376,10 +376,11 @@
 
   function _updateTouchForce () {
 
-    _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
+    _touchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
     if (_touchForce > 0) {
       _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
     } else {
+      _touchForce = 0.5;
       _frameUpdateForce = false;
     }
 
