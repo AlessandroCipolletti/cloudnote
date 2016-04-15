@@ -582,27 +582,28 @@
       if (_tool.cursor) {
         _toolCursor.classList.add("displayNone");
       }
+      if (Param.supportTouch === false) {
+        _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
+        _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+        if (_cursorX !== _oldX && _cursorY !== _oldY) {
+          params = {
+            type: "end",
+            x: _cursorX,
+            y: _cursorY,
+            size: _tool.size,
+            oldMidX: _oldMidX,
+            oldMidY: _oldMidY,
+            oldX: _oldX,
+            oldY: _oldY
+          };
+          _stepEnd(_context, params, _tool);
+          if (_coworking) {
+            _coworkingSteps.push(params);
+          }
+        }
+      }
       if (_coworking) {
         _coworkingSendSteps();
-      }
-      return;
-      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-      if (_cursorX !== _oldX && _cursorY !== _oldY) {
-        params = {
-          type: "end",
-          x: _cursorX,
-          y: _cursorY,
-          size: _tool.size,
-          oldMidX: _oldMidX,
-          oldMidY: _oldMidY,
-          oldX: _oldX,
-          oldY: _oldY
-        };
-        _stepEnd(_context, params, _tool);
-        if (_coworking) {
-          _coworkingSteps.push(params);
-        }
       }
       _saveStep();
 
