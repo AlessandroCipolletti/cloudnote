@@ -52,8 +52,7 @@
 
     _socket.io.on("user login", app.User.onSocketLogin);
     _socket.io.on("dashboard drag", app.Dashboard.onSocketMessage);
-    _socket.io.on("editor save", app.Editor.onSocketMessage);
-    _socket.io.on("editor steps", app.Editor.onSocketMessage);
+    _socket.io.on("editor", app.Editor.onSocketMessage);
 
   }
 

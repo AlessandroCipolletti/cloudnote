@@ -61,6 +61,8 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
   }
 
 
+  var roomsIds = [];
+
   io.on("connection", function (socket) {
 
     log("Connection: " + socket.id);
@@ -70,6 +72,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
     socket.on("disconnect", function() {
       log("Disconnect: " + socket.id);
+      roomsIds.splice(roomsIds.indexOf(socket.roomId), 1);
     });
 
     socket.on("error", function() {
@@ -78,6 +81,12 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
 
     socket.emittedDraws = [];
+    socket.roomId = "0"; // generare una room id univoca
+    roomsIds.push(socket.roomId);
+    socket.emit("editor", JSON.stringify({
+      type: "roomId",
+      id: socket.roomId
+    }));
 
 
     socket.on("user login", function (data) {
@@ -126,7 +135,8 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
       var draw = JSON.parse(data);
       Draws.insert(draw, function(err, item) {
         log("new draw from " + socket.id + ". id: ", item._id);
-        socket.emit("editor save", JSON.stringify({
+        socket.emit("editor", JSON.stringify({
+          type: "save",
           ok: true,
           id: item._id
         }));
@@ -137,7 +147,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
     socket.on("editor steps", function (data) {
 
-      socket.broadcast.to("coworking").emit("editor steps", data);
+      socket.broadcast.to("coworking").emit("editor", data);
       console.log("steps: " + JSON.parse(data).steps.length);
 
     });

@@ -14,7 +14,7 @@
 
   var _config = {
     primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
-    tools: ["marker", "pencil", "eraser", "undo", "redo", "save", "clear", "paper", "exit"],
+    tools: ["marker", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -23,7 +23,7 @@
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
-  var _touchDown = false, _coworking = true, _coworkingSteps = [];
+  var _touchDown = false, _coworking = false, _coworkingSteps = [], _personalRoomId = false;
   var _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
@@ -56,6 +56,35 @@
     return MATH.round(n * m) / m;
   }
 
+  function _startCoworking () {
+
+    _coworking = true;
+    Utils.addGlobalStatus("cloudnote__EDITOR-COWORKING");
+    // Socket.emit("editor coworking start", true);
+
+  }
+
+  function startCoworking () {
+
+    // aprire un pannello con un codice autogenerato dal server come chiave per questa room
+    // oppure un campo input per inserire la chiave di room generata da qualcun altro
+    if (_personalRoomId === false) {
+      // open popup
+
+    } else {
+      Messages.error("Network error");
+    }
+
+  }
+
+  function stopCoworking () {
+
+    _coworking = false;
+    Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
+    Socket.emit("editor coworking stop", false);
+
+  }
+
   function __save () {
 
     _savedDraw.user = _currentUser;
@@ -76,13 +105,17 @@
 
     //console.log("editor riceve: " + data);
     data = JSON.parse(data);
-    if (data.steps) {
-      _coworkingDrawSteps(data);
-    } else if (data.ok) {
-      _savedDraw.id = data.id;
-      __save();
-    } else if (data.ok === false) {
-      Messages.error("Salvataggio non riuscito");
+    if (data.type === "steps") {
+      if (_coworking) {
+        _coworkingDrawSteps(data);
+      }
+    } else if (data.type === "save") {
+      if (data.ok) {
+        _savedDraw.id = data.id;
+        __save();
+      } else if (data.ok === false) {
+        Messages.error("Salvataggio non riuscito");
+      }
     }
 
   }
@@ -416,7 +449,8 @@
 
     Socket.emit("editor steps", JSON.stringify({
       steps: _coworkingSteps,
-      tool: _tool
+      tool: _tool,
+      type: "steps"
     }));
     _coworkingSteps = [];
 
@@ -707,7 +741,9 @@
     redo: redo,
     clear: clear,
     changePaper: changePaper,
-    onSocketMessage: onSocketMessage
+    onSocketMessage: onSocketMessage,
+    startCoworking: startCoworking,
+    stopCoworking: stopCoworking
   });
 
 })(cloudnote);

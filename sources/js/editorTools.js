@@ -63,14 +63,20 @@
     redo: function () {
       Editor.redo();
     },
+    coworkingStart: function () {
+      Editor.startCoworking();
+    },
+    coworkingStop: function () {
+      Editor.stopCoworking();
+    },
+    save: function () {
+      Editor.save();
+    },
     clear: function () {
       Editor.clear();
     },
     paper: function () {
       Editor.changePaper();
-    },
-    save: function () {
-      Editor.save();
     },
     exit: function () {
       Editor.hide();
@@ -122,8 +128,8 @@
     var target = e.target;
     if (
       target.classList.contains("cloudnote-editor-tools__tool") &&
-      !target.classList.contains("cloudnote-editor-tools__tool-selected") &&
-      !target.classList.contains("disabled")
+      target.classList.contains("cloudnote-editor-tools__tool-selected") === false &&
+      target.classList.contains("disabled") === false
     ) {
 
       var tool = target.getAttribute("data-tool");
@@ -139,21 +145,30 @@
     // do some stuff
   }
 
-  function _initDom (moduleContainer) {
+  function _setToolsSide () {
 
     if (_config.toolsSide === "right") {
+      Utils.removeGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
       Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
     } else {
+      Utils.removeGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
       Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
     }
 
+  }
+
+  function _initDom (moduleContainer) {
+
     var tools = [];
+    var disabled = ["undo", "redo", "save"];
     for (var i = 0, l = _config.tools.length; i < l; i++) {
       tools.push({
         name: _config.tools[i],
-        disabled: ["undo", "redo", "save"].indexOf(_config.tools[i]) >= 0
+        disabled: disabled.indexOf(_config.tools[i]) >= 0
       });
     }
+
+    _setToolsSide();
 
     Main.loadTemplate("editorTools", {
       tools: tools

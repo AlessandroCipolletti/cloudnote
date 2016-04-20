@@ -62,6 +62,13 @@
 .cloudnote-editor-tools__tool-redo {
   background-image: url("../img/icons/redo.png");
 }
+.cloudnote-editor-tools__tool-coworkingStart {
+  background-image: url("../img/icons/coworkingStart.png");
+}
+.cloudnote-editor-tools__tool-coworkingStop {
+  background-image: url("../img/icons/coworkingStop.png");
+  display: none;
+}
 .cloudnote-editor-tools__tool-save {
   background-image: url("../img/icons/save.png");
 }
@@ -73,4 +80,11 @@
 }
 .cloudnote-editor-tools__tool-exit {
   background-image: url("../img/icons/exit.png");
+}
+
+.cloudnote__EDITOR-COWORKING .cloudnote-editor-tools__tool-coworkingStop {
+  display: block;
+}
+.cloudnote__EDITOR-COWORKING .cloudnote-editor-tools__tool-coworkingStart {
+  display: none;
 }
