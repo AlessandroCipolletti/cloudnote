@@ -2,3 +2,7 @@
   <div class="cloudnote-editor__tool-cursor displayNone"></div>
   <canvas class="cloudnote-editor__canvas paper-white"></canvas>
 </div>
+
+<div class="cloudnote-editor__coworking-popup">
+  
+</div>

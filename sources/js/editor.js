@@ -23,8 +23,8 @@
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
-  var _touchDown = false, _coworking = false, _coworkingSteps = [], _personalRoomId = false;
-  var _currentPaper = "white";
+  var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {};
+  var _touchDown = false, _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _touchEventObject = {};
@@ -64,13 +64,24 @@
 
   }
 
+  function _requestCoworking (roomId) {
+    // quando premo su conferma per
+    if (roomId) {
+      Socket.emit("editor coworking request", {
+        roomId: roomId
+      });
+      //_campoDelCodice.blur();
+      // set spinner
+    }
+
+  }
+
   function startCoworking () {
 
     // aprire un pannello con un codice autogenerato dal server come chiave per questa room
     // oppure un campo input per inserire la chiave di room generata da qualcun altro
-    if (_personalRoomId === false) {
-      // open popup
-
+    if (_personalRoomId) {
+      Utils.openPopup(_popupCoworking);
     } else {
       Messages.error("Network error");
     }
@@ -82,6 +93,7 @@
     _coworking = false;
     Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
     Socket.emit("editor coworking stop", false);
+    Messages.success("Connessione chiusa");
 
   }
 
@@ -116,6 +128,10 @@
       } else if (data.ok === false) {
         Messages.error("Salvataggio non riuscito");
       }
+    } else if (data.type === "roomId") {
+      _personalRoomId = data.id;
+    } else if (data.type === "coworking started") {
+      Messages.success("Connessione stabilita");
     }
 
   }

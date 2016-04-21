@@ -5,6 +5,8 @@
   var Utils = {};
 
   var _overlaySpinner = {};
+  var _popupContainer = {};
+  var _popupOpen = false;
   var MATH = Math;
 
   Utils.arrayOrderStringDown = function (a, b) {
@@ -138,6 +140,34 @@
 
   };
 
+  Utils.openPopup = function (popup, force, close) {
+
+    if (_popupOpen) {
+      if (force) {
+        Utils.closePopup();
+      } else {
+        return;
+      }
+    }
+
+    if (close) {
+      _popupContainer.addEventListener(Param.eventStart, Utils.closePopup);
+    }
+    _popupContainer.appendChild(popup);
+    Param.container.appendChild(_popupContainer);
+    _popupOpen = true;
+
+  };
+
+  Utils.closePopup = function () {
+
+    Param.container.removeChild(_popupContainer);
+    _popupContainer.removeEventListener(Param.eventStart, Utils.closePopup);
+    _popupContainer.innerHTML = "";
+    _popupOpen = false;
+
+  };
+
   Utils.getEventCoordX = function (e, offset, absolute) {
 
     if (absolute || typeof(e.layerX) === "undefined") {
@@ -223,6 +253,7 @@
       e.preventDefault();
     });
     Param.container.appendChild(_overlaySpinner);
+    _popupContainer = Utils.createDom("cloudnote__popup-container", "popup");
 
   }
 

@@ -49,18 +49,13 @@
 
 .cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
   transform: translateX(-50%) translateY(0%);
-}
-.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
-  transform: translateX(-50%) translateY(10rem);
-}
-.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
-  z-index: 250;
+  z-index: 300;
   border-radius: 0 0 0.7rem 0.7rem;
 }
 .cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
+  transform: translateX(-50%) translateY(10rem);
   z-index: 1000;
 }
-
 
 
 /* ALERT*/
