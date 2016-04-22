@@ -507,8 +507,8 @@
   }
 
   function _stepEnd (context, params) {
-    _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.x, params.x);
-    _checkCoord(params.x, params.y);
+    //_curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.x, params.x);
+    //_checkCoord(params.x, params.y);
   }
 
   var _onTouchStart = (function () {
