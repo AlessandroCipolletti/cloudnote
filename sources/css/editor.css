@@ -37,3 +37,24 @@
   position: absolute;
   z-index: 70;
 }
+
+
+.cloudnote-editor__coworking-popup {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  border: solid 2px black;
+  background-color: white;
+}
+.cloudnote-editor__coworking-popup p {
+
+}
+.cloudnote-editor__coworking-popup input {
+
+}
+.cloudnote-editor__coworking-popup h1 {
+  
+}

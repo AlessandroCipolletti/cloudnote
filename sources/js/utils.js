@@ -161,10 +161,12 @@
 
   Utils.closePopup = function () {
 
-    Param.container.removeChild(_popupContainer);
-    _popupContainer.removeEventListener(Param.eventStart, Utils.closePopup);
-    _popupContainer.innerHTML = "";
-    _popupOpen = false;
+    if (_popupOpen) {
+      Param.container.removeChild(_popupContainer);
+      _popupContainer.removeEventListener(Param.eventStart, Utils.closePopup);
+      _popupContainer.innerHTML = "";
+      _popupOpen = false;
+    }
 
   };
 
