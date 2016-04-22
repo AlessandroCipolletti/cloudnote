@@ -71,8 +71,14 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
 
     socket.on("disconnect", function() {
+
       log("Disconnect: " + socket.id);
       roomsIds.splice(roomsIds.indexOf(socket.roomId), 1);
+      // TODO  se questo utente era connesso con qualcuno, inviargli messaggio di deconnessione
+      socket.broadcast.to("la room corrente di socket").emit("editor", JSON.stringify({
+        type: "coworking close"
+      }));
+
     });
 
     socket.on("error", function() {
@@ -81,12 +87,38 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
 
     socket.emittedDraws = [];
-    socket.roomId = "0"; // generare una room id univoca
+    socket.roomId = "0"; // TODO generare una room id univoca, almeno 4 caratteri
     roomsIds.push(socket.roomId);
     socket.emit("editor", JSON.stringify({
       type: "roomId",
       id: socket.roomId
     }));
+
+
+    socket.on("editor coworking request", function (data) {
+
+      if (roomsIds.indexOf(data.roomId) >= 0) {
+        // TODO crea la room tra socket, ed il socket corrispondente al codice passato
+        socket.emit("", JSON.stringify({
+          type: "coworking started"
+        }));
+      } else {
+        socket.emit("editor", JSON.stringify({
+          type: "coworking error",
+          error: "wrong code"
+        }));
+      }
+
+    });
+
+
+    socket.on("editor coworking stop", function (data) {
+      // TODO chiude la room, ed invia un messaggio di deconnessione all'altro utente
+      socket.broadcast.to("la room corrente di socket").emit("editor", JSON.stringify({
+        type: "coworking close"
+      }));
+
+    });
 
 
     socket.on("user login", function (data) {

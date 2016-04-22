@@ -59,8 +59,11 @@
   function _requestCoworking (e) {
 
     if (e.keyCode === 13) {
+      if (_coworkingIdText.value.length === 0) {
+        return;
+      }
       var roomId = _coworkingIdText.value;
-      if (roomId) {
+      if (roomId.length > 3) {
         Socket.emit("editor coworking request", {
           roomId: roomId
         });
@@ -69,6 +72,22 @@
       } else {
         Messages.error("Codice non valido");
       }
+    }
+
+  }
+
+  function _onCoworkingClose () {
+
+    _coworking = false;
+    Messages.info("L'altro utente si è disconnesso");
+    Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
+
+  }
+
+  function _onCoworkingError (data) {
+
+    if (data.error === "wrong code") {
+      Messages.error("Codice errato");
     }
 
   }
@@ -102,22 +121,6 @@
 
   }
 
-  function __save () {
-
-    _savedDraw.user = _currentUser;
-    Dashboard.addDraw(_savedDraw, true);
-    _savedDraw = undefined;
-    _clear();
-    _step = [];
-    _currentStep = 0;
-    _saveStep();
-    hide();
-    Utils.setSpinner(false);
-    Dashboard.show();
-    Messages.success("Salvataggio riuscito");
-
-  }
-
   function onSocketMessage (data) {
 
     //console.log("editor riceve: " + data);
@@ -137,7 +140,27 @@
       _personalRoomId = data.id;
     } else if (data.type === "coworking started") {
       _onCoworkingStarted();
+    } else if (data.type === "coworking close") {
+      _onCoworkingClose();
+    } else if (data.type === "coworking error") {
+      _onCoworkingError(data);
     }
+
+  }
+
+  function __save () {
+
+    _savedDraw.user = _currentUser;
+    Dashboard.addDraw(_savedDraw, true);
+    _savedDraw = undefined;
+    _clear();
+    _step = [];
+    _currentStep = 0;
+    _saveStep();
+    hide();
+    Utils.setSpinner(false);
+    Dashboard.show();
+    Messages.success("Salvataggio riuscito");
 
   }
 
