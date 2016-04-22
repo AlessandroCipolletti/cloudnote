@@ -140,7 +140,7 @@
 
   };
 
-  Utils.openPopup = function (popup, force, close) {
+  Utils.openPopup = function (popup, force, disableAutoClose) {
 
     if (_popupOpen) {
       if (force) {
@@ -150,7 +150,7 @@
       }
     }
 
-    if (close) {
+    if (!disableAutoClose) {
       _popupContainer.addEventListener(Param.eventStart, Utils.closePopup);
     }
     _popupContainer.appendChild(popup);

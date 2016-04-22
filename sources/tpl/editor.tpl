@@ -4,10 +4,11 @@
   <canvas class="cloudnote-editor__canvas paper-white"></canvas>
 
   <div class="cloudnote-editor__coworking-popup">
+    <p>{{personalCodeLabel}}</p>
+    <h1>{{personalRoomId}}</h1>
+    <p>{{coworkingCodeLabel}}</p>
     <p>{{coworkingStartLabel}}</p>
     <input type="text">
-    <p>{{coworkingCodeLabel}}</p>
-    <h1>{{personalRoomId}}</h1>
   </div>
 
 </div>

@@ -40,21 +40,32 @@
 
 
 .cloudnote-editor__coworking-popup {
-  width: 300px;
-  height: 300px;
+  width: 30rem;
+  height: 15rem;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
   border: solid 2px black;
   background-color: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  z-index: 500;
+}
+.cloudnote-editor__coworking-popup * {
+  margin: auto;
 }
 .cloudnote-editor__coworking-popup p {
-
+  font-size: 1.5rem;
 }
 .cloudnote-editor__coworking-popup input {
-
+  font-size: 2rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
 }
 .cloudnote-editor__coworking-popup h1 {
-  
+
 }
