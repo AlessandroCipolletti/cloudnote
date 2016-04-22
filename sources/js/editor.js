@@ -60,7 +60,6 @@
 
     if (e.keyCode === 13) {
       var roomId = _coworkingIdText.value;
-      console.log(roomId);
       if (roomId) {
         Socket.emit("editor coworking request", {
           roomId: roomId
@@ -87,7 +86,7 @@
   function startCoworking () {
 
     if (_personalRoomId && true ) { //Socket.isConnected()) {
-      Utils.openPopup(_popupCoworking, false, true);
+      Utils.openPopup(_popupCoworking);
     } else {
       Messages.error("Network error");
     }
@@ -693,7 +692,7 @@
       personalCodeLabel: "Codice personale:",
       personalRoomId: _personalRoomId,
       coworkingCodeLabel: "Comunica questo codice a qualcuno,",
-      coworkingStartLabel: "o Inserisci il codice di un tuo amico:"
+      coworkingStartLabel: "o inserisci il codice di un tuo amico:"
     }, Param.container, function (templateDom) {
 
       _container = templateDom;

@@ -140,6 +140,14 @@
 
   };
 
+  function _closePopup (e) {
+
+    if (e.target === _popupContainer) {
+      Utils.closePopup();
+    }
+
+  }
+
   Utils.openPopup = function (popup, force, disableAutoClose) {
 
     if (_popupOpen) {
@@ -151,7 +159,7 @@
     }
 
     if (!disableAutoClose) {
-      _popupContainer.addEventListener(Param.eventStart, Utils.closePopup);
+      _popupContainer.addEventListener(Param.eventStart, _closePopup);
     }
     _popupContainer.appendChild(popup);
     Param.container.appendChild(_popupContainer);
@@ -163,7 +171,7 @@
 
     if (_popupOpen) {
       Param.container.removeChild(_popupContainer);
-      _popupContainer.removeEventListener(Param.eventStart, Utils.closePopup);
+      _popupContainer.removeEventListener(Param.eventStart, _closePopup);
       _popupContainer.innerHTML = "";
       _popupOpen = false;
     }
