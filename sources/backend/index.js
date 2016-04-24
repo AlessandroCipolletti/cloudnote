@@ -114,13 +114,11 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
   var _generateRoomID = (function () {
 
     var MATH = Math;
-    var last = 40000;
     var min = 40000;
     var tot = 1000000000;
     var id;
 
     return function () {
-      //return (++last).toString(36);
       do {
         id = (MATH.floor(MATH.random() * tot) + min).toString(36);
       } while (_roomsIds.indexOf(id) >= 0);
@@ -201,8 +199,6 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
             s.connectedRoom = data.roomId;
             s.emit("editor", msgOk);
           }
-          log(s.connectedRoom);
-          log(socket.connectedRoom);
           s = undefined;
         } else {
           socket.emit("editor", msgErrorCode);
@@ -275,7 +271,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
     socket.on("editor steps", function (data) {
 
       socket.broadcast.to(socket.connectedRoom).emit("editor", data);
-      console.log("steps: " + JSON.parse(data).steps.length + " " + socket.connectedRoom);
+      console.log("steps: " + JSON.parse(data).steps.length + " room: " + socket.connectedRoom);
 
     });
 

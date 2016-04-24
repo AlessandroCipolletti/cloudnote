@@ -477,7 +477,12 @@
 
     //var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
-    _contextCoworking.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+    _contextCoworking.clearRect(0, 0, _canvasCoworking.width, _canvasCoworking.height);
+    if (data.tool.globalCompositeOperation === "destination-out") {
+      _contextCoworking.globalCompositeOperation = "source-over";
+      _contextCoworking.globalAlpha = 1;
+      _contextCoworking.drawImage(_canvas, 0, 0, _canvas.width, _canvas.height);
+    }
     for (var i = 0, l = steps.length; i < l; i++) {
       if (steps[i].type === "move") {
         _stepMove(_contextCoworking, steps[i], data.tool);
@@ -488,8 +493,10 @@
       }
     }
     _saveStep();
-
     _context.globalAlpha = 1;
+    if (data.tool.globalCompositeOperation === "destination-out") {
+      _context.clearRect(0, 0, _canvas.width, _canvas.height);
+    }
     _context.drawImage(_canvasCoworking, 0, 0, _canvasCoworking.width, _canvasCoworking.height);
     data = steps = undefined;
 
@@ -511,6 +518,7 @@
     var x = params.x, y = params.y;
     _checkCoord(x, y);
     context.globalCompositeOperation = tool.globalCompositeOperation;
+    console.log(context.globalCompositeOperation);
     context.lineWidth = tool.size;
     //context.globalCompositeOperation = "lighter";
     //context.shadowBlur = 10;
