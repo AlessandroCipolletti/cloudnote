@@ -22,7 +22,7 @@ if (DEV) {
 
 
 
-MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
+MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
   log("db connected");
 
@@ -60,26 +60,96 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
     return self.indexOf(value) === index;
   }
 
+  var _logout = (function () {
 
-  var roomsIds = [];
+    var msgClose = JSON.stringify({
+      type: "coworking close"
+    });
+    var roomId = 0;
+    var s = {};
+    var sockets = {};
+    var socketsIds = [];
+    var i = 0;
+
+    return function (socket) {
+
+      roomId = socket.connectedRoom;
+      if (roomId) {
+        socket.broadcast.to(roomId).emit("editor", msgClose);
+        sockets = io.sockets.adapter.rooms[roomId].sockets;
+        socketsIds = Object.keys(sockets);
+        for (i = socketsIds.length; i--; ) {
+          if (sockets[socketsIds[i]] === true) {
+            s = io.sockets.connected[socketsIds[i]];
+            s.leave(roomId);
+            s.connectedRoom = false;
+            s = undefined;
+          }
+        }
+        sockets = undefined;
+      }
+
+    };
+
+  })();
+
+  /*
+  function makesID () {
+    var id = "", i = 0, MATH = Math, possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var l = possible.length;
+    return function () {
+      text = "";
+      for (i = 0; i < 5; i++) {
+        text += possible.charAt(MATH.floor(MATH.random() * l));
+      }
+      return text;
+    };
+  }
+  */
+
+
+  var _roomsIds = [];
+  var _roomIdsOwners = [];
+
+  var _generateRoomID = (function () {
+
+    var MATH = Math;
+    var last = 40000;
+    var min = 40000;
+    var tot = 1000000000;
+    var id;
+
+    return function () {
+      //return (++last).toString(36);
+      do {
+        id = (MATH.floor(MATH.random() * tot) + min).toString(36);
+      } while (_roomsIds.indexOf(id) >= 0);
+      return id;
+
+    };
+
+  })();
 
   io.on("connection", function (socket) {
 
     log("Connection: " + socket.id);
 
-    socket.join("coworking");
 
+    socket.on("disconnect", (function() {
 
-    socket.on("disconnect", function() {
+      var index = 0;
 
-      log("Disconnect: " + socket.id);
-      roomsIds.splice(roomsIds.indexOf(socket.roomId), 1);
-      // TODO  se questo utente era connesso con qualcuno, inviargli messaggio di deconnessione
-      socket.broadcast.to("la room corrente di socket").emit("editor", JSON.stringify({
-        type: "coworking close"
-      }));
+      return function () {
 
-    });
+        log("Disconnect: " + socket.id);
+        index = _roomsIds.indexOf(socket.roomId);
+        _roomsIds.splice(index, 1);
+        _roomIdsOwners.splice(index, 1);
+        _logout(socket);
+
+      };
+
+    })());
 
     socket.on("error", function() {
       console.log("Socket error: " + socket.id);
@@ -87,38 +157,63 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
 
     socket.emittedDraws = [];
-    socket.roomId = "0"; // TODO generare una room id univoca, almeno 4 caratteri
-    roomsIds.push(socket.roomId);
+    socket.roomId = _generateRoomID();
+    socket.connectedRoom = false;
+    _roomsIds.push(socket.roomId);
+    _roomIdsOwners.push(socket.id);
     socket.emit("editor", JSON.stringify({
       type: "roomId",
       id: socket.roomId
     }));
 
 
-    socket.on("editor coworking request", function (data) {
+    socket.on("editor coworking request", (function () {
 
-      if (roomsIds.indexOf(data.roomId) >= 0) {
-        // TODO crea la room tra socket, ed il socket corrispondente al codice passato
-        socket.emit("", JSON.stringify({
-          type: "coworking started"
-        }));
-      } else {
-        socket.emit("editor", JSON.stringify({
-          type: "coworking error",
-          error: "wrong code"
-        }));
-      }
+      var index = 0;
+      var s;
+      var msgOk = JSON.stringify({
+        type: "coworking started"
+      });
+      var msgErrorCode = JSON.stringify({
+        type: "coworking error",
+        error: "wrong code"
+      });
+      var msgErrorConnected = JSON.stringify({
+        type: "coworking error",
+        error: "wrong code"
+      });
 
-    });
+      return function (data) {
+
+        data = JSON.parse(data);
+        index = _roomsIds.indexOf(data.roomId);
+        log("socket " + socket.id + " request id " + data.roomId + " found at index " + index);
+
+        if (index >= 0 && data.roomId !== socket.roomId && socket.connectedRoom === false) {
+          s = io.sockets.connected[_roomIdsOwners[index]];
+          if (s.connectedRoom) {
+            socket.emit("editor", msgErrorConnected);
+          } else {
+            socket.join(data.roomId);
+            socket.connectedRoom = data.roomId;
+            socket.emit("editor", msgOk);
+            s.join(data.roomId);
+            s.connectedRoom = data.roomId;
+            s.emit("editor", msgOk);
+          }
+          log(s.connectedRoom);
+          log(socket.connectedRoom);
+          s = undefined;
+        } else {
+          socket.emit("editor", msgErrorCode);
+        }
+
+      };
+
+    })());
 
 
-    socket.on("editor coworking stop", function (data) {
-      // TODO chiude la room, ed invia un messaggio di deconnessione all'altro utente
-      socket.broadcast.to("la room corrente di socket").emit("editor", JSON.stringify({
-        type: "coworking close"
-      }));
-
-    });
+    socket.on("editor coworking stop", _logout.bind({}, socket));
 
 
     socket.on("user login", function (data) {
@@ -179,8 +274,8 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function(err, db) {
 
     socket.on("editor steps", function (data) {
 
-      socket.broadcast.to("coworking").emit("editor", data);
-      console.log("steps: " + JSON.parse(data).steps.length);
+      socket.broadcast.to(socket.connectedRoom).emit("editor", data);
+      console.log("steps: " + JSON.parse(data).steps.length + " " + socket.connectedRoom);
 
     });
 

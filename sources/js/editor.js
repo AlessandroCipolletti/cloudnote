@@ -23,7 +23,7 @@
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
-  var _coworking = false, _coworkingSteps = [], _personalRoomId = "1234", _popupCoworking = {}, _coworkingIdText = {};
+  var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false, _currentPaper = "white";
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
@@ -79,7 +79,7 @@
   function _onCoworkingClose () {
 
     _coworking = false;
-    Messages.info("L'altro utente si è disconnesso");
+    Messages.error("L'altro utente si è disconnesso");
     Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
 
   }
@@ -88,7 +88,10 @@
 
     if (data.error === "wrong code") {
       Messages.error("Codice errato");
+    } else if (data.error === "already connected") {
+      Messages.error("Utente già connesso");
     }
+    Utils.setSpinner(false);
 
   }
 
@@ -96,6 +99,8 @@
 
     Utils.closePopup();
     Utils.setSpinner(false);
+    _coworkingIdText.value = "";
+    _coworkingIdText.blur();
     Messages.success("Connessione stabilita");
     Utils.addGlobalStatus("cloudnote__EDITOR-COWORKING");
     _coworking = true;
@@ -104,7 +109,7 @@
 
   function startCoworking () {
 
-    if (_personalRoomId && true ) { //Socket.isConnected()) {
+    if (_personalRoomId && Socket.isConnected()) {
       Utils.openPopup(_popupCoworking);
     } else {
       Messages.error("Network error");
@@ -138,6 +143,7 @@
       }
     } else if (data.type === "roomId") {
       _personalRoomId = data.id;
+      _coworkingIdLabel.innerHTML = _personalRoomId;
     } else if (data.type === "coworking started") {
       _onCoworkingStarted();
     } else if (data.type === "coworking close") {
@@ -726,9 +732,9 @@
       _toolCursor = templateDom.querySelector(".cloudnote-editor__tool-cursor");
       _popupCoworking = templateDom.querySelector(".cloudnote-editor__coworking-popup");
       _coworkingIdText = templateDom.querySelector(".cloudnote-editor__coworking-popup input");
+      _coworkingIdLabel = templateDom.querySelector(".cloudnote-editor__coworking-popup h1");
       _coworkingIdText.addEventListener("input", function (e) {
-        // TODO lettere e numeri
-        this.value = this.value.replace(/[^\d]/g, "");
+        this.value = this.value.replace(/[^a-z0-9]/gi, "");
       });
       _coworkingIdText.addEventListener("keydown", _requestCoworking);
       _popupCoworking.parentNode.removeChild(_popupCoworking);

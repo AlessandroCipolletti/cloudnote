@@ -49,7 +49,7 @@
 
 .cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
   transform: translateX(-50%) translateY(0%);
-  z-index: 300;
+  z-index: 750;
   border-radius: 0 0 0.7rem 0.7rem;
 }
 .cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {

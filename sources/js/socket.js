@@ -3,6 +3,7 @@
   // Dependencies
   var Param = {};
   var Utils = {};
+  var Messages = {};
 
   var _config = {
 
@@ -19,6 +20,7 @@
 
     Param = app.Param;
     Utils = app.Utils;
+    Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
 
     function _onConnect () {
@@ -38,9 +40,12 @@
 
     _socket.io.on("error", function () {
       console.log("socket error");
+      Messages.error("Network Error");
     });
     _socket.io.on("disconnect", function () {
       console.log("socket disconnect");
+      Utils.setSpinner(false);
+      Messages.error("Network Error");
     });
     _socket.io.on("reconnect", function () {
       _onConnect();
