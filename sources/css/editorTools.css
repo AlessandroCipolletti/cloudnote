@@ -8,8 +8,8 @@
   transform: translate3d(0rem, 0rem, 0rem);
   z-index: 100;
   display: flex;
-  flex-flow: column wrap;
-  justify-content: space-around;
+  flex-flow: column nowrap;
+  justify-content: space-between;;
 }
 
 .cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__container {
@@ -30,9 +30,9 @@
 .cloudnote-editor-tools__tool {
   width: 7.5rem;  /* 150px */
   height: 6rem; /* 120px */
-  min-height: 6rem; /* 120px */
   background-position: center;
   background-size: 4.5rem 4.5rem; /* 90px */
+  background-size: contain;
   background-repeat: no-repeat;
 }
 .cloudnote-editor-tools__tool-selected {
