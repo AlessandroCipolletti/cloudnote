@@ -50,6 +50,9 @@
 .cloudnote-editor-tools__tool-marker {
   background-image: url("../img/icons/marker.png");
 }
+.cloudnote-editor-tools__tool-pen {
+  background-image: url("../img/icons/pen.png");
+}
 .cloudnote-editor-tools__tool-pencil {
   background-image: url("../img/icons/pencil.png");
 }

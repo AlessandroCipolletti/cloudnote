@@ -25,6 +25,15 @@
       globalCompositeOperation: "source-over",
       cursor: false
     },
+    pen: {
+      name: "pen",
+      size: 2,
+      forceFactor: 0,
+      speedFactor: 0,
+      shape: "circle",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
     pencil: {
       name: "pencil",
       size: 2,
@@ -48,6 +57,10 @@
     marker: function () {
       _selectTool("marker");
       Editor.setTool(_toolsConfig.maker);
+    },
+    pen: function () {
+      _selectTool("pen");
+      Editor.setTool(_toolsConfig.pen);
     },
     pencil: function () {
       _selectTool("pencil");

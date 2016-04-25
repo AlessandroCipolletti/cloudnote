@@ -14,7 +14,7 @@
 
   var _config = {
     primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
-    tools: ["marker", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
+    tools: ["marker", "pen", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
