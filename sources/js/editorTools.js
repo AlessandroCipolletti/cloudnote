@@ -18,7 +18,7 @@
   var _toolsConfig = {
     maker: {
       name: "marker",
-      size: 8,
+      size: 10,
       forceFactor: 1.5,
       speedFactor: 0,
       shape: "circle",
@@ -28,7 +28,7 @@
     pen: {
       name: "pen",
       size: 2,
-      forceFactor: 0,
+      forceFactor: 1,
       speedFactor: 0,
       shape: "circle",
       globalCompositeOperation: "source-over",

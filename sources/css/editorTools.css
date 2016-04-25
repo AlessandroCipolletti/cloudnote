@@ -30,8 +30,8 @@
 .cloudnote-editor-tools__tool {
   width: 7.5rem;  /* 150px */
   height: 6rem; /* 120px */
+  margin: 0.75rem 0; /* 15px */
   background-position: center;
-  background-size: 4.5rem 4.5rem; /* 90px */
   background-size: contain;
   background-repeat: no-repeat;
 }
