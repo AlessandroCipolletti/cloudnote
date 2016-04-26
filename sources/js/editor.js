@@ -56,6 +56,15 @@
     return MATH.round(n * m) / m;
   }
 
+  function _setCoworkingId (id) {
+
+    if (id) {
+      _personalRoomId = id;
+      _coworkingIdLabel.innerHTML = id;
+    }
+
+  }
+
   function _requestCoworking (e) {
 
     if (e.keyCode === 13) {
@@ -142,8 +151,7 @@
         Messages.error("Salvataggio non riuscito");
       }
     } else if (data.type === "roomId") {
-      _personalRoomId = data.id;
-      _coworkingIdLabel.innerHTML = _personalRoomId;
+      _setCoworkingId(data.id);
     } else if (data.type === "coworking started") {
       _onCoworkingStarted();
     } else if (data.type === "coworking close") {
