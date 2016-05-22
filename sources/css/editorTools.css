@@ -1,42 +1,39 @@
 .cloudnote-editor-tools__container {
   position: absolute;
   top: 0rem;
-  width: 7.5rem;  /* 150px */
-  height: calc(100% - 7.5rem);  /* 150px */
+  width: 4.5rem;  /* 90px */
+  height: calc(100% - 4.5rem);  /* 90px */
   background-color: rgba(255, 255, 255, 1);
   transition: transform 0.6s;
   transform: translate3d(0rem, 0rem, 0rem);
   z-index: 100;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;;
+  padding-top: 0.5rem;
 }
 
 .cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__container {
   left: 0rem;
-  border-right: solid 0.05rem gray;
 }
 .cloudnote__EDITOR-TOOLS-LEFT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
-  transform: translate3d(-7.55rem, 0rem, 0rem); /* 151px */
+  transform: translate3d(-4.5rem, 0rem, 0rem); /* 90px */
 }
 .cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__container {
   right: 0rem;
-  border-left: solid 0.05rem gray;
 }
 .cloudnote__EDITOR-TOOLS-RIGHT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
-  transform: translate3d(7.55rem, 0rem, 0rem);  /* 151px */
+  transform: translate3d(4.5rem, 0rem, 0rem);  /* 90px */
 }
 
 .cloudnote-editor-tools__tool {
-  width: 7.5rem;  /* 150px */
-  height: 6rem; /* 120px */
-  margin: 0.75rem 0; /* 15px */
+  width: 4.1rem;  /* 82px */
+  height: 4rem; /* 80px */
+  margin: 0.3rem 0; /* 6px */
   background-position: center;
-  background-size: contain;
+  background-size: 80%;
   background-repeat: no-repeat;
-}
-.cloudnote-editor-tools__tool-selected {
-  width: 7.1rem;  /* 142px */
+  border-right: solid 0.2rem transparent;
+  border-left: solid 0.2rem transparent;
 }
 .cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__tool-selected {
   border-right: solid 0.2rem transparent;
@@ -78,9 +75,17 @@
 .cloudnote-editor-tools__tool-clear {
   background-image: url("../img/icons/clear.png");
 }
-.cloudnote-editor-tools__tool-paper {
-  background-image: url("../img/icons/paper.png");
+
+.cloudnote-editor-tools__tool-paper.paper-white {
+  background-image: url("../img/icons/paper_white.png");
 }
+.cloudnote-editor-tools__tool-paper.paper-squares {
+  background-image: url("../img/icons/paper_squares.png");
+}
+.cloudnote-editor-tools__tool-paper.paper-lines {
+  background-image: url("../img/icons/paper_lines.png");
+}
+
 .cloudnote-editor-tools__tool-exit {
   background-image: url("../img/icons/exit.png");
 }

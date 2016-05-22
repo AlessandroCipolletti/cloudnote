@@ -13,7 +13,14 @@
   var Socket = {};
 
   var _config = {
-    primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
+    //primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
+    primaryColors: [
+      "#000000", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#000688", "#6d0088", "#88004a",
+      "#a00000", "#883600", "#ec0000", "#005f00", "#887a00", "#ff6600", "#00d500", "#ffe400", "#00ff5a", "#00f6ff",
+      "#007eff", "#0022ef", "#ff00a2", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8", "#ffb8b8", "#ffb8e5", "#ddb8ff",
+      "#b8ccff", "#b8f9ff", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
+    ],
+    secondaryColors: false,
     tools: ["marker", "pen", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
     toolsSide: "left",
     minPxToDraw: 3,
@@ -24,11 +31,11 @@
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
-  var _touchDown = false, _currentPaper = "white";
+  var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _touchEventObject = {};
-  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 75.5, _colorsPickerHeight = 75.5;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
   var _lastRandomColor = "";
   var _tool = {
@@ -327,17 +334,10 @@
 
   }
 
-  function changePaper () {
+  function changePaper (paper) {
 
     _canvas.classList.remove("paper-squares", "paper-lines", "paper-white");
-    if (_currentPaper === "white") {
-      _currentPaper = "squares";
-    } else if (_currentPaper === "squares") {
-      _currentPaper = "lines";
-    } else {
-      _currentPaper = "white";
-    }
-    _canvas.classList.add("paper-" + _currentPaper);
+    _canvas.classList.add("paper-" + paper);
 
   }
 
@@ -773,6 +773,11 @@
       _canvas.height = _canvasCoworking.height = _canvasHeight;
       _canvas.style.width = _canvasWidth + "px";
       _canvas.style.height = _canvasHeight + "px";
+      if (_config.toolsSide === "left") {
+        _canvas.style.left = _toolsWidth + "px";
+      } else {
+        _canvas.style.right = _toolsWidth + "px";
+      }
       _saveStep();
       Main.addRotationHandler(_onRotate);
 

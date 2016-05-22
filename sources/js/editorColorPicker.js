@@ -7,7 +7,8 @@
   var Main = {};
 
   var _config = {
-    primaryColors: []
+    primaryColors: [],
+    secondaryColors: false
   };
 
   var _container, _isOpen = false;
@@ -125,16 +126,20 @@
 
   function _initDom (moduleContainer) {
 
-    var primaryColorNumber = Math.min(round((app.WIDTH - 250 * Param.pixelRatio) / (55 * Param.pixelRatio)), _config.primaryColors.length);
+    var primaryColorNumber = Math.min(round((app.WIDTH - 55 * Param.pixelRatio) / (30 * Param.pixelRatio)), _config.primaryColors.length);
     var primaryColors = _config.primaryColors.splice(0, primaryColorNumber);
 
-    var secondaryColors = [];
-    var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) * Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
-    var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
-    for (var i = 0; i < colorsNumber; i++) {
-      secondaryColors.push("#" + _intToHex(columnIntUnit * i));
+    var secondaryColors = false;
+    if (_config.secondaryColors) {
+      secondaryColors = [];
+      var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) *
+        Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
+      var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
+      for (var i = 0; i < colorsNumber; i++) {
+        secondaryColors.push("#" + _intToHex(columnIntUnit * i));
+      }
+      secondaryColors.push("#FFF");
     }
-    secondaryColors.push("#FFF");
 
     Main.loadTemplate("editorColorPicker", {
       primaryColors: primaryColors,

@@ -14,7 +14,8 @@
 
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
   var _container = {};
-  var _undoButton = false, _redoButton = false, _saveButton = false;
+  var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false;
+  var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
   var _toolsConfig = {
     maker: {
       name: "marker",
@@ -89,7 +90,12 @@
       Editor.clear();
     },
     paper: function () {
-      Editor.changePaper();
+
+      _currentPaper = _papers[(_papers.indexOf(_currentPaper) + 1) % _papers.length];
+      _paperButton.classList.remove("paper-squares", "paper-lines", "paper-white");
+      _paperButton.classList.add("paper-" + _papers[(_papers.indexOf(_currentPaper) + 1) % _papers.length]);
+      Editor.changePaper(_currentPaper);
+
     },
     exit: function () {
       Editor.hide();
@@ -197,6 +203,10 @@
       }
       if (_config.tools.indexOf("save") >= 0) {
         _saveButton = _container.querySelector(".cloudnote-editor-tools__tool-save");
+      }
+      if (_config.tools.indexOf("paper") >= 0) {
+        _paperButton = _container.querySelector(".cloudnote-editor-tools__tool-paper");
+        _paperButton.classList.add("paper-squares");
       }
       (_toolsFunctions[_config.tools[0]])();
 

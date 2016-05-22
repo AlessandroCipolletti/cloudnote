@@ -1,14 +1,13 @@
 /* CONTAINER */
 .cloudnote-editor-colorpicker__container {
   background-color: rgba(255, 255, 255, 0.95);
-  border-top: solid 0.05rem gray;
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0rem;
   left: 0rem;
   transition: transform 0.6s;
-  transform: translate3d(0rem, calc(100% - 7.55rem), 0rem); /* 151px */
+  transform: translate3d(0rem, calc(100% - 4.6rem), 0rem); /* 92px */
   z-index: 110;
 }
 .cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-colorpicker__container {
@@ -21,28 +20,28 @@
   position: absolute;
   justify-content: space-between;
   left: 0rem;
-  width: 100%;
+  width: calc(100% - 0.5rem);
 }
 .cloudnote-editor-colorpicker__primary {
   flex-flow: row nowrap;
-  height: 7.5rem; /* 150px */
+  height: 4.5rem; /* 90px */
   top: 0rem;
 }
 .cloudnote-editor-colorpicker__secondary {
   flex-flow: column wrap;
-  top: 7.5rem;  /* 150px */
-  height: calc(100% - 7.5rem); /* 150px */
+  top: 4.5rem;  /* 90px */
+  height: calc(100% - 4.5rem); /* 90px */
 }
 
 /* COLORS */
 .cloudnote-editor-colorpicker__color {
-  width: 4rem;  /* 80px */
-  height: 4rem; /* 80px */
+  width: 2.5rem;  /* 50px */
+  height: 2.5rem; /* 50px */
   border-radius: 50%;
   box-shadow: 0rem -0.05rem 0.15rem 0rem rgba(50, 50, 50, 0.75), inset 0rem 0rem 0.15rem 0rem black;
 }
 .cloudnote-editor-colorpicker__primary .cloudnote-editor-colorpicker__color {
-  margin: 1.75rem 1rem; /* 35px 20px */
+  margin: 1rem 0.25rem; /* 20px 5px */
 }
 .cloudnote-editor-colorpicker__secondary .cloudnote-editor-colorpicker__color {
   margin: 1.2rem; /* 20px */
@@ -60,7 +59,7 @@
 
 /* RANDOM */  /* SHOW HIDE */
 .cloudnote-editor-colorpicker__random-container, .cloudnote-editor-colorpicker__showhide-container {
-  width: 12.5rem; /* 250px */
+  width: 5.5rem; /* 110px */
   height: 100%;
   display: inline-block;
 }
@@ -69,25 +68,20 @@
   background-repeat: no-repeat;
   background-size: contain;
   margin: auto;
+  border-radius: 50%;
 }
 .cloudnote-editor-colorpicker__random {
-  height: 90%;
-  width: 55%;
-  margin-top: 3%;
+  height: 4rem;
+  width: 4rem;
+  background-size: 90%;
+  margin-top: 0.25rem;
+  background-position: 0.2rem 0.2rem ;
   background-image: url("../img/icons/random.png");
 }
 .cloudnote-editor-colorpicker__random.cloudnote-editor-colorpicker__random-locked {
   background-image: url("../img/icons/random-locked.png");
 }
-.cloudnote-editor-colorpicker__random-selected::before {
-  content: '';
-  display: inline-block;
-  width: 90%;
-  height: 90%;
-  margin-left: 0.35rem;
-  margin-top: 0.35rem;
-  border-radius: 50%;
-  border: solid 0rem black;
+.cloudnote-editor-colorpicker__random-selected {
   box-shadow: 0rem 0rem 0.75rem 0rem rgba(0, 0, 0, 1);
 }
 .cloudnote-editor-colorpicker__showhide {
