@@ -16,7 +16,7 @@
   var PI = Math.PI;
   var _lastPosition = false;
   var _geoWatchId = false;
-  var _gpsGlobalStatus = "cloudnote__GPS-ON";
+  var _gpsGlobalStatus = "drawith__GPS-ON";
   var _GEO = navigator.geolocation, _scaleFactor;
 
   var _WGS84 = {
@@ -204,4 +204,4 @@
     coordGps2px: coordGps2px
   });
 
-})(cloudnote);
+})(drawith);

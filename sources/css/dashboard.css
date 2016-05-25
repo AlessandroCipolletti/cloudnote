@@ -1,4 +1,4 @@
-.cloudnote-dashboard__container {
+.drawith-dashboard__container {
   position: absolute;
   left: 0rem;
   width: 100%;
@@ -6,7 +6,7 @@
   display: block;
 }
 
-.cloudnote-dashboard__svg {
+.drawith-dashboard__svg {
   position: absolute;
   top: 0rem;
   left: 0rem;
@@ -14,26 +14,26 @@
   height: 100%;
 }
 
-.cloudnote-dashboard__zoom-label-rect {
+.drawith-dashboard__zoom-label-rect {
   fill: white;
   stroke: #87cefa;
   stroke-width: 3;
   opacity: 0.85;
 }
-.cloudnote-dashboard__zoom-label {
+.drawith-dashboard__zoom-label {
   fill: black;
   font-size: 1.7rem;  /* 34px */
   opacity: 0.7;
 }
 
-.cloudnote-dashboard__showeditor {
+.drawith-dashboard__showeditor {
   position: absolute;
   bottom: 1rem; /* 20px */
   left: 1rem; /* 20px */
   z-index: 50;
 }
 
-.cloudnote-dashboard__spinner {
+.drawith-dashboard__spinner {
   position: absolute;
   bottom: 2rem;
   right: 2rem;
@@ -43,7 +43,7 @@
   z-index: 100;
   background-color: rgba(0, 0, 0, 0.6);
 }
-.cloudnote-dashboard__spinner-image {
+.drawith-dashboard__spinner-image {
   position: absolute;
   width: 60%;
   height: 60%;

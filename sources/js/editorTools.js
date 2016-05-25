@@ -134,11 +134,11 @@
 
   function _selectTool (tool) {
 
-    var selected = _container.querySelector(".cloudnote-editor-tools__tool-selected");
+    var selected = _container.querySelector(".drawith-editor-tools__tool-selected");
     if (selected) {
-      selected.classList.remove("cloudnote-editor-tools__tool-selected");
+      selected.classList.remove("drawith-editor-tools__tool-selected");
     }
-    _container.querySelector(".cloudnote-editor-tools__tool-" + tool).classList.add("cloudnote-editor-tools__tool-selected");
+    _container.querySelector(".drawith-editor-tools__tool-" + tool).classList.add("drawith-editor-tools__tool-selected");
 
   }
 
@@ -146,8 +146,8 @@
 
     var target = e.target;
     if (
-      target.classList.contains("cloudnote-editor-tools__tool") &&
-      target.classList.contains("cloudnote-editor-tools__tool-selected") === false &&
+      target.classList.contains("drawith-editor-tools__tool") &&
+      target.classList.contains("drawith-editor-tools__tool-selected") === false &&
       target.classList.contains("disabled") === false
     ) {
 
@@ -167,11 +167,11 @@
   function _setToolsSide () {
 
     if (_config.toolsSide === "right") {
-      Utils.removeGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
-      Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
+      Utils.removeGlobalStatus("drawith__EDITOR-TOOLS-LEFT");
+      Utils.addGlobalStatus("drawith__EDITOR-TOOLS-RIGHT");
     } else {
-      Utils.removeGlobalStatus("cloudnote__EDITOR-TOOLS-RIGHT");
-      Utils.addGlobalStatus("cloudnote__EDITOR-TOOLS-LEFT");
+      Utils.removeGlobalStatus("drawith__EDITOR-TOOLS-RIGHT");
+      Utils.addGlobalStatus("drawith__EDITOR-TOOLS-LEFT");
     }
 
   }
@@ -196,16 +196,16 @@
       _container = templateDom;
       _container.addEventListener(Param.eventStart, _onTouchStart, true);
       if (_config.tools.indexOf("undo") >= 0) {
-        _undoButton = _container.querySelector(".cloudnote-editor-tools__tool-undo");
+        _undoButton = _container.querySelector(".drawith-editor-tools__tool-undo");
       }
       if (_config.tools.indexOf("redo") >= 0) {
-        _redoButton = _container.querySelector(".cloudnote-editor-tools__tool-redo");
+        _redoButton = _container.querySelector(".drawith-editor-tools__tool-redo");
       }
       if (_config.tools.indexOf("save") >= 0) {
-        _saveButton = _container.querySelector(".cloudnote-editor-tools__tool-save");
+        _saveButton = _container.querySelector(".drawith-editor-tools__tool-save");
       }
       if (_config.tools.indexOf("paper") >= 0) {
-        _paperButton = _container.querySelector(".cloudnote-editor-tools__tool-paper");
+        _paperButton = _container.querySelector(".drawith-editor-tools__tool-paper");
         _paperButton.classList.add("paper-squares");
       }
       (_toolsFunctions[_config.tools[0]])();
@@ -234,4 +234,4 @@
     getToolConfig: getToolConfig
   });
 
-})(cloudnote);
+})(drawith);

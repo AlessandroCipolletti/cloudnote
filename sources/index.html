@@ -5,17 +5,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="google" content="notranslate">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>CloudNote for iPad Pro</title>
+    <title>Drawith.me</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/header.css">
     <script type="text/javascript">
 
-      var cloudnote = {};
-      cloudnote.NAME = "cloudnote";
-      cloudnote.module = function (name, module) {
+      var drawith = {};
+      drawith.NAME = "Drawith.me";
+      drawith.module = function (name, module) {
 
         var modules = name.split(".");
-        var parent = cloudnote;
+        var parent = drawith;
         var i = 0, l = 0;
 
         if (modules[0] === parent.NAME) {
@@ -41,7 +41,7 @@
 
       document.onreadystatechange = function () {
         if (document.readyState === "complete") {
-          cloudnote.Main.init({
+          drawith.Main.init({
             testDebugFalse: false
           });
         }

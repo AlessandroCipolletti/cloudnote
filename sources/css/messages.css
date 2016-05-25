@@ -1,4 +1,4 @@
-.cloudnote-messages__overlay {
+.drawith-messages__overlay {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -10,12 +10,12 @@
   display: none;
   z-index: 750;
 }
-.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__overlay {
+.drawith__MESSAGE-MANDATORY-OPEN .drawith-messages__overlay {
   display: block;
   opacity: 0.3;
 }
 
-.cloudnote-messages__panel {
+.drawith-messages__panel {
   width: auto;
   height: 2.5rem;
   display: block;
@@ -30,7 +30,7 @@
   transform: translateX(-50%) translateY(-110%);
   transition: transform 200ms;
 }
-.cloudnote-messages__panel-text {
+.drawith-messages__panel-text {
   font-size: 1.5rem;
   line-height: 2.5rem;
   height: 2.5rem;
@@ -38,7 +38,7 @@
   margin: auto;
   white-space: nowrap;
 }
-.cloudnote-messages__panel-button-ok, .cloudnote-messages__panel-button-cancel {
+.drawith-messages__panel-button-ok, .drawith-messages__panel-button-cancel {
   border: solid 1px white;
   display: none;
   align-items: center;
@@ -47,23 +47,23 @@
   cursor: pointer;
 }
 
-.cloudnote__MESSAGE-OPEN .cloudnote-messages__panel {
+.drawith__MESSAGE-OPEN .drawith-messages__panel {
   transform: translateX(-50%) translateY(0%);
   z-index: 750;
   border-radius: 0 0 0.7rem 0.7rem;
 }
-.cloudnote__MESSAGE-MANDATORY-OPEN .cloudnote-messages__panel {
+.drawith__MESSAGE-MANDATORY-OPEN .drawith-messages__panel {
   transform: translateX(-50%) translateY(10rem);
   z-index: 1000;
 }
 
 
 /* ALERT*/
-.cloudnote-messages__panel.cloudnote-messages__panel-alert {
+.drawith-messages__panel.drawith-messages__panel-alert {
   height: auto;
   width: 100%;
 }
-.cloudnote-messages__panel-alert {
+.drawith-messages__panel-alert {
   background-color: #eee;
   background-image: url("../img/icons/alert.png");
   display: flex;
@@ -71,52 +71,52 @@
   align-items: center;
   justify-content: space-around;
 }
-.cloudnote-messages__panel-alert .cloudnote-messages__panel-text {
+.drawith-messages__panel-alert .drawith-messages__panel-text {
   color: black;
   max-width: 85%;
   margin: 0rem 2.5%;
 }
-.cloudnote-messages__panel-alert .cloudnote-messages__panel-button-ok {
+.drawith-messages__panel-alert .drawith-messages__panel-button-ok {
   width: 8rem;
   height: 4rem;
   float: right;
   border-color: black;
   display: flex;
 }
-.cloudnote-messages__panel-alert .cloudnote-messages__panel-button-cancel,
-.cloudnote-messages__panel-alert .cloudnote-messages__panel-input {
+.drawith-messages__panel-alert .drawith-messages__panel-button-cancel,
+.drawith-messages__panel-alert .drawith-messages__panel-input {
   display: none;
 }
 
 /* INFO manca icona */
-.cloudnote-messages__panel-info {
+.drawith-messages__panel-info {
   background-color: #4D82D6;
   background-image: url("../img/icons/info.png");
 }
-.cloudnote-messages__panel-info .cloudnote-messages__panel-button-ok,
-.cloudnote-messages__panel-info .cloudnote-messages__panel-button-cancel,
-.cloudnote-messages__panel-info .cloudnote-messages__panel-input {
+.drawith-messages__panel-info .drawith-messages__panel-button-ok,
+.drawith-messages__panel-info .drawith-messages__panel-button-cancel,
+.drawith-messages__panel-info .drawith-messages__panel-input {
   display: none;
 }
 
 /* SUCCESS manca icona */
-.cloudnote-messages__panel-success {
+.drawith-messages__panel-success {
   background-color: #57BF57;
   background-image: url("../img/icons/success.png");
 }
-.cloudnote-messages__panel-success .cloudnote-messages__panel-button-ok,
-.cloudnote-messages__panel-success .cloudnote-messages__panel-button-cancel,
-.cloudnote-messages__panel-success .cloudnote-messages__panel-input {
+.drawith-messages__panel-success .drawith-messages__panel-button-ok,
+.drawith-messages__panel-success .drawith-messages__panel-button-cancel,
+.drawith-messages__panel-success .drawith-messages__panel-input {
   display: none;
 }
 
 /* ERROR manca icona */
-.cloudnote-messages__panel-error {
+.drawith-messages__panel-error {
   background-color: #E1715B;
   background-image: url("../img/icons/error.png");
 }
-.cloudnote-messages__panel-error .cloudnote-messages__panel-button-ok,
-.cloudnote-messages__panel-error .cloudnote-messages__panel-button-cancel,
-.cloudnote-messages__panel-error .cloudnote-messages__panel-input {
+.drawith-messages__panel-error .drawith-messages__panel-button-ok,
+.drawith-messages__panel-error .drawith-messages__panel-button-cancel,
+.drawith-messages__panel-error .drawith-messages__panel-input {
   display: none;
 }

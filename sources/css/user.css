@@ -1,11 +1,11 @@
-.cloudnote-user__login-panel-container {
+.drawith-user__login-panel-container {
   position: absolute;
   width: 100%;
   height: 100%;
   top: 0rem;
   left: 0rem;
 }
-.cloudnote-user__login-panel-overlay {
+.drawith-user__login-panel-overlay {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -15,7 +15,7 @@
   background-color: white;
   z-index: 10;
 }
-.cloudnote-user__login-panel {
+.drawith-user__login-panel {
   width: 45rem; /* 900px */
   height: 40rem;  /* 800px */
   border: solid 0.1rem gray;
@@ -27,7 +27,7 @@
   margin-top: -20rem; /* 400px */
   z-index: 50;
 }
-.cloudnote-user__login-panel-logo {
+.drawith-user__login-panel-logo {
   width: 40rem; /* 800px */
   height: 7.5rem; /* 150px */
   margin: 3.5rem auto;  /* 70px */
@@ -37,14 +37,14 @@
   background-position: center;
 }
 
-.cloudnote-user__login-panel-facebook {
+.drawith-user__login-panel-facebook {
   width: 23.6rem; /* 472px */
   height: 4.4rem; /* 88px */
   margin: 2.5rem auto;  /* 50px */
   background-image: url("../img/fb.png");
 }
 
-.cloudnote-user__header-button {
+.drawith-user__header-button {
   border-radius: 50%;
   background-image: url("../img/user.png");
   background-size: contain;

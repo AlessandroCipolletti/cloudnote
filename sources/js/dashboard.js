@@ -475,7 +475,7 @@
     if ((!e.button) && (!e.touches || e.touches.length === 1) && _touchDown === false) {
 
       _touchDown = true;
-      _svg.classList.add("cloudnote-dashboard__dragging");
+      _svg.classList.add("drawith-dashboard__dragging");
       _cursorX = _clickX = Utils.getEventCoordX(e);
       _cursorY = _clickY = Utils.getEventCoordY(e, Param.headerSize);
       _imageGroup.matrix = _imageGroup.tag.getCTM();
@@ -521,7 +521,7 @@
       }
       _cursorX = _cursorY = 0;
       _touchDown = false;
-      _svg.classList.remove("cloudnote-dashboard__dragging");
+      _svg.classList.remove("drawith-dashboard__dragging");
 
     }
 
@@ -601,10 +601,10 @@
 
       _container = templateDom;
       _svg = templateDom.querySelector("svg");
-      _zoomRect = templateDom.querySelector(".cloudnote-dashboard__zoom-label-rect");
-      _zoomLabel = templateDom.querySelector(".cloudnote-dashboard__zoom-label");
-      _showEditor = templateDom.querySelector(".cloudnote-dashboard__showeditor");
-      _spinner = templateDom.querySelector(".cloudnote-dashboard__spinner");
+      _zoomRect = templateDom.querySelector(".drawith-dashboard__zoom-label-rect");
+      _zoomLabel = templateDom.querySelector(".drawith-dashboard__zoom-label");
+      _showEditor = templateDom.querySelector(".drawith-dashboard__showeditor");
+      _spinner = templateDom.querySelector(".drawith-dashboard__spinner");
 
       _showEditor.addEventListener(Param.eventStart, _openEditor);
       _svg.addEventListener(Param.eventStart, _onTouchStart, true);
@@ -658,4 +658,4 @@
     onSocketMessage: onSocketMessage
   });
 
-})(cloudnote);
+})(drawith);

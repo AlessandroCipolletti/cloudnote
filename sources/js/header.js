@@ -15,7 +15,7 @@
 
   function addButton (button, side) {
 
-    button.classList.add("cloudnote-header__button");
+    button.classList.add("drawith-header__button");
     if (side === "right") {
       button.style.right = _rightCounter * _buttonWidth * Param.pixelRatio + "px";
       _rightCounter++;
@@ -33,9 +33,9 @@
 
   function _initDom () {
 
-    _container = Utils.createDom("cloudnote-header__container");
+    _container = Utils.createDom("drawith-header__container");
     var logo = document.createElement("div");
-    logo.classList.add("cloudnote-header__logo");
+    logo.classList.add("drawith-header__logo");
     _container.appendChild(logo);
     Param.container.appendChild(_container);
     Main.addRotationHandler(_onRotate);
@@ -58,4 +58,4 @@
     addButton: addButton
   });
 
-})(cloudnote);
+})(drawith);

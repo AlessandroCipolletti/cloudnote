@@ -84,4 +84,4 @@
     isConnected: isConnected
   });
 
-})(cloudnote);
+})(drawith);

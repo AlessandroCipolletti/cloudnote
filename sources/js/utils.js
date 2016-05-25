@@ -254,16 +254,16 @@
 
   function _initDom () {
 
-    _overlaySpinner = Utils.createDom("cloudnote__overlay-spinner", "displayNone", "fadeOut");
+    _overlaySpinner = Utils.createDom("drawith__overlay-spinner", "displayNone", "fadeOut");
     var spinner = document.createElement("img");
-    spinner.classList.add("cloudnote__overlay-spinner-image");
+    spinner.classList.add("drawith__overlay-spinner-image");
     spinner.src = "img/spinner.gif";
     _overlaySpinner.appendChild(spinner);
     _overlaySpinner.addEventListener(Param.eventStart, function (e) {
       e.preventDefault();
     });
     Param.container.appendChild(_overlaySpinner);
-    _popupContainer = Utils.createDom("cloudnote__popup-container", "popup");
+    _popupContainer = Utils.createDom("drawith__popup-container", "popup");
 
   }
 
@@ -286,4 +286,4 @@
 
   app.module("Utils", Utils);
 
-})(cloudnote);
+})(drawith);

@@ -43,4 +43,4 @@
     init: init
   });
 
-})(cloudnote);
+})(drawith);

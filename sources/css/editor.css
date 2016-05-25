@@ -1,43 +1,43 @@
-.cloudnote-editor__container {
+.drawith-editor__container {
   position: absolute;
   left: 0rem;
   width: 100%;
   z-index: 50;
 }
 
-.cloudnote-editor__canvas {
+.drawith-editor__canvas {
   position: absolute;
   box-shadow: 0px 0px 15px rgba(0, 50, 50, 0.7);
   top: 0rem;
   z-index: 60;
 }
 
-.cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor__canvas {
+.drawith__EDITOR-TOOLS-RIGHT .drawith-editor__canvas {
   left: 0rem;
 }
 
-.cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor__canvas {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor__canvas {
   right: 0rem;
 }
 
-.cloudnote-editor__canvas.paper-white {
+.drawith-editor__canvas.paper-white {
   background-image: url("../img/paper/white.png");
 }
-.cloudnote-editor__canvas.paper-squares {
+.drawith-editor__canvas.paper-squares {
   background-image: url("../img/paper/squares.png");
 }
-.cloudnote-editor__canvas.paper-lines {
+.drawith-editor__canvas.paper-lines {
   background-image: url("../img/paper/lines.png");
 }
 
-.cloudnote-editor__tool-cursor {
+.drawith-editor__tool-cursor {
   border: solid 1px gray;
   border-radius: 50%;
   position: absolute;
   z-index: 70;
 }
 
-.cloudnote-editor__coworking-popup {
+.drawith-editor__coworking-popup {
   width: 30rem;
   height: 15rem;
   position: absolute;
@@ -54,16 +54,16 @@
   align-items: center;
   z-index: 500;
 }
-.cloudnote-editor__coworking-popup p {
+.drawith-editor__coworking-popup p {
   font-size: 1.5rem;
 }
-.cloudnote-editor__coworking-popup input {
+.drawith-editor__coworking-popup input {
   font-size: 2rem;
   height: 2.5rem;
   line-height: 2.5rem;
   text-align: center;
 }
-.cloudnote-editor__coworking-popup h1 {
+.drawith-editor__coworking-popup h1 {
   font-family: Arial, Helvetica, sans-serif !important;
   font-weight: 100;
 }

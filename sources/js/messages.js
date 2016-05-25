@@ -14,16 +14,16 @@
   var _isOpen = false, _autoCloseTimeout = false;
 
   function _setType (type) {
-    _dom.className = "cloudnote-messages__panel cloudnote-messages__panel-" + type;
+    _dom.className = "drawith-messages__panel drawith-messages__panel-" + type;
   }
 
   function _show (mandatory) {
 
     _isOpen = true;
     if (mandatory) {
-      Utils.addGlobalStatus("cloudnote__MESSAGE-MANDATORY-OPEN");
+      Utils.addGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
     } else {
-      Utils.addGlobalStatus("cloudnote__MESSAGE-OPEN");
+      Utils.addGlobalStatus("drawith__MESSAGE-OPEN");
       _autoCloseTimeout = setTimeout(_hide, _config.autoCloseDelay);
     }
 
@@ -32,8 +32,8 @@
   function _hide () {
 
     _isOpen = false;
-    Utils.removeGlobalStatus("cloudnote__MESSAGE-OPEN");
-    Utils.removeGlobalStatus("cloudnote__MESSAGE-MANDATORY-OPEN");
+    Utils.removeGlobalStatus("drawith__MESSAGE-OPEN");
+    Utils.removeGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
     if (_autoCloseTimeout) {
       clearTimeout(_autoCloseTimeout);
       _autoCloseTimeout = false;
@@ -126,11 +126,11 @@
       labelCancel: "Cancel"
     }, Param.container, function (templateDom) {
 
-      _overlay = document.querySelector(".cloudnote-messages__overlay");
-      _dom = document.querySelector(".cloudnote-messages__panel");
-      _message = _dom.querySelector(".cloudnote-messages__panel-text");
-      _confirmButton = _dom.querySelector(".cloudnote-messages__panel-button-ok");
-      _cancelButton = _dom.querySelector(".cloudnote-messages__panel-button-cancel");
+      _overlay = document.querySelector(".drawith-messages__overlay");
+      _dom = document.querySelector(".drawith-messages__panel");
+      _message = _dom.querySelector(".drawith-messages__panel-text");
+      _confirmButton = _dom.querySelector(".drawith-messages__panel-button-ok");
+      _cancelButton = _dom.querySelector(".drawith-messages__panel-button-cancel");
 
       Main.addRotationHandler(_onRotate);
 
@@ -158,4 +158,4 @@
     input: input
   });
 
-})(cloudnote);
+})(drawith);

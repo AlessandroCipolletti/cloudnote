@@ -66,7 +66,7 @@
       */
 
       Utils.fadeInElements(_overlay);
-      _tooltip.classList.add("cloudnote-dashboard-tooltip__panel-visible");
+      _tooltip.classList.add("drawith-dashboard-tooltip__panel-visible");
 
     }
 
@@ -76,7 +76,7 @@
 
     _selectedId = 0;
     Utils.fadeOutElements(_overlay);
-    _tooltip.classList.remove("cloudnote-dashboard-tooltip__panel-visible");
+    _tooltip.classList.remove("drawith-dashboard-tooltip__panel-visible");
 
   }
 
@@ -87,28 +87,28 @@
   function _initDom (moduleContainer) {
 
     if (_config.tooltipSide === "right") {
-      Utils.addGlobalStatus("cloudnote__DASHBOARD-TOOLTIP-RIGHT");
+      Utils.addGlobalStatus("drawith__DASHBOARD-TOOLTIP-RIGHT");
     } else {
-      Utils.addGlobalStatus("cloudnote__DASHBOARD-TOOLTIP-LEFT");
+      Utils.addGlobalStatus("drawith__DASHBOARD-TOOLTIP-LEFT");
     }
 
     Main.loadTemplate("dashboardTooltip", {
       labelShare: "Share"
     }, moduleContainer, function (templateDom) {
 
-      _overlay = document.querySelector(".cloudnote-dashboard-tooltip__overlay");
-      _tooltip = document.querySelector(".cloudnote-dashboard-tooltip__panel");
-      _previewImage = document.querySelector(".cloudnote-dashboard-tooltip__preview");
-      _likeButton = document.querySelector(".cloudnote-dashboard-tooltip__info-like-button");
-      _likeText = document.querySelector(".cloudnote-dashboard-tooltip__info-like-text");
-      _commentText = document.querySelector(".cloudnote-dashboard-tooltip__info-comment-text");
-      _userImage = document.querySelector(".cloudnote-dashboard-tooltip__info-user-image");
-      _userName = document.querySelector(".cloudnote-dashboard-tooltip__info-user-name");
-      _drawPosition = document.querySelector(".cloudnote-dashboard-tooltip__info-position");
-      document.querySelector(".cloudnote-dashboard-tooltip__info-boutique").addEventListener(Param.eventStart, _onBoutiqueClick);
-      document.querySelector(".cloudnote-dashboard-tooltip__info-comment").addEventListener(Param.eventStart, _onCommentClick);
-      document.querySelector(".cloudnote-dashboard-tooltip__info-share").addEventListener(Param.eventStart, _onShareClick);
-      document.querySelector(".cloudnote-dashboard-tooltip__info-user-follow").addEventListener(Param.eventStart, _onFollowClick);
+      _overlay = document.querySelector(".drawith-dashboard-tooltip__overlay");
+      _tooltip = document.querySelector(".drawith-dashboard-tooltip__panel");
+      _previewImage = document.querySelector(".drawith-dashboard-tooltip__preview");
+      _likeButton = document.querySelector(".drawith-dashboard-tooltip__info-like-button");
+      _likeText = document.querySelector(".drawith-dashboard-tooltip__info-like-text");
+      _commentText = document.querySelector(".drawith-dashboard-tooltip__info-comment-text");
+      _userImage = document.querySelector(".drawith-dashboard-tooltip__info-user-image");
+      _userName = document.querySelector(".drawith-dashboard-tooltip__info-user-name");
+      _drawPosition = document.querySelector(".drawith-dashboard-tooltip__info-position");
+      document.querySelector(".drawith-dashboard-tooltip__info-boutique").addEventListener(Param.eventStart, _onBoutiqueClick);
+      document.querySelector(".drawith-dashboard-tooltip__info-comment").addEventListener(Param.eventStart, _onCommentClick);
+      document.querySelector(".drawith-dashboard-tooltip__info-share").addEventListener(Param.eventStart, _onShareClick);
+      document.querySelector(".drawith-dashboard-tooltip__info-user-follow").addEventListener(Param.eventStart, _onFollowClick);
       _overlay.addEventListener(Param.eventStart, hide);
       _likeButton.addEventListener(Param.eventStart, _onLikeClick);
       _drawPosition.addEventListener(Param.eventStart, _onPositionClick);
@@ -138,4 +138,4 @@
     hide: hide
   });
 
-})(cloudnote);
+})(drawith);

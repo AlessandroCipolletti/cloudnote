@@ -52,7 +52,7 @@
   function _initDom () {
 
     _container = document.createElement("div");
-    _container.classList.add("cloudnote__container");
+    _container.classList.add("drawith__container");
     document.body.appendChild(_container);
     app.Param.container = _container;
     window.addEventListener(app.Param.eventResize, _onRotate, false);
@@ -147,4 +147,4 @@
     addRotationHandler: addRotationHandler
   });
 
-})(cloudnote);
+})(drawith);

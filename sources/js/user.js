@@ -164,15 +164,15 @@
 
   function _initDom () {
 
-    _headerUserButton = Utils.createDom("cloudnote-user__header-button");
+    _headerUserButton = Utils.createDom("drawith-user__header-button");
     _headerUserButton.addEventListener(Param.eventStart, _headerButtonClick);
     Header.addButton(_headerUserButton, "right");
 
     Main.loadTemplate("user", {}, Param.container, function (templateDom) {
 
       _loginPanel = templateDom;
-      _facebookLoginButton = templateDom.querySelector(".cloudnote-user__login-panel-facebook");
-      templateDom.querySelector(".cloudnote-user__login-panel-overlay").addEventListener(Param.eventStart, _hideLogin);
+      _facebookLoginButton = templateDom.querySelector(".drawith-user__login-panel-facebook");
+      templateDom.querySelector(".drawith-user__login-panel-overlay").addEventListener(Param.eventStart, _hideLogin);
       Main.addRotationHandler(_onRotate);
       _facebook.init();
 
@@ -199,4 +199,4 @@
     getUserInfo: getUserInfo
   });
 
-})(cloudnote);
+})(drawith);

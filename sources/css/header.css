@@ -1,4 +1,4 @@
-.cloudnote-header__container {
+.drawith-header__container {
   position: absolute;
   width: 100%;
   height: 5rem; /* 100px */
@@ -12,7 +12,7 @@
   display: flex;
 }
 
-.cloudnote-header__logo {
+.drawith-header__logo {
   height: 100%;
   width: 25rem; /* 500px */
   margin: auto;
@@ -22,7 +22,7 @@
   background-repeat: no-repeat;
 }
 
-.cloudnote-header__button {
+.drawith-header__button {
   width: 4rem;  /* 80px */
   height: 4rem; /* 80px */
   margin: 0.5rem 1.25rem; /* 10px 25px */

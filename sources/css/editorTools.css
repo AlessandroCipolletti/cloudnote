@@ -1,4 +1,4 @@
-.cloudnote-editor-tools__container {
+.drawith-editor-tools__container {
   position: absolute;
   top: 0rem;
   width: 4.5rem;  /* 90px */
@@ -12,20 +12,20 @@
   padding-top: 0.5rem;
 }
 
-.cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__container {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__container {
   left: 0rem;
 }
-.cloudnote__EDITOR-TOOLS-LEFT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
+.drawith__EDITOR-TOOLS-LEFT.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-tools__container {
   transform: translate3d(-4.5rem, 0rem, 0rem); /* 90px */
 }
-.cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__container {
+.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__container {
   right: 0rem;
 }
-.cloudnote__EDITOR-TOOLS-RIGHT.cloudnote__EDITOR-COLORPICKER-OPEN .cloudnote-editor-tools__container {
+.drawith__EDITOR-TOOLS-RIGHT.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-tools__container {
   transform: translate3d(4.5rem, 0rem, 0rem);  /* 90px */
 }
 
-.cloudnote-editor-tools__tool {
+.drawith-editor-tools__tool {
   width: 4.1rem;  /* 82px */
   height: 4rem; /* 80px */
   margin: 0.3rem 0; /* 6px */
@@ -35,64 +35,64 @@
   border-right: solid 0.2rem transparent;
   border-left: solid 0.2rem transparent;
 }
-.cloudnote__EDITOR-TOOLS-RIGHT .cloudnote-editor-tools__tool-selected {
+.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-selected {
   border-right: solid 0.2rem transparent;
   border-left: solid 0.2rem gray;
 }
-.cloudnote__EDITOR-TOOLS-LEFT .cloudnote-editor-tools__tool-selected {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__tool-selected {
   border-right: solid 0.2rem gray;
   border-left: solid 0.2rem transparent;
 }
 
-.cloudnote-editor-tools__tool-marker {
+.drawith-editor-tools__tool-marker {
   background-image: url("../img/icons/marker.png");
 }
-.cloudnote-editor-tools__tool-pen {
+.drawith-editor-tools__tool-pen {
   background-image: url("../img/icons/pen.png");
 }
-.cloudnote-editor-tools__tool-pencil {
+.drawith-editor-tools__tool-pencil {
   background-image: url("../img/icons/pencil.png");
 }
-.cloudnote-editor-tools__tool-eraser {
+.drawith-editor-tools__tool-eraser {
   background-image: url("../img/icons/eraser.png");
 }
-.cloudnote-editor-tools__tool-undo {
+.drawith-editor-tools__tool-undo {
   background-image: url("../img/icons/undo.png");
 }
-.cloudnote-editor-tools__tool-redo {
+.drawith-editor-tools__tool-redo {
   background-image: url("../img/icons/redo.png");
 }
-.cloudnote-editor-tools__tool-coworkingStart {
+.drawith-editor-tools__tool-coworkingStart {
   background-image: url("../img/icons/coworkingStart.png");
 }
-.cloudnote-editor-tools__tool-coworkingStop {
+.drawith-editor-tools__tool-coworkingStop {
   background-image: url("../img/icons/coworkingStop.png");
   display: none;
 }
-.cloudnote-editor-tools__tool-save {
+.drawith-editor-tools__tool-save {
   background-image: url("../img/icons/save.png");
 }
-.cloudnote-editor-tools__tool-clear {
+.drawith-editor-tools__tool-clear {
   background-image: url("../img/icons/clear.png");
 }
 
-.cloudnote-editor-tools__tool-paper.paper-white {
+.drawith-editor-tools__tool-paper.paper-white {
   background-image: url("../img/icons/paper_white.png");
 }
-.cloudnote-editor-tools__tool-paper.paper-squares {
+.drawith-editor-tools__tool-paper.paper-squares {
   background-image: url("../img/icons/paper_squares.png");
 }
-.cloudnote-editor-tools__tool-paper.paper-lines {
+.drawith-editor-tools__tool-paper.paper-lines {
   background-image: url("../img/icons/paper_lines.png");
 }
 
-.cloudnote-editor-tools__tool-exit {
+.drawith-editor-tools__tool-exit {
   background-image: url("../img/icons/exit.png");
 }
 
-.cloudnote__EDITOR-COWORKING .cloudnote-editor-tools__tool-coworkingStop {
+.drawith__EDITOR-COWORKING .drawith-editor-tools__tool-coworkingStop {
   display: block;
 }
-.cloudnote__EDITOR-COWORKING .cloudnote-editor-tools__tool-coworkingStart {
+.drawith__EDITOR-COWORKING .drawith-editor-tools__tool-coworkingStart {
   display: none;
 }

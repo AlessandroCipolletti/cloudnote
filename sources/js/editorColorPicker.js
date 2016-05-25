@@ -45,13 +45,13 @@
 
   function _selectColor (target) {
 
-    _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-selected");
-    _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-locked");
-    var selected = _container.querySelector(".cloudnote-editor-colorpicker__color-selected");
+    _randomButtom.classList.remove("drawith-editor-colorpicker__random-selected");
+    _randomButtom.classList.remove("drawith-editor-colorpicker__random-locked");
+    var selected = _container.querySelector(".drawith-editor-colorpicker__color-selected");
     if (selected) {
-      selected.classList.remove("cloudnote-editor-colorpicker__color-selected");
+      selected.classList.remove("drawith-editor-colorpicker__color-selected");
     }
-    target.classList.add("cloudnote-editor-colorpicker__color-selected");
+    target.classList.add("drawith-editor-colorpicker__color-selected");
     _selectedValue = target.getAttribute("data-color");
     if (_isOpen) {
       _hide();
@@ -64,18 +64,18 @@
 
   function _selectRandom (last) {
 
-    var selected = _container.querySelector(".cloudnote-editor-colorpicker__color-selected");
+    var selected = _container.querySelector(".drawith-editor-colorpicker__color-selected");
     if (selected) {
-      selected.classList.remove("cloudnote-editor-colorpicker__color-selected");
+      selected.classList.remove("drawith-editor-colorpicker__color-selected");
     }
     if (last) {
-      _randomButtom.classList.add("cloudnote-editor-colorpicker__random-locked");
+      _randomButtom.classList.add("drawith-editor-colorpicker__random-locked");
       _selectedValue = "last-random";
     } else {
-      _randomButtom.classList.remove("cloudnote-editor-colorpicker__random-locked");
+      _randomButtom.classList.remove("drawith-editor-colorpicker__random-locked");
       _selectedValue = "random";
     }
-    _randomButtom.classList.add("cloudnote-editor-colorpicker__random-selected");
+    _randomButtom.classList.add("drawith-editor-colorpicker__random-selected");
     if (_isOpen) {
       _hide();
     }
@@ -88,14 +88,14 @@
 
   function _show () {
 
-    Utils.addGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
+    Utils.addGlobalStatus("drawith__EDITOR-COLORPICKER-OPEN");
     _isOpen = true;
 
   }
 
   function _hide () {
 
-    Utils.removeGlobalStatus("cloudnote__EDITOR-COLORPICKER-OPEN");
+    Utils.removeGlobalStatus("drawith__EDITOR-COLORPICKER-OPEN");
     _isOpen = false;
 
   }
@@ -104,13 +104,13 @@
 
     if (e.type.indexOf("mouse") >= 0 && e.button > 0) return;
     var target = e.target;
-    if (target.classList.contains("cloudnote-editor-colorpicker__color")) {
-      if (target.classList.contains("cloudnote-editor-colorpicker__color-selected") === false) {
+    if (target.classList.contains("drawith-editor-colorpicker__color")) {
+      if (target.classList.contains("drawith-editor-colorpicker__color-selected") === false) {
         _selectColor(target);
       }
-    } else if (target.classList.contains("cloudnote-editor-colorpicker__random")) {
+    } else if (target.classList.contains("drawith-editor-colorpicker__random")) {
       _selectRandom(_selectedValue === "random");
-    } else if (target.classList.contains("cloudnote-editor-colorpicker__showhide")) {
+    } else if (target.classList.contains("drawith-editor-colorpicker__showhide")) {
       if (_isOpen) {
         _hide();
       } else {
@@ -147,7 +147,7 @@
     }, moduleContainer, function (templateDom) {
 
       _container = templateDom;
-      _randomButtom = _container.querySelector(".cloudnote-editor-colorpicker__random");
+      _randomButtom = _container.querySelector(".drawith-editor-colorpicker__random");
       _container.addEventListener(Param.eventStart, _onTouchStart, true);
 
     });
@@ -172,4 +172,4 @@
     init: init
   });
 
-})(cloudnote);
+})(drawith);

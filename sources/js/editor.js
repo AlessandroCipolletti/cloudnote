@@ -96,7 +96,7 @@
 
     _coworking = false;
     Messages.error("L'altro utente si è disconnesso");
-    Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
+    Utils.removeGlobalStatus("drawith__EDITOR-COWORKING");
 
   }
 
@@ -118,7 +118,7 @@
     _coworkingIdText.value = "";
     _coworkingIdText.blur();
     Messages.success("Connessione stabilita");
-    Utils.addGlobalStatus("cloudnote__EDITOR-COWORKING");
+    Utils.addGlobalStatus("drawith__EDITOR-COWORKING");
     _coworking = true;
 
   }
@@ -136,7 +136,7 @@
   function stopCoworking () {
 
     _coworking = false;
-    Utils.removeGlobalStatus("cloudnote__EDITOR-COWORKING");
+    Utils.removeGlobalStatus("drawith__EDITOR-COWORKING");
     Socket.emit("editor coworking stop", false);
     Messages.success("Connessione chiusa");
 
@@ -239,14 +239,14 @@
 
   function show () {
 
-    Utils.addGlobalStatus("cloudnote__EDITOR-OPEN");
+    Utils.addGlobalStatus("drawith__EDITOR-OPEN");
     Utils.fadeInElements(_container);
 
   }
 
   function hide () {
 
-    Utils.removeGlobalStatus("cloudnote__EDITOR-OPEN");
+    Utils.removeGlobalStatus("drawith__EDITOR-OPEN");
     Utils.fadeOutElements(_container);
 
   }
@@ -741,14 +741,14 @@
     }, Param.container, function (templateDom) {
 
       _container = templateDom;
-      _canvas = templateDom.querySelector(".cloudnote-editor__canvas");
+      _canvas = templateDom.querySelector(".drawith-editor__canvas");
       _context = _canvas.getContext("2d");
       _canvasCoworking = document.createElement("canvas");
       _contextCoworking = _canvasCoworking.getContext("2d");
-      _toolCursor = templateDom.querySelector(".cloudnote-editor__tool-cursor");
-      _popupCoworking = templateDom.querySelector(".cloudnote-editor__coworking-popup");
-      _coworkingIdText = templateDom.querySelector(".cloudnote-editor__coworking-popup input");
-      _coworkingIdLabel = templateDom.querySelector(".cloudnote-editor__coworking-popup h1");
+      _toolCursor = templateDom.querySelector(".drawith-editor__tool-cursor");
+      _popupCoworking = templateDom.querySelector(".drawith-editor__coworking-popup");
+      _coworkingIdText = templateDom.querySelector(".drawith-editor__coworking-popup input");
+      _coworkingIdLabel = templateDom.querySelector(".drawith-editor__coworking-popup h1");
       _coworkingIdText.addEventListener("input", function (e) {
         this.value = this.value.replace(/[^a-z0-9]/gi, "");
       });
@@ -829,4 +829,4 @@
     stopCoworking: stopCoworking
   });
 
-})(cloudnote);
+})(drawith);
