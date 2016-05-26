@@ -4,7 +4,6 @@ var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
-
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectID;
 
@@ -19,8 +18,6 @@ if (DEV) {
   var port = 4000;
   var log = function () {};
 }
-
-
 
 MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
@@ -50,13 +47,12 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
     });
   };
 
-
-  function _onUserLoginQueryError (error) {
+  function _onUserLoginQueryError(error) {
     console.log("User query error: " + error + " \n");
     socket.emit("user login", "error");
   }
 
-  function _arrayFilterOnlyUnique (value, index, self) {
+  function _arrayFilterOnlyUnique(value, index, self) {
     return self.indexOf(value) === index;
   }
 
@@ -78,7 +74,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
         socket.broadcast.to(roomId).emit("editor", msgClose);
         sockets = io.sockets.adapter.rooms[roomId].sockets;
         socketsIds = Object.keys(sockets);
-        for (i = socketsIds.length; i--; ) {
+        for (i = socketsIds.length; i--;) {
           if (sockets[socketsIds[i]] === true) {
             s = io.sockets.connected[socketsIds[i]];
             s.leave(roomId);
@@ -107,7 +103,6 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
   }
   */
 
-
   var _roomsIds = [];
   var _roomIdsOwners = [];
 
@@ -120,7 +115,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     return function () {
       do {
-        id = (MATH.floor(MATH.random() * tot) + min).toString(36);
+        id = (MATH.floor(MATH.random() * tot) + min).toString(36).toUpperCase();
       } while (_roomsIds.indexOf(id) >= 0);
       return id;
 
@@ -132,8 +127,7 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     log("Connection: " + socket.id);
 
-
-    socket.on("disconnect", (function() {
+    socket.on("disconnect", (function () {
 
       var index = 0;
 
@@ -149,10 +143,9 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     })());
 
-    socket.on("error", function() {
+    socket.on("error", function () {
       console.log("Socket error: " + socket.id);
     });
-
 
     socket.emittedDraws = [];
     socket.roomId = _generateRoomID();
@@ -163,7 +156,6 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
       type: "roomId",
       id: socket.roomId
     }));
-
 
     socket.on("editor coworking request", (function () {
 
@@ -208,27 +200,25 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     })());
 
-
     socket.on("editor coworking stop", _logout.bind({}, socket));
-
 
     socket.on("user login", function (data) {
 
       var user = JSON.parse(data);
-      if (user.id) {  // aggiunta di un social ad un utente già esistente, o semplice login
+      if (user.id) { // aggiunta di un social ad un utente già esistente, o semplice login
         // TODO aggiorno i dati che ho ricevuto a db
         socket.emit("user login", JSON.stringify({
           id: user.id,
           "new": false
         }));
         log("new social for user " + user.id);
-      } else {    // primo login per la sessione corrente - TODO Google
+      } else { // primo login per la sessione corrente - TODO Google
         if (user.fb.id || user.google.id) {
           MongoFind(
             Users.find({
               "fb.id": user.fb.id
             }).limit(1),
-            function ( userDb) {
+            function (userDb) {
               if (userDb) {
                 socket.emit("user login", JSON.stringify({
                   id: userDb._id,
@@ -252,11 +242,10 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     });
 
-
     socket.on("editor save", function (data) {
 
       var draw = JSON.parse(data);
-      Draws.insert(draw, function(err, item) {
+      Draws.insert(draw, function (err, item) {
         log("new draw from " + socket.id + ". id: ", item._id);
         socket.emit("editor", JSON.stringify({
           type: "save",
@@ -267,7 +256,6 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     });
 
-
     socket.on("editor steps", function (data) {
 
       socket.broadcast.to(socket.connectedRoom).emit("editor", data);
@@ -275,14 +263,13 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     });
 
-
     socket.on("dashboard drag", function (data) {
 
       data = JSON.parse(data);
       var _ids = data.ids;
       var ids = [];
 
-      for (var i = _ids.length; i--; ) {
+      for (var i = _ids.length; i--;) {
         if (_ids[i].length) {
           ids.push(ObjectId(_ids[i]));
         }
@@ -291,11 +278,21 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
       MongoFind(
         Draws.find({
-          _id    : { $nin : ids },
-          x    : { $lt : data.area.maxX },
-          y    : { $lt : data.area.maxY },
-          r    : { $gt : data.area.minX },
-          b    : { $gt : data.area.minY }
+          _id: {
+            $nin: ids
+          },
+          x: {
+            $lt: data.area.maxX
+          },
+          y: {
+            $lt: data.area.maxY
+          },
+          r: {
+            $gt: data.area.minX
+          },
+          b: {
+            $gt: data.area.minY
+          }
         }).limit(100),
         function (draws) {
           if (draws) {
@@ -337,13 +334,10 @@ MongoClient.connect("mongodb://localhost:27017/" + db, function (err, db) {
 
     });
 
-
   });
 
-
-  http.listen(port, function() {
-    console.log("listening " + (DEV ? "DEV": "PROD") +" on *:" + port + " \n");
+  http.listen(port, function () {
+    console.log("listening " + (DEV ? "DEV" : "PROD") + " on *:" + port + " \n");
   });
-
 
 });

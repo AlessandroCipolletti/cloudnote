@@ -62,6 +62,8 @@
   height: 2.5rem;
   line-height: 2.5rem;
   text-align: center;
+  text-transform: uppercase;
+  font-family: sans-serif;
 }
 .drawith-editor__coworking-popup h1 {
   font-family: Arial, Helvetica, sans-serif !important;

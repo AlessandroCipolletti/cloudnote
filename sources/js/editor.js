@@ -78,7 +78,7 @@
       if (_coworkingIdText.value.length === 0) {
         return;
       }
-      var roomId = _coworkingIdText.value;
+      var roomId = _coworkingIdText.value.toUpperCase();
       if (roomId.length > 3) {
         Socket.emit("editor coworking request", {
           roomId: roomId
