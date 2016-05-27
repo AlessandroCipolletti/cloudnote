@@ -465,15 +465,27 @@
 
   }
 
-  function _updateTouchForce () {
+  function _updateTouchForce (e) {
 
-    _touchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
-    if (_touchForce > 0) {
-      _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
-    } else {
-      _touchForce = 0.5;
-      _frameUpdateForce = false;
+    if (e) {
+      _touchEventObject = e.touches[0];
     }
+
+    _touchEventObject.force = _touchEventObject.force || 0;
+
+    // if (Param.supportTouch) {
+    //   if (_frameUpdateForce === false) {
+    //     _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
+    //   }
+    //   if (touchEventObject.force > 0) {
+    //
+    //   }
+    // } else {
+    //   _touchForce = 0.5;
+    // }
+
+    console.log(_touchEventObject.force);
+    _touchForce = _touchEventObject.force || 0.5;
 
   }
 
@@ -526,7 +538,6 @@
     var x = params.x, y = params.y;
     _checkCoord(x, y);
     context.globalCompositeOperation = tool.globalCompositeOperation;
-    console.log(context.globalCompositeOperation);
     context.lineWidth = tool.size;
     //context.globalCompositeOperation = "lighter";
     //context.shadowBlur = 10;
@@ -571,7 +582,8 @@
         _oldY = _oldMidY = _cursorY;
         return;
       }
-      _oldTouchForce = _touchForce = 0;
+      _oldTouchForce = 0;
+      _updateTouchForce(e);
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
         _lastRandomColor = _getRandomColor();
@@ -615,14 +627,15 @@
         _touchDown = false;
         return;
       }
-      if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
-        _touchEventObject = e.touches[0];
-        if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
-          _updateTouchForce();
-        }
-      } else {
-        _touchForce = 0.5;
-      }
+      _updateTouchForce(e);
+      // if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
+      //   _touchEventObject = e.touches[0];
+      //   if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
+      //     _updateTouchForce();
+      //   }
+      // } else {
+      //   _touchForce = 0.5;
+      // }
 
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
