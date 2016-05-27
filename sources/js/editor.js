@@ -34,7 +34,7 @@
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
-  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _touchEventObject = {};
+  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _firstTouchForce = false, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
   var _lastRandomColor = "";
@@ -465,27 +465,24 @@
 
   }
 
-  function _updateTouchForce (e) {
+  function _initTouchForce (e) {
 
-    if (e) {
-      _touchEventObject = e.touches[0];
-    }
+    _touchEventObject = e.touches[0];
+    _touchEventObject.force = _touchEventObject.force || 0;
+    _firstTouchForce = !!_touchEventObject.force;
+    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
+
+  }
+
+  function _updateTouchForce () {
 
     _touchEventObject.force = _touchEventObject.force || 0;
-
-    // if (Param.supportTouch) {
-    //   if (_frameUpdateForce === false) {
-    //     _frameUpdateForce = requestAnimationFrame(_updateTouchForce);
-    //   }
-    //   if (touchEventObject.force > 0) {
-    //
-    //   }
-    // } else {
-    //   _touchForce = 0.5;
-    // }
-
-    console.log(_touchEventObject.force);
-    _touchForce = _touchEventObject.force || 0.5;
+    _oldTouchForce = _touchForce;
+    if (_touchEventObject.force > 0) {
+      _touchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
+    } else {
+      _touchForce = (_firstTouchForce ? 0 : 0.3);
+    }
 
   }
 
@@ -582,8 +579,7 @@
         _oldY = _oldMidY = _cursorY;
         return;
       }
-      _oldTouchForce = 0;
-      _updateTouchForce(e);
+      _initTouchForce(e);
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
         _lastRandomColor = _getRandomColor();
@@ -627,15 +623,7 @@
         _touchDown = false;
         return;
       }
-      _updateTouchForce(e);
-      // if (Param.supportTouch) { // TODO e se non sto usando il dito su schermo touch
-      //   _touchEventObject = e.touches[0];
-      //   if (_frameUpdateForce === false && _touchForce === 0 && _touchEventObject.force > 0) {
-      //     _updateTouchForce();
-      //   }
-      // } else {
-      //   _touchForce = 0.5;
-      // }
+      _updateTouchForce();
 
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
