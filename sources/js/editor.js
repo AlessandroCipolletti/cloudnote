@@ -97,6 +97,13 @@
     _coworking = false;
     Messages.error("L'altro utente si è disconnesso");
     Utils.removeGlobalStatus("drawith__EDITOR-COWORKING");
+    Tools.toggleButton("clear", true);
+    if (_currentStep > 0) {
+      Tools.toggleButton("redo", true);
+    }
+    if (_step.length > 1) {
+      Tools.toggleButton("undo", true);
+    }
 
   }
 
@@ -119,6 +126,9 @@
     _coworkingIdText.blur();
     Messages.success("Connessione stabilita");
     Utils.addGlobalStatus("drawith__EDITOR-COWORKING");
+    Tools.toggleButton("undo", false);
+    Tools.toggleButton("redo", false);
+    Tools.toggleButton("clear", false);
     _coworking = true;
 
   }
@@ -127,6 +137,7 @@
 
     if (_personalRoomId && Socket.isConnected()) {
       Utils.openPopup(_popupCoworking);
+      _coworkingIdText.focus();
     } else {
       Messages.error("Network error");
     }
@@ -139,6 +150,13 @@
     Utils.removeGlobalStatus("drawith__EDITOR-COWORKING");
     Socket.emit("editor coworking stop", false);
     Messages.success("Connessione chiusa");
+    Tools.toggleButton("clear", true);
+    if (_currentStep > 0) {
+      Tools.toggleButton("redo", true);
+    }
+    if (_step.length > 1) {
+      Tools.toggleButton("undo", true);
+    }
 
   }
 
@@ -286,14 +304,18 @@
     _step.splice(0, 0, _saveLayer());
     if (_step.length > _stepCacheLength)
       _step.splice(_stepCacheLength, _step.length);
-    if (_step.length > 1) {
-      Tools.toggleButton("undo", true);
-      Tools.toggleButton("save", true);
-    } else {
-      Tools.toggleButton("undo", false);
-      Tools.toggleButton("save", false);
+
+    if (_coworking === false) {
+      if (_step.length > 1) {
+        Tools.toggleButton("undo", true);
+        Tools.toggleButton("save", true);
+      } else {
+        Tools.toggleButton("undo", false);
+        Tools.toggleButton("save", false);
+      }
+      Tools.toggleButton("redo", false);
     }
-    Tools.toggleButton("redo", false);
+
 
   }
 
@@ -306,7 +328,7 @@
       _currentStep = _currentStep + 1;
       _clear();
       _restoreStep(step);
-      if (!tot) {
+      if (tot === 0) {
         Tools.toggleButton("undo", false);
         Tools.toggleButton("save", false);
       } else {

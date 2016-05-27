@@ -14,7 +14,7 @@
 
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
   var _container = {};
-  var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false;
+  var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
   var _toolsConfig = {
     maker: {
@@ -118,6 +118,8 @@
         button = _redoButton;
       } else if (tool === "save") {
         button = _saveButton;
+      } else if (tool === "clear") {
+        button = _clearButton;
       }
 
       if (button) {
@@ -203,6 +205,9 @@
       }
       if (_config.tools.indexOf("save") >= 0) {
         _saveButton = _container.querySelector(".drawith-editor-tools__tool-save");
+      }
+      if (_config.tools.indexOf("clear") >= 0) {
+        _clearButton = _container.querySelector(".drawith-editor-tools__tool-clear");
       }
       if (_config.tools.indexOf("paper") >= 0) {
         _paperButton = _container.querySelector(".drawith-editor-tools__tool-paper");
