@@ -493,7 +493,7 @@
     _touchEventObject = e.touches[0];
     _touchEventObject.force = _touchEventObject.force || 0;
     _currentTouchSupportForce = !!_touchEventObject.force;
-    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force / 2, 3), 0.01);
+    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
 
   };
 
