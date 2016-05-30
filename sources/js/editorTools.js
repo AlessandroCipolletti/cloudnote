@@ -9,7 +9,7 @@
 
   var _config = {
     tools: [],
-    toolsSide: "right"
+    toolsSide: "left"
   };
 
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
@@ -35,9 +35,18 @@
       globalCompositeOperation: "source-over",
       cursor: false
     },
+    crayon: {
+      name: "crayon",
+      size: 9,
+      forceFactor: 0,
+      speedFactor: 0,
+      shape: "particles",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
     pencil: {
       name: "pencil",
-      size: 2,
+      size: 3,
       forceFactor: 0,
       speedFactor: 0,
       shape: "particles",
@@ -62,6 +71,10 @@
     pen: function () {
       _selectTool("pen");
       Editor.setTool(_toolsConfig.pen);
+    },
+    crayon: function () {
+      _selectTool("crayon");
+      Editor.setTool(_toolsConfig.crayon);
     },
     pencil: function () {
       _selectTool("pencil");

@@ -9,6 +9,8 @@
   var _popupOpen = false;
   var MATH = Math;
 
+  Utils.emptyFN = function () {};
+  
   Utils.arrayOrderStringDown = function (a, b) {
 
     if (a < b) return +1;

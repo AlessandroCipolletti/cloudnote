@@ -21,7 +21,7 @@
       "#00f6ff", "#b8f9ff", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["marker", "pen", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
+    tools: ["marker", "pen", "pencil", "crayon", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -34,7 +34,7 @@
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
-  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _firstTouchForce = false, _touchEventObject = {};
+  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
   var _lastRandomColor = "";
@@ -430,14 +430,15 @@
     context.globalAlpha = alpha;
     context.fillStyle = tool.color;
     var angle = 0, radius = 0, w = 0;
-    for (var i = 10; i--; ) {
+    for (var i = tool.size * (tool.size + 1); i--; ) {
       angle = random(PI2, true);
       radius = random(tool.size) + 1;
       w = random(2) + 1;
       context.fillRect(
         x + radius * MATH.cos(angle),
         y + radius * MATH.sin(angle),
-        w, (w === 2 ? 1 : random(2) + 1)
+        w,
+        (w === 2 ? 1 : random(2) + 1)
       );
     }
 
@@ -458,7 +459,7 @@
     return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
   }
 
-  function _curverParticlesLine (context, delta, touchForce, oldTouchForce, tool, fromX, fromY, midX, midY, toX, toY) {
+  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, tool, fromX, fromY, midX, midY, toX, toY) {
 
     delta = 1 / delta;
     var baseForce = MATH.min(oldTouchForce,  0.75);
@@ -487,26 +488,27 @@
 
   }
 
-  function _initTouchForce (e) {
+  var _initTouchForce = function (e) {
 
     _touchEventObject = e.touches[0];
     _touchEventObject.force = _touchEventObject.force || 0;
-    _firstTouchForce = !!_touchEventObject.force;
-    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
+    _currentTouchSupportForce = !!_touchEventObject.force;
+    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force / 2, 3), 0.01);
 
-  }
+  };
 
-  function _updateTouchForce () {
+  var _updateTouchForce = function () {
 
     _touchEventObject.force = _touchEventObject.force || 0;
+    _currentTouchSupportForce = _currentTouchSupportForce || !!_touchEventObject.force;
     _oldTouchForce = _touchForce;
     if (_touchEventObject.force > 0) {
-      _touchForce = MATH.max(round(_touchEventObject.force || 0, 3), 0.01);
+      _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
     } else {
-      _touchForce = (_firstTouchForce ? 0 : 0.3);
+      _touchForce = (_currentTouchSupportForce ? 0 : 0.3);
     }
 
-  }
+  };
 
   function _coworkingDrawImage (data) {
     // TODO in certi casi posso trasmettere il disegno intero (data base64) ed aggiungerlo intero all'editor
@@ -575,7 +577,7 @@
     if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     } else if (tool.shape === "particles") {
-      _curverParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
     _checkCoord(params.x, params.y);
 
@@ -670,7 +672,7 @@
         x: _cursorX,
         y: _cursorY,
         size: size,
-        delta: distance / (size - 0.3),
+        delta: round(distance / (size - 1), 2),
         oldMidX: _oldMidX,
         oldMidY: _oldMidY,
         oldX: _oldX,
@@ -834,6 +836,11 @@
     _offsetTop = Param.headerSize;
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _initDom();
+
+    if (Param.supportTouch === false) {
+      _touchForce = _oldTouchForce = 0.3;
+      _initTouchForce = _updateTouchForce = Utils.emptyFN;
+    }
 
   }
 

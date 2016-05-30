@@ -50,6 +50,9 @@
 .drawith-editor-tools__tool-pen {
   background-image: url("../img/icons/pen.png");
 }
+.drawith-editor-tools__tool-crayon {
+  background-image: url("../img/icons/crayon.png");
+}
 .drawith-editor-tools__tool-pencil {
   background-image: url("../img/icons/pencil.png");
 }
