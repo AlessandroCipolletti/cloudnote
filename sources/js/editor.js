@@ -738,12 +738,14 @@
   })();
 
   function _onGestureStart (e) {
-    _touchDown = false;
+    _onTouchEnd(e);
     console.log(e);
   }
 
   function _onGestureChange (e) {
-    _touchDown = false;
+    if (_touchDown) {
+      _onTouchEnd(e);
+    }
     console.log(e);
   }
 
