@@ -21,7 +21,7 @@
       "#00f6ff", "#b8f9ff", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["marker", "pen", "crayon", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear", "exit"],
+    tools: ["marker", "pen", "crayon", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true

@@ -130,11 +130,11 @@
     app.Messages.init();
     app.Socket.init();
     app.Header.init();
-    app.User.init({
-      fbAppId: app.Param.fb.appId,
-      fbApiVersion: app.Param.fb.apiVersion
-    });
-    //app.Dashboard.init();
+    // app.User.init({
+    //   fbAppId: app.Param.fb.appId,
+    //   fbApiVersion: app.Param.fb.apiVersion
+    // });
+    // app.Dashboard.init();
     app.Editor.init();
 
     _initialised = true;
