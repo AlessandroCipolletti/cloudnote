@@ -21,7 +21,7 @@
       "#00f6ff", "#b8f9ff", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["marker", "pen", "pencil", "crayon", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "save", "clear", "paper", "exit"],
+    tools: ["marker", "pen", "crayon", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear", "exit"],
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -224,34 +224,43 @@
 
   function save () {
 
-    Utils.setSpinner(true);
-    _savedDraw = _saveLayer();
-    var _coords = Dashboard.getCoords();
-    var _tempCanvas = document.createElement("canvas");
-    _tempCanvas.width = _savedDraw.data.width;
-    _tempCanvas.height = _savedDraw.data.height;
-    _tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);
-    _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
-    _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
-    _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
-    _savedDraw.y = _coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
-    _savedDraw.r = _savedDraw.x + _savedDraw.w;
-    _savedDraw.b = _savedDraw.y - _savedDraw.h;
-    _savedDraw.data = undefined;
-    delete _savedDraw.data;
-    delete _savedDraw.oldX;
-    delete _savedDraw.oldY;
-    delete _savedDraw.maxX;
-    delete _savedDraw.maxY;
-    delete _savedDraw.minX;
-    delete _savedDraw.minY;
-    _tempCanvas = undefined;
-    if (Socket.isConnected()) {
-      _saveToServer();
-    } else {
-      _saveToDashboard();
-    }
+    _saveToLocal();
+
+    // Utils.setSpinner(true);
+    // _savedDraw = _saveLayer();
+    // var _coords = Dashboard.getCoords();
+    // var _tempCanvas = document.createElement("canvas");
+    // _tempCanvas.width = _savedDraw.data.width;
+    // _tempCanvas.height = _savedDraw.data.height;
+    // _tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);
+    // _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
+    // _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
+    // _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
+    // _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
+    // _savedDraw.y = _coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
+    // _savedDraw.r = _savedDraw.x + _savedDraw.w;
+    // _savedDraw.b = _savedDraw.y - _savedDraw.h;
+    // _savedDraw.data = undefined;
+    // delete _savedDraw.data;
+    // delete _savedDraw.oldX;
+    // delete _savedDraw.oldY;
+    // delete _savedDraw.maxX;
+    // delete _savedDraw.maxY;
+    // delete _savedDraw.minX;
+    // delete _savedDraw.minY;
+    // _tempCanvas = undefined;
+    // if (Socket.isConnected()) {
+    //   _saveToServer();
+    // } else {
+    //   _saveToDashboard();
+    // }
+
+  }
+
+  function _saveToLocal () {
+
+    Messages.error("TODO");
+    Utils.setSpinner(false);
 
   }
 
@@ -807,6 +816,8 @@
       }
       _saveStep();
       Main.addRotationHandler(_onRotate);
+
+      show();
 
     });
 

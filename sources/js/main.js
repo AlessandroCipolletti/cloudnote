@@ -134,7 +134,7 @@
       fbAppId: app.Param.fb.appId,
       fbApiVersion: app.Param.fb.apiVersion
     });
-    app.Dashboard.init();
+    //app.Dashboard.init();
     app.Editor.init();
 
     _initialised = true;
