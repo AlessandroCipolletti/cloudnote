@@ -712,11 +712,11 @@
     return function (e) {
 
       e.stopPropagation();
-      if (_touchDown === false || (e.touches && e.touches.length)) return;
-      _touchDown = false;
-      if (_tool.cursor) {
+      if (!e.touches || e.touches.length === 0) {
         _toolCursor.classList.add("displayNone");
       }
+      if (_touchDown === false || (e.touches && e.touches.length)) return;
+      _touchDown = false;
       if (Param.supportTouch === false) {
         _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
         _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
