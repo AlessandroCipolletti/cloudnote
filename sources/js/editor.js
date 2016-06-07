@@ -506,9 +506,12 @@
 
   };
 
-  var _updateTouchForce = function () {
+  var _updateTouchForce = function (e) {
 
     _touchEventObject.force = _touchEventObject.force || 0;
+    if (_touchEventObject.force === 0 && e.touches[0].force > 0) {
+      _touchEventObject = e.touches[0];
+    }
     _currentTouchSupportForce = _currentTouchSupportForce || !!_touchEventObject.force;
     _oldTouchForce = _touchForce;
     if (_touchEventObject.force > 0) {
@@ -656,7 +659,7 @@
         _touchDown = false;
         return;
       }
-      _updateTouchForce();
+      _updateTouchForce(e);
 
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
