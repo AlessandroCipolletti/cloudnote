@@ -159,6 +159,8 @@
 
   function _onTouchStart (e) {
 
+    e.preventDefault();
+    e.stopPropagation();
     var target = e.target;
     if (
       target.classList.contains("drawith-editor-tools__tool") &&
