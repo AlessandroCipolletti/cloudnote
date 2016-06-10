@@ -24,7 +24,7 @@
     param.templatePath = "tpl/";
     param.cssPath = "css/";
 
-    param.isDebug = testDebug;
+    param.isDebug = _config.testDebug;
     param.socketUrl = (param.isDebug ? "http://46.252.150.61:5000" : "http://46.252.150.61:4000");
 
     param.fb = {

@@ -517,7 +517,7 @@
     if (_touchEventObject.force > 0) {
       _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
     } else {
-      _touchForce = (_currentTouchSupportForce ? 0 : 0.3);
+      _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
     }
 
   };
@@ -810,7 +810,7 @@
       var canvasWidth = app.WIDTH - _toolsWidth;
       var canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
 
-      if (Param.ios && param.isAppOnline) {
+      if (Param.ios && Param.isAppOnline) {
         canvasWidth = canvasHeight = MATH.max(canvasWidth, canvasHeight);
       }
 
