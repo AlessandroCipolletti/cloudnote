@@ -1,7 +1,7 @@
 (function (app) {
 
   var _config = {
-    testDebugFalse: false
+    testDebug: true
   };
 
   var param = {};
@@ -20,23 +20,19 @@
   param.init = function (params) {
 
     _setConfig(params);
-    param.appName = "gitart.co";
+    param.appName = "drawith.me";
     param.templatePath = "tpl/";
     param.cssPath = "css/";
 
-    if (_config.testDebugFalse) {
-      param.isDebug = false;
-      param.socketUrl = "http://46.252.150.61:5000";
-    } else {
-      param.isDebug = (document.location.host !== param.appName);
-      param.socketUrl = (param.isDebug ? "http://46.252.150.61:5000" : "http://46.252.150.61:4000");
-    }
+    param.isDebug = testDebug;
+    param.socketUrl = (param.isDebug ? "http://46.252.150.61:5000" : "http://46.252.150.61:4000");
 
     param.fb = {
       appId: "1448620825449065",
       apiVersion: "v2.2"
     };
 
+    param.isAppOnline = (document.location.host.toLowerCase() === param.appName);
     param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
     param.pixelRatio = param.ios ? 2 : window.devicePixelRatio;

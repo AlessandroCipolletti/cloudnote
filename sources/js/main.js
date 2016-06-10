@@ -1,7 +1,7 @@
 (function (app) {
 
   var _config = {
-    testDebugFalse: false
+    testDebug: true
   };
 
   var _container = {};
@@ -117,9 +117,10 @@
 
   function init (params) {
 
-    app.Param.init(params);
-
     _setConfig(params);
+
+    app.Param.init(_config);
+
     _initDom();
     _initViewport();
     app.WIDTH = window.innerWidth;

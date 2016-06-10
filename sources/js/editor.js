@@ -29,7 +29,7 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasWidth, _canvasHeight, _canvasCoworking, _contextCoworking;
+  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -806,12 +806,18 @@
       }
 
       _initSubModules();
-      _canvasWidth = app.WIDTH - _toolsWidth;
-      _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
-      _canvas.width = _canvasCoworking.width = _canvasWidth;
-      _canvas.height = _canvasCoworking.height = _canvasHeight;
-      _canvas.style.width = _canvasWidth + "px";
-      _canvas.style.height = _canvasHeight + "px";
+
+      var canvasWidth = app.WIDTH - _toolsWidth;
+      var canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
+
+      if (Param.ios && param.isAppOnline) {
+        canvasWidth = canvasHeight = MATH.max(canvasWidth, canvasHeight);
+      }
+
+      _canvas.width = _canvasCoworking.width = canvasWidth;
+      _canvas.height = _canvasCoworking.height = canvasHeight;
+      _canvas.style.width = canvasWidth + "px";
+      _canvas.style.height = canvasHeight + "px";
       if (_config.toolsSide === "left") {
         _canvas.style.left = _toolsWidth + "px";
       } else {
