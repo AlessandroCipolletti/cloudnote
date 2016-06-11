@@ -515,7 +515,7 @@
     _currentTouchSupportForce = _currentTouchSupportForce || !!_touchEventObject.force;
     _oldTouchForce = _touchForce;
     if (_touchEventObject.force > 0) {
-      _touchForce = MATH.max(round(_touchEventObject.force, 0.25), 0.01);
+      _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
     } else {
       _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
     }
