@@ -57,7 +57,7 @@
       name: "eraser",
       size: 12,
       forceFactor: 5,
-      speedFactor: 0,
+      speedFactor: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
       cursor: true
