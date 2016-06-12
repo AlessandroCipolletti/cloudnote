@@ -15,13 +15,13 @@
   var _config = {
     //primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
     primaryColors: [
-      "#000000", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#007eff", "#0022ef", "#000688",
-      "#6d0088", "#ff00a2", "#88004a", "#a00000", "#883600", "#ff6600", "#ec0000", "#005f00", "#887a00", "#00d500",
-      "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8", "#ffb8b8", "#ffb8e5", "#ddb8ff", "#b8ccff",
-      "#00f6ff", "#b8f9ff", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
+      "#000000", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
+      "#0022ef", "#000688", "#6d0088", "#ddb8ff", "#b8ccff", "#ffb8e5", "#88004a", "#663300", "#883600", "#a00000",
+      "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
+      "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["marker", "pen", "crayon", "pencil", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
+    tools: ["crayon", "pencil", "marker", "pen", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
