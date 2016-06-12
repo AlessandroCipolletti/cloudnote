@@ -421,15 +421,15 @@
 
   }
 
-  function _circle (context, x, y, tool) {
+  function _circle (context, x, y, color, size) {
 
     context.beginPath();
-    context.fillStyle = tool.color;
-    context.strokeStyle = tool.color;
+    context.fillStyle = color;
+    context.strokeStyle = color;
     context.globalAlpha = 1;
     context.lineJoin = "round";
     context.lineCap = "round";
-    context.arc(x, y, tool.size / 2, 0, PI2, true);
+    context.arc(x, y, size / 2, 0, PI2, true);
     context.fill();
 
   }
@@ -577,7 +577,7 @@
     //context.shadowBlur = 10;
     //context.shadowColor = _tool.color;
     if (tool.shape === "circle") {
-      _circle(context, x, y, tool);
+      _circle(context, x, y, tool.color, params.size);
     } else if (tool.shape === "particles") {
       _particles(context, x, y, params.force, tool);
     }
@@ -634,7 +634,8 @@
         type: "start",
         x: _cursorX,
         y: _cursorY,
-        force: _touchForce
+        force: _touchForce,
+        size: _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1)
       };
       _stepStart(_context, params, _tool);
       if (_coworking) {
