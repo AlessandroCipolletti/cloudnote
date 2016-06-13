@@ -429,6 +429,7 @@
     context.globalAlpha = 1;
     context.lineJoin = "round";
     context.lineCap = "round";
+    //context.shadowBlur = 0;
     context.arc(x, y, size / 2, 0, PI2, true);
     context.fill();
 
@@ -457,6 +458,7 @@
 
     context.beginPath();
     context.lineWidth = size;
+    //context.shadowBlur = 10;
     context.moveTo(fromX, fromY);
     context.quadraticCurveTo(midX, midY, toX, toY);
     context.stroke();
@@ -573,12 +575,11 @@
     _checkCoord(x, y);
     context.globalCompositeOperation = tool.globalCompositeOperation;
     context.lineWidth = tool.size;
-    //context.globalCompositeOperation = "lighter";
-    //context.shadowBlur = 10;
-    //context.shadowColor = _tool.color;
     if (tool.shape === "circle") {
+      //context.shadowColor = _tool.color;
       _circle(context, x, y, tool.color, params.size);
     } else if (tool.shape === "particles") {
+      //context.shadowColor = "#000000";
       _particles(context, x, y, params.force, tool);
     }
     x = y = undefined;
