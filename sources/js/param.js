@@ -35,7 +35,7 @@
     param.isAppOnline = (document.location.host.toLowerCase() === param.appName);
     param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
-    param.pixelRatio = param.ios ? 2 : window.devicePixelRatio;
+    param.pixelRatio = param.ios ? 2 : window.devicePixelRatio; // TODO iPhone Plus
     param.scale = 1 / param.pixelRatio;
     param.supportTouch = ("ontouchstart" in window);
     param.supportGesture = ("ongesturechange" in window);

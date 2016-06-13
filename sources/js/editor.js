@@ -814,7 +814,7 @@
       var canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
 
       if (Param.ios && Param.isAppOnline) {
-        canvasWidth = canvasHeight = MATH.max(canvasWidth, canvasHeight);
+        canvasWidth = canvasHeight = MATH.max(canvasWidth, canvasHeight) + Param.headerSize + 20 * Param.pixelRatio;
       }
 
       _canvas.width = _canvasCoworking.width = canvasWidth;
