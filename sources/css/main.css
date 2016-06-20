@@ -1,12 +1,12 @@
 @font-face {
-  font-family: disegnato;
-  src: url('../font/font.ttf');
+  font-family: "setFireToTheRain";
+  src: url("../font/setFireToTheRain.ttf");
 }
 
 * {
   margin: 0rem;
   padding: 0rem;
-  font-family: disegnato !important;
+  font-family: "setFireToTheRain";
   letter-spacing: 0.05rem;
   user-select: none;
   opacity: 1;

@@ -87,6 +87,7 @@
     style.rel = "stylesheet";
     style.href = app.Param.cssPath + templateName + ".css";
     document.head.appendChild(style);
+    console.log(app);
 
     return app.Utils.promiseXHR("GET", app.Param.templatePath + templateName + ".tpl").then(function (template) {
 

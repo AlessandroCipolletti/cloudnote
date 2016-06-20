@@ -1,0 +1,149 @@
+/* latin */
+@font-face {
+  font-family: "AnnieUseYourTelescope";
+  font-style: normal;
+  src: local("Annie Use Your Telescope"), local("AnnieUseYourTelescope"), url("../font/AnnieUseYourTelescope.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "Chewy";
+  font-style: normal;
+  src: local("Chewy"), url("../font/Chewy.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "ComingSoon";
+  font-style: normal;
+  src: local("Coming Soon"), local("ComingSoon"), url("../font/ComingSoon.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "CraftyGirls";
+  font-style: normal;
+  src: local("Crafty Girls"), local("CraftyGirls"), url("../font/CraftyGirls.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "FingerPaint";
+  font-style: normal;
+  src: local("Finger Paint"), local("FingerPaint-Regular"), url("../font/FingerPaint.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "GloriaHallelujah";
+  font-style: normal;
+  src: local("Gloria Hallelujah"), local("GloriaHallelujah"), url("../font/GloriaHallelujah.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "IndieFlower";
+  font-style: normal;
+  src: local("Indie Flower"), local("IndieFlower"), url("../font/IndieFlower.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "LoveYaLikeASister";
+  font-style: normal;
+  src: local("Love Ya Like A Sister Regular"), local("LoveYaLikeASister-Regular"), url("../font/LoveYaLikeASister.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin-ext */
+@font-face {
+  font-family: "Margarine";
+  font-style: normal;
+  src: local("Margarine"), local("Margarine-Regular"), url("../font/Margarine.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "Margarine";
+  font-style: normal;
+  src: local("Margarine"), local("Margarine-Regular"), url("../font/Margarine2.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "Pacifico";
+  font-style: normal;
+  src: local("Pacifico Regular"), local("Pacifico-Regular"), url("../font/Pacifico.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* vietnamese */
+@font-face {
+  font-family: "PatrickHand";
+  font-style: normal;
+  src: local("Patrick Hand"), local("PatrickHand-Regular"), url("../font/PatrickHand.woff2") format("woff2");
+  unicode-range: U+0102-0103, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: "PatrickHand";
+  font-style: normal;
+  src: local("Patrick Hand"), local("PatrickHand-Regular"), url("../font/PatrickHand2.woff2") format("woff2");
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: "PatrickHand";
+  font-style: normal;
+  src: local("Patrick Hand"), local("PatrickHand-Regular"), url("../font/PatrickHand3.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "PermanentMarker";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Permanent Marker"), local("PermanentMarker"), url("../font/PermanentMarker.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "ReenieBeanie";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Reenie Beanie"), local("ReenieBeanie"), url("../font/ReenieBeanie.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "RockSalt";
+  font-style: normal;
+  src: local("Rock Salt"), local("RockSalt"), url("../font/RockSalt.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "SueEllenFrancisco";
+  font-style: normal;
+  src: local("Sue Ellen Francisco "), local("SueEllenFrancisco"), url("../font/SueEllenFrancisco.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "Sunshiney";
+  font-style: normal;
+  src: local("Sunshiney"), url("../font/Sunshiney.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "SwankyandMooMoo";
+  font-style: normal;
+  src: local("Swanky and Moo Moo"), local("SwankyandMooMoo"), url("../font/SwankyandMooMoo.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: "Yellowtail";
+  font-style: normal;
+  src: local("Yellowtail"), url("../font/Yellowtail.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
