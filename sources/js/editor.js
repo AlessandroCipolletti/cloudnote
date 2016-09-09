@@ -21,7 +21,7 @@
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["crayon", "pencil", "marker", "pen", "eraser", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
+    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -36,7 +36,7 @@
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false, _touchEventObject = {};
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
-  var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0;
+  var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
   var _tool = {
     name: "",
@@ -414,10 +414,48 @@
     if (_maxY === -1 || _maxY < (y + offset)) _maxY = y + offset;
     if (_minX < 0) _minX = 0;
     if (_minY < 0) _minY = 0;
-    if (_maxX > app.WIDTH) _maxX = app.WIDTH;
-    if (_maxY > app.HEIGHT) _maxY = app.HEIGHT;
+    if (_maxX > _canvasWidth) _maxX = _canvasWidth;
+    if (_maxY > _canvasHeight) _maxY = _canvasHeight;
     _oldX = x;
     _oldY = y;
+
+  }
+
+  var drawPx = function () {
+
+    var pxData;
+
+    return function (context, x, y, color) {
+
+      pxData = context.getImageData(x, y, 1, 1);
+      if (true) {
+
+      }
+
+    };
+
+  };
+
+  function _drawBucketPx (context, x, y, color) {
+
+    if (x === -1 || x > _canvasWidth || y === -1 || y > _canvasHeight) {
+      return;
+    }
+
+  }
+
+  function _bucket (context, x, y, color) {
+
+    // TODO funzione ricorsiva per cambiare il imageData di tutti i px dello stesso colore vicini tra loro, e poi applicare la modifica
+    // TODO se si ricorsivamente si arriva a toccare le pareti, fare un checkCoord con le coord delle pareti toccate
+    var startPx = context.getImageData(x, y, 1, 1);
+    var startR = startPx[0];
+    var startG = startPx[1];
+    var startB = startPx[2];
+    var startA = startPx[3];
+    // TODO solo se il colore selezionato è diverso dal colore cliccato
+    
+    debugger;
 
   }
 
@@ -425,7 +463,6 @@
 
     context.beginPath();
     context.fillStyle = color;
-    context.strokeStyle = color;
     context.globalAlpha = 1;
     context.lineJoin = "round";
     context.lineCap = "round";
@@ -435,14 +472,14 @@
 
   }
 
-  function _particles (context, x, y, alpha, tool) {
+  function _particles (context, x, y, alpha, color, size) {
 
     context.globalAlpha = alpha;
-    context.fillStyle = tool.color;
+    context.fillStyle = color;
     var angle = 0, radius = 0, w = 0;
-    for (var i = tool.size * (tool.size + 1); i--; ) {
+    for (var i = size * (size + 1); i--; ) {
       angle = random(PI2, true);
-      radius = random(tool.size) + 1;
+      radius = random(size) + 1;
       w = random(2) + 1;
       context.fillRect(
         x + radius * MATH.cos(angle),
@@ -454,10 +491,15 @@
 
   }
 
-  function _curvedCircleLine (context, size, fromX, fromY, midX, midY, toX, toY) {
+  function _image (context, x, y) {
+
+  }
+
+  function _curvedCircleLine (context, size, color, fromX, fromY, midX, midY, toX, toY) {
 
     context.beginPath();
     context.lineWidth = size;
+    context.strokeStyle = color;
     //context.shadowBlur = 10;
     context.moveTo(fromX, fromY);
     context.quadraticCurveTo(midX, midY, toX, toY);
@@ -470,7 +512,7 @@
     return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
   }
 
-  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, tool, fromX, fromY, midX, midY, toX, toY) {
+  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
 
     delta = 1 / delta;
     var baseForce = MATH.min(oldTouchForce,  0.75);
@@ -481,7 +523,8 @@
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
         baseForce + deltaForce * i,
-        tool
+        color,
+        size
       );
     }
 
@@ -572,15 +615,19 @@
   function _stepStart (context, params, tool) {
 
     var x = params.x, y = params.y;
-    _checkCoord(x, y);
     context.globalCompositeOperation = tool.globalCompositeOperation;
     context.lineWidth = tool.size;
-    if (tool.shape === "circle") {
+    if (tool.name === "bucket") {
+      _bucket(context, x, y, tool.color);
+    } else if (tool.shape === "circle") {
       //context.shadowColor = _tool.color;
       _circle(context, x, y, tool.color, params.size);
     } else if (tool.shape === "particles") {
       //context.shadowColor = "#000000";
-      _particles(context, x, y, params.force, tool);
+      _particles(context, x, y, params.force, tool.color, tool.size);
+    }
+    if (tool.name !== "eraser" && tool.name !== "bucket") {
+      _checkCoord(x, y);
     }
     x = y = undefined;
 
@@ -589,16 +636,18 @@
   function _stepMove (context, params, tool) {
 
     if (tool.shape === "circle") {
-      _curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+      _curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     } else if (tool.shape === "particles") {
-      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
-    _checkCoord(params.x, params.y);
+    if (tool.name !== "eraser" && tool.name !== "bucket") {
+      _checkCoord(params.x, params.y);
+    }
 
   }
 
-  function _stepEnd (context, params) {
-    //_curvedCircleLine(context, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.x, params.x);
+  function _stepEnd (context, params, tool) {
+    //_curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.x, params.x);
     //_checkCoord(params.x, params.y);
   }
 
@@ -810,17 +859,17 @@
 
       _initSubModules();
 
-      var canvasWidth = app.WIDTH - _toolsWidth;
-      var canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
+      _canvasWidth = app.WIDTH - _toolsWidth;
+      _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
 
       if (Param.ios && Param.isAppOnline) {
-        canvasWidth = canvasHeight = MATH.max(canvasWidth, canvasHeight) + Param.headerSize + 20 * Param.pixelRatio;
+        _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize + 20 * Param.pixelRatio;
       }
 
-      _canvas.width = _canvasCoworking.width = canvasWidth;
-      _canvas.height = _canvasCoworking.height = canvasHeight;
-      _canvas.style.width = canvasWidth + "px";
-      _canvas.style.height = canvasHeight + "px";
+      _canvas.width = _canvasCoworking.width = _canvasWidth;
+      _canvas.height = _canvasCoworking.height = _canvasHeight;
+      _canvas.style.width = _canvasWidth + "px";
+      _canvas.style.height = _canvasHeight + "px";
       if (_config.toolsSide === "left") {
         _canvas.style.left = _toolsWidth + "px";
       } else {

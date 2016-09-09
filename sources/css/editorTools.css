@@ -56,6 +56,9 @@
 .drawith-editor-tools__tool-pencil {
   background-image: url("../img/icons/pencil.png");
 }
+.drawith-editor-tools__tool-bucket {
+  background-image: url("../img/icons/bucket.png");
+}
 .drawith-editor-tools__tool-eraser {
   background-image: url("../img/icons/eraser.png");
 }

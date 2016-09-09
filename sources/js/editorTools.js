@@ -17,24 +17,6 @@
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
   var _toolsConfig = {
-    maker: {
-      name: "marker",
-      size: 10,
-      forceFactor: 1.5,
-      speedFactor: 0,
-      shape: "circle",
-      globalCompositeOperation: "source-over",
-      cursor: false
-    },
-    pen: {
-      name: "pen",
-      size: 2,
-      forceFactor: 1,
-      speedFactor: 0,
-      shape: "circle",
-      globalCompositeOperation: "source-over",
-      cursor: false
-    },
     crayon: {
       name: "crayon",
       size: 9,
@@ -53,6 +35,24 @@
       globalCompositeOperation: "source-over",
       cursor: false
     },
+    maker: {
+      name: "marker",
+      size: 10,
+      forceFactor: 1.5,
+      speedFactor: 0,
+      shape: "circle",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
+    pen: {
+      name: "pen",
+      size: 2,
+      forceFactor: 2.5,
+      speedFactor: 0,
+      shape: "circle",
+      globalCompositeOperation: "source-over",
+      cursor: false
+    },
     eraser: {
       name: "eraser",
       size: 12,
@@ -61,6 +61,15 @@
       shape: "circle",
       globalCompositeOperation: "destination-out",
       cursor: true
+    },
+    bucket: {
+      name: "bucket",
+      size: 1,
+      forceFactor: 1,
+      speedFactor: 1,
+      shape: "",
+      globalCompositeOperation: "",
+      cursor: false
     }
   };
   var _toolsFunctions = {
@@ -83,6 +92,10 @@
     eraser: function () {
       _selectTool("eraser");
       Editor.setTool(_toolsConfig.eraser);
+    },
+    bucket: function () {
+      _selectTool("bucket");
+      Editor.setTool(_toolsConfig.bucket);
     },
     undo: function () {
       Editor.undo();
