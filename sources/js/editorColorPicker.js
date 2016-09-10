@@ -19,30 +19,6 @@
     return Math.round(n * m) / m;
   };
 
-  function _rgbToHex (r, g, b) {
-    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-  }
-
-  function _hexToRgb (hex) {
-
-    return {
-      r: parseInt(hex.substring(0, 2), 16),
-      g: parseInt(hex.substring(2, 4), 16),
-      b: parseInt(hex.substring(4, 6), 16)
-    };
-
-  }
-
-  function _intToHex (int) {
-
-    var hex = int.toString(16);
-    while (hex.length < 6) {
-      hex = "0" + hex;
-    }
-    return hex;
-
-  }
-
   function _selectColor (target) {
 
     _randomButtom.classList.remove("drawith-editor-colorpicker__random-selected");
@@ -136,7 +112,7 @@
         Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
       var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
       for (var i = 0; i < colorsNumber; i++) {
-        secondaryColors.push("#" + _intToHex(columnIntUnit * i));
+        secondaryColors.push("#" + Utils.intToHex(columnIntUnit * i));
       }
       secondaryColors.push("#FFF");
     }

@@ -10,7 +10,7 @@
   var MATH = Math;
 
   Utils.emptyFN = function () {};
-  
+
   Utils.arrayOrderStringDown = function (a, b) {
 
     if (a < b) return +1;
@@ -252,6 +252,35 @@
 
     });
 
+  };
+
+  Utils.rgbStringToRgb = function (color) {
+    // TODO rgb(100, 100, 100) to r = 100 , g = 100, b = 100
+    debugger;
+  };
+
+  Utils.hexToRgb = function (hex) {
+
+    return {
+      r: parseInt(hex.substring(0, 2), 16),
+      g: parseInt(hex.substring(2, 4), 16),
+      b: parseInt(hex.substring(4, 6), 16)
+    };
+
+  };
+
+  Utils.intToHex = function (int) {
+
+    var hex = int.toString(16);
+    while (hex.length < 6) {
+      hex = "0" + hex;
+    }
+    return hex;
+
+  };
+
+  Utils.rgbToHex = function (r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   };
 
   function _initDom () {

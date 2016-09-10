@@ -1,3 +1,154 @@
+(function() {
+
+	function floodfill(data,x,y,fillcolor,tolerance,width,height) {
+
+		var length = data.length;
+		var Q = [];
+		var i = (x+y*width)*4;
+		var e = i, w = i, me, mw, w2 = width*4;
+
+		var targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
+
+		if(!pixelCompare(i,targetcolor,fillcolor,data,length,tolerance)) { return false; }
+		Q.push(i);
+		while(Q.length) {
+			i = Q.pop();
+			if(pixelCompareAndSet(i,targetcolor,fillcolor,data,length,tolerance)) {
+				e = i;
+				w = i;
+				mw = parseInt(i/w2)*w2; //left bound
+				me = mw+w2;             //right bound
+				while(mw<w && mw<(w-=4) && pixelCompareAndSet(w,targetcolor,fillcolor,data,length,tolerance)); //go left until edge hit
+				while(me>e && me>(e+=4) && pixelCompareAndSet(e,targetcolor,fillcolor,data,length,tolerance)); //go right until edge hit
+				for(var j=w;j<e;j+=4) {
+					if(j-w2>=0     && pixelCompare(j-w2,targetcolor,fillcolor,data,length,tolerance)) Q.push(j-w2); //queue y-1
+					if(j+w2<length && pixelCompare(j+w2,targetcolor,fillcolor,data,length,tolerance)) Q.push(j+w2); //queue y+1
+				}
+			}
+		}
+		return data;
+	}
+
+	function pixelCompare(i,targetcolor,fillcolor,data,length,tolerance) {
+		if (i<0||i>=length) return false; //out of bounds
+		if (data[i+3]===0 && fillcolor.a>0) return true;  //surface is invisible and fill is visible
+
+		if (
+			Math.abs(targetcolor[3] - fillcolor.a)<=tolerance &&
+			Math.abs(targetcolor[0] - fillcolor.r)<=tolerance &&
+			Math.abs(targetcolor[1] - fillcolor.g)<=tolerance &&
+			Math.abs(targetcolor[2] - fillcolor.b)<=tolerance
+		) return false; //target is same as fill
+
+		if (
+			(targetcolor[3] === data[i+3]) &&
+			(targetcolor[0] === data[i]  ) &&
+			(targetcolor[1] === data[i+1]) &&
+			(targetcolor[2] === data[i+2])
+		) return true; //target matches surface
+
+		if (
+			Math.abs(targetcolor[3] - data[i+3])<=(255-tolerance) &&
+			Math.abs(targetcolor[0] - data[i]  )<=tolerance &&
+			Math.abs(targetcolor[1] - data[i+1])<=tolerance &&
+			Math.abs(targetcolor[2] - data[i+2])<=tolerance
+		) return true; //target to surface within tolerance
+
+		return false; //no match
+	}
+
+	function pixelCompareAndSet(i,targetcolor,fillcolor,data,length,tolerance) {
+		if(pixelCompare(i,targetcolor,fillcolor,data,length,tolerance)) {
+			//fill the color
+			data[i]   = fillcolor.r;
+			data[i+1] = fillcolor.g;
+			data[i+2] = fillcolor.b;
+			data[i+3] = fillcolor.a;
+			return true;
+		}
+		return false;
+	}
+
+	function fillUint8ClampedArray(data,x,y,color,tolerance,width,height) {
+		if (!data instanceof Uint8ClampedArray) throw new Error("data must be an instance of Uint8ClampedArray");
+		if (isNaN(width)  || width<1)  throw new Error("argument 'width' must be a positive integer");
+		if (isNaN(height) || height<1) throw new Error("argument 'height' must be a positive integer");
+		if (isNaN(x) || x<0) throw new Error("argument 'x' must be a positive integer");
+		if (isNaN(y) || y<0) throw new Error("argument 'y' must be a positive integer");
+		if (width*height*4!==data.length) throw new Error("width and height do not fit Uint8ClampedArray dimensions");
+
+		var xi = Math.floor(x);
+		var yi = Math.floor(y);
+
+		if (xi!==x) console.warn("x truncated from",x,"to",xi);
+		if (yi!==y) console.warn("y truncated from",y,"to",yi);
+
+		//Maximum tolerance of 254, Default to 0
+		tolerance = (!isNaN(tolerance)) ? Math.min(Math.abs(Math.round(tolerance)),254) : 0;
+
+		return floodfill(data,xi,yi,color,tolerance,width,height);
+	}
+
+	var getComputedColor = function(c) {
+		var temp = document.createElement("div");
+		var color = {r:0,g:0,b:0,a:0};
+		temp.style.color = c;
+		temp.style.display = "none";
+		document.body.appendChild(temp);
+		//Use native window.getComputedStyle to parse any CSS color pattern
+		var style = window.getComputedStyle(temp,null).color;
+		document.body.removeChild(temp);
+
+		var recol = /([\.\d]+)/g;
+		var vals  = style.match(recol);
+		if (vals && vals.length>2) {
+			//Coerce the string value into an rgba object
+			color.r = parseInt(vals[0])||0;
+			color.g = parseInt(vals[1])||0;
+			color.b = parseInt(vals[2])||0;
+			color.a = Math.round((parseFloat(vals[3])||1.0)*255);
+		}
+		return color;
+	};
+
+	function fillContext(x,y,tolerance,left,top,right,bottom) {
+		var ctx  = this;
+
+		//Gets the rgba color from the context fillStyle
+		var color = getComputedColor(this.fillStyle);
+
+		//Defaults and type checks for image boundaries
+		left     = (isNaN(left)) ? 0 : left;
+		top      = (isNaN(top)) ? 0 : top;
+		right    = (!isNaN(right)&&right) ? Math.min(Math.abs(right),ctx.canvas.width) : ctx.canvas.width;
+		bottom   = (!isNaN(bottom)&&bottom) ? Math.min(Math.abs(bottom),ctx.canvas.height) : ctx.canvas.height;
+
+		var image = ctx.getImageData(left,top,right,bottom);
+
+		var data = image.data;
+		var width = image.width;
+		var height = image.height;
+
+		if(width>0 && height>0) {
+			fillUint8ClampedArray(data,x,y,color,tolerance,width,height);
+			ctx.putImageData(image,left,top);
+		}
+	}
+
+	CanvasRenderingContext2D.prototype.fillFlood = fillContext;
+
+
+	return fillUint8ClampedArray;
+
+})();
+
+
+
+
+
+
+
+
 (function (app) {
 
   // Dependencies
@@ -421,41 +572,183 @@
 
   }
 
-  var drawPx = function () {
-
-    var pxData;
-
-    return function (context, x, y, color) {
-
-      pxData = context.getImageData(x, y, 1, 1);
-      if (true) {
-
-      }
-
-    };
-
-  };
-
-  function _drawBucketPx (context, x, y, color) {
-
-    if (x === -1 || x > _canvasWidth || y === -1 || y > _canvasHeight) {
-      return;
-    }
-
-  }
-
-  function _bucket (context, x, y, color) {
+  function _bucket (context, pxX, pxY, color) {
 
     // TODO funzione ricorsiva per cambiare il imageData di tutti i px dello stesso colore vicini tra loro, e poi applicare la modifica
     // TODO se si ricorsivamente si arriva a toccare le pareti, fare un checkCoord con le coord delle pareti toccate
-    var startPx = context.getImageData(x, y, 1, 1);
+
+    context.fillStyle = color;
+    context.fillFlood(pxX, pxY, 0);
+
+/*
+    var imageData = context.getImageData(0, 0, _canvasWidth, _canvasHeight);
+    var imageDataL = imageData.data.length;
+    var pixelStack = [];  // array di index di imageData che puntano al R dei px da controllare
+    var startPx = context.getImageData(pxX, pxY, 1, 1).data;
+    var cont = 0;
+
     var startR = startPx[0];
     var startG = startPx[1];
     var startB = startPx[2];
     var startA = startPx[3];
-    // TODO solo se il colore selezionato è diverso dal colore cliccato
-    
-    debugger;
+    var endColor, endR = 0, endG = 0, endB = 0, endA = 255;
+
+    if (color[0] === "#") {
+      endColor = Utils.hexToRgb(color.substring(1));
+    } else {
+      endColor = Utils.rgbStringToRgb(color);
+    }
+    endR = endColor.r;
+    endG = endColor.g;
+    endB = endColor.b;
+
+    if (
+      startR !== endR ||
+      startG !== endG ||
+      startB !== endB ||
+      startA !== endA
+    ) {
+*/
+
+
+      /*
+      var currentPx, leftState, rightState;
+      var canvasWidth4 = 4 * _canvasWidth;
+      var lastImageDataIndex = imageDataL - 4;
+      pixelStack.push(4 * (x - 1) + (y - 1) * canvasWidth4);
+
+      while (pixelStack.length) {
+        currentPx = pixelStack.pop();  // pixel da cui partire in salita alla ricerca del bordo superiore
+        leftState = rightState = false;
+
+        while ( // partendo da questo pixel devo risalire
+          currentPx > canvasWidth4 &&
+          imageData.data[currentPx] === startR &&
+          imageData.data[currentPx + 1] === startG &&
+          imageData.data[currentPx + 2] === startB &&
+          imageData.data[currentPx + 3] === startA
+        ) {
+          currentPx = currentPx - canvasWidth4;
+        }
+
+        imageData.data[currentPx] = 255;  // poi coloro il primo px in alto di quella colonna
+        imageData.data[currentPx + 1] = 255;
+        imageData.data[currentPx + 2] = 255;
+        imageData.data[currentPx + 3] = 255;
+        cont++;
+
+        if (currentPx > 3) {
+          if (
+            imageData.data[currentPx - 4] === startR &&
+            imageData.data[currentPx - 3] === startG &&
+            imageData.data[currentPx - 2] === startB &&
+            imageData.data[currentPx - 1] === startA
+          ) {
+            if (!leftState) {
+              leftState = true;
+              pixelStack.push(currentPx - 4);
+            }
+          } else if (leftState) {
+            leftState = false;
+          }
+        }
+
+        if (currentPx < lastImageDataIndex) {
+          if (
+            imageData.data[currentPx + 4] === startR &&
+            imageData.data[currentPx + 5] === startG &&
+            imageData.data[currentPx + 6] === startB &&
+            imageData.data[currentPx + 7] === startA
+          ) {
+            if (!rightState) {
+              rightState = true;
+              pixelStack.push(currentPx - 4);
+            }
+          } else if (rightState) {
+            rightState = false;
+          }
+        }
+
+        currentPx = currentPx + canvasWidth4;
+
+      }
+      */
+
+
+      ////////////////////
+
+
+      /*
+      pixelStack = [[pxX, pxY]];
+
+      var matchStartColor = function (pixelPos) {
+        var r = imageData.data[pixelPos];
+        var g = imageData.data[pixelPos + 1];
+        var b = imageData.data[pixelPos + 2];
+        var a = imageData.data[pixelPos + 3];
+
+        return (r === startR && g === startG && b === startB && a === startA);
+      };
+
+      var colorPixel = function (pixelPos) {
+        cont++;
+        imageData.data[pixelPos] = endR;
+        imageData.data[pixelPos + 1] = endG;
+        imageData.data[pixelPos + 2] = endB;
+        imageData.data[pixelPos + 3] = endA;
+      };
+
+      while (pixelStack.length) {
+        var newPos, x, y, pixelPos, reachLeft, reachRight;
+        newPos = pixelStack.pop();
+        x = newPos[0];
+        y = newPos[1];
+
+        pixelPos = (y * _canvasWidth + x) * 4;
+        while (y-- >= 0 && matchStartColor(pixelPos)) {
+          pixelPos -= _canvasWidth * 4;
+        }
+        pixelPos += _canvasWidth * 4;
+        ++y;
+        reachLeft = false;
+        reachRight = false;
+        while (y++ < _canvasHeight - 1 && matchStartColor(pixelPos)) {
+          colorPixel(pixelPos);
+
+          if (x > 0) {
+            if (matchStartColor(pixelPos - 4)) {
+              if (!reachLeft) {
+                pixelStack.push([x - 1, y]);
+                reachLeft = true;
+              }
+            }
+            else if (reachLeft) {
+              reachLeft = false;
+            }
+          }
+
+          if (x < _canvasWidth - 1) {
+            if (matchStartColor(pixelPos + 4)) {
+              if (!reachRight) {
+                pixelStack.push([x + 1, y]);
+                reachRight = true;
+              }
+            }
+            else if (reachRight) {
+              reachRight = false;
+            }
+          }
+
+          pixelPos += _canvasWidth * 4;
+        }
+      }
+      console.log("PX: " + cont);
+      context.putImageData(imageData, 0, 0);
+
+      */
+
+
+//    }
 
   }
 
