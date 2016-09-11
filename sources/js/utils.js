@@ -255,8 +255,13 @@
   };
 
   Utils.rgbStringToRgb = function (color) {
-    // TODO rgb(100, 100, 100) to r = 100 , g = 100, b = 100
-    debugger;
+    color = color.substring(4).replace(")", "").replace(" ", "").split(",");
+    return {
+      r: parseInt(color[0]),
+      g: parseInt(color[1]),
+      b: parseInt(color[2]),
+      a: color[3] ? parseInt(color[3]) : 0
+    };
   };
 
   Utils.hexToRgb = function (hex) {
