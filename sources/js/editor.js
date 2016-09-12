@@ -424,6 +424,7 @@
   var _bucket = (function () {
 
     // TODO aggiungere controllo checkCoord per quando si colora l'intero sfondo
+    // TODO bug trasparenza
     var tolerance = 16;
     var pixelCompare = function (i,targetcolor,fillcolor,data,length,tolerance) {
     	if (i<0||i>=length) return false; //out of bounds
@@ -673,7 +674,10 @@
       //context.shadowColor = "#000000";
       _particles(context, x, y, params.force, tool.color, tool.size);
     }
-    if (tool.name !== "eraser" && tool.name !== "bucket") {
+    if (tool.name === "eraser") {
+      _oldX = x;
+      _oldY = y;
+    } else if (tool.name !== "bucket") {
       _checkCoord(x, y);
     }
     x = y = undefined;
@@ -687,7 +691,10 @@
     } else if (tool.shape === "particles") {
       _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
-    if (tool.name !== "eraser" && tool.name !== "bucket") {
+    if (tool.name === "eraser") {
+      _oldX = params.x;
+      _oldY = params.y;
+    } else if (tool.name !== "bucket") {
       _checkCoord(params.x, params.y);
     }
 
