@@ -728,7 +728,9 @@
       _initTouchForce(e);
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
-        _lastRandomColor = _getRandomColor();
+        _tool.color = _lastRandomColor = _getRandomColor();
+      }
+      if (_tool.color === "") {
         _tool.color = _lastRandomColor;
       }
 

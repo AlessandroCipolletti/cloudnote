@@ -68,7 +68,7 @@
       forceFactor: 1,
       speedFactor: 1,
       shape: "",
-      globalCompositeOperation: "",
+      globalCompositeOperation: "source-over",
       cursor: false
     }
   };
