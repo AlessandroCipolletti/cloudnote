@@ -13,7 +13,6 @@
   var Socket = {};
 
   var _config = {
-    //primaryColors: ["#000000", "#C0C0C0", "#FFFFFF", "#FFAEB9", "#6DF4FF", "#00AAFF", "#0000FF", "#551A8B", "#8B008B", "#800000", "#CD0000", "#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#00CD00", "#008000" ],
     primaryColors: [
       "#000000", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
       "#0022ef", "#000688", "#6d0088", "#ddb8ff", "#b8ccff", "#ffb8e5", "#88004a", "#663300", "#883600", "#a00000",
@@ -21,7 +20,7 @@
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     secondaryColors: false,
-    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
+    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -29,7 +28,7 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
+  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking, _rule;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -419,6 +418,10 @@
     _oldX = x;
     _oldY = y;
 
+  }
+
+  function toggleRule () {
+    _rule.classList.toggle("displayNone");
   }
 
   var _bucket = (function () {
@@ -898,6 +901,7 @@
       _canvasCoworking = document.createElement("canvas");
       _contextCoworking = _canvasCoworking.getContext("2d");
       _toolCursor = templateDom.querySelector(".drawith-editor__tool-cursor");
+      _rule = templateDom.querySelector(".drawith-editor__tool-rule");
       _popupCoworking = templateDom.querySelector(".drawith-editor__coworking-popup");
       _coworkingIdText = templateDom.querySelector(".drawith-editor__coworking-popup input");
       _coworkingIdLabel = templateDom.querySelector(".drawith-editor__coworking-popup h1");
@@ -985,6 +989,7 @@
     hide: hide,
     save: save,
     setTool: setTool,
+    toggleRule: toggleRule,
     undo: undo,
     redo: redo,
     clear: clear,

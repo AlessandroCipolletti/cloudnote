@@ -35,11 +35,13 @@
   border-right: solid 0.2rem transparent;
   border-left: solid 0.2rem transparent;
 }
-.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-selected {
+.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-selected,
+.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-activated {
   border-right: solid 0.2rem transparent;
   border-left: solid 0.2rem gray;
 }
-.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__tool-selected {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__tool-selected,
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__tool-activated {
   border-right: solid 0.2rem gray;
   border-left: solid 0.2rem transparent;
 }
@@ -58,6 +60,9 @@
 }
 .drawith-editor-tools__tool-bucket {
   background-image: url("../img/icons/bucket.png");
+}
+.drawith-editor-tools__tool-rule {
+  background-image: url("../img/icons/rule.png");
 }
 .drawith-editor-tools__tool-eraser {
   background-image: url("../img/icons/eraser.png");
