@@ -423,12 +423,17 @@
 
   var _bucket = (function () {
 
-    // TODO aggiungere controllo checkCoord per quando si colora l'intero sfondo
-    // TODO bug trasparenza
     var tolerance = 16;
     var pixelCompare = function (i,targetcolor,fillcolor,data,length,tolerance) {
     	if (i<0||i>=length) return false; //out of bounds
-    	if (data[i+3]===0 && fillcolor.a>0) return true;  //surface is invisible and fill is visible
+      if (i === 0) {
+        _minX = _minY = 0;
+      }
+      if (i === length - 4) {
+        _maxX = _canvasWidth;
+        _maxY = _canvasHeight;
+      }
+    	if (data[i+3]===0 && fillcolor.a>0) return (targetcolor[3] === 0);  //surface is invisible and fill is visible
 
     	if (
     		MATH.abs(targetcolor[3] - fillcolor.a)<=tolerance &&
