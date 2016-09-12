@@ -423,6 +423,7 @@
 
   var _bucket = (function () {
 
+    // TODO aggiungere controllo checkCoord per quando si colora l'intero sfondo
     var tolerance = 16;
     var pixelCompare = function (i,targetcolor,fillcolor,data,length,tolerance) {
     	if (i<0||i>=length) return false; //out of bounds
@@ -465,7 +466,7 @@
     };
 
     return function (context, x, y, fillcolor) {
-      
+
       if (fillcolor[0] === "#") {
         fillcolor = Utils.hexToRgb(fillcolor.substring(1));
       } else {
