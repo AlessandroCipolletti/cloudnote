@@ -421,7 +421,7 @@
   }
 
   function toggleRule () {
-    _rule.classList.toggle("displayNone");
+    Utils.toggleFadeElements(_rule);
   }
 
   var _bucket = (function () {

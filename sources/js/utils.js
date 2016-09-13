@@ -84,12 +84,26 @@
     }
   }
 
+  function _toggleFadeEl (el) {
+    if (el) {
+      if (el.classList.contains("displayNone")) {
+        _fadeInEl(el);
+      } else {
+        _fadeOutEl(el);
+      }
+    }
+  }
+
   Utils.fadeInElements = function (els) {
     _iterable(els, _fadeInEl);
   };
 
   Utils.fadeOutElements = function (els) {
     _iterable(els, _fadeOutEl);
+  };
+
+  Utils.toggleFadeElements = function (els) {
+    _iterable(els, _toggleFadeEl);
   };
 
   function _enableEl (el) {
