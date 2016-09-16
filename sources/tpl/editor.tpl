@@ -1,7 +1,6 @@
 <div class="drawith-editor__container displayNone fadeOut" style="height: calc(100% - {{marginTop}}px); top: {{marginTop}}px;">
 
-  <div class="drawith-editor__tool-cursor displayNone fadeOut"></div>
-  <div class="drawith-editor__tool-rule displayNone"></div>
+  <div class="drawith-editor__tool-cursor displayNone"></div>
   <canvas class="drawith-editor__canvas paper-white"></canvas>
 
   <div class="drawith-editor__coworking-popup">

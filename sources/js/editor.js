@@ -8,6 +8,7 @@
   var Main = {};
   var Tools = {};
   var ColorPicker = {};
+  var Rule = {};
   var Dashboard = {};
   var User = {};
   var Socket = {};
@@ -28,7 +29,7 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking, _rule;
+  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -420,13 +421,9 @@
 
   }
 
-  function toggleRule () {
-    Utils.toggleFadeElements(_rule);
-  }
-
   var _bucket = (function () {
 
-    var tolerance = 16;
+    var tolerance = 8;
     var pixelCompare = function (i,targetcolor,fillcolor,data,length,tolerance) {
     	if (i<0||i>=length) return false; //out of bounds
       if (i === 0) {
@@ -901,7 +898,6 @@
       _canvasCoworking = document.createElement("canvas");
       _contextCoworking = _canvasCoworking.getContext("2d");
       _toolCursor = templateDom.querySelector(".drawith-editor__tool-cursor");
-      _rule = templateDom.querySelector(".drawith-editor__tool-rule");
       _popupCoworking = templateDom.querySelector(".drawith-editor__coworking-popup");
       _coworkingIdText = templateDom.querySelector(".drawith-editor__coworking-popup input");
       _coworkingIdLabel = templateDom.querySelector(".drawith-editor__coworking-popup h1");
@@ -953,6 +949,7 @@
 
     ColorPicker.init(_config, _container);
     Tools.init(_config, _container);
+    Rule.init(_config, _container);
 
   }
 
@@ -964,6 +961,7 @@
     Main = app.Main;
     Tools = app.Editor.Tools;
     ColorPicker = app.Editor.ColorPicker;
+    Rule = app.Editor.Rule;
     Dashboard = app.Dashboard;
     User = app.User;
     Socket = app.Socket;
@@ -989,7 +987,6 @@
     hide: hide,
     save: save,
     setTool: setTool,
-    toggleRule: toggleRule,
     undo: undo,
     redo: redo,
     clear: clear,

@@ -98,8 +98,7 @@
       Editor.setTool(_toolsConfig.bucket);
     },
     rule: function () {
-      _toggleTool("rule");
-      Editor.toggleRule();
+      _toggleTool("rule") ? Editor.Rule.show() : Editor.Rule.hide();
     },
     undo: function () {
       Editor.undo();
@@ -175,7 +174,7 @@
   }
 
   function _toggleTool (tool) {
-    _container.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
+    return _container.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
   }
 
   function _onTouchStart (e) {
