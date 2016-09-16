@@ -597,23 +597,18 @@
 
   var _initTouchForce = function (e) {
 
-    _touchEventObject = e.touches[0];
-    _touchEventObject.force = _touchEventObject.force || 0;
-    _currentTouchSupportForce = !!_touchEventObject.force;
-    _touchForce = _oldTouchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
+    var force = e.touches[0].force || 0;
+    _currentTouchSupportForce = !!force;
+    _touchForce = _oldTouchForce = MATH.max(round(force, 3), 0.01);
 
   };
 
   var _updateTouchForce = function (e) {
 
-    _touchEventObject.force = _touchEventObject.force || 0;
-    if (_touchEventObject.force === 0 && e.touches[0].force > 0) {
-      _touchEventObject = e.touches[0];
-    }
-    _currentTouchSupportForce = _currentTouchSupportForce || !!_touchEventObject.force;
+    var force = e.touches[0].force || 0;
     _oldTouchForce = _touchForce;
-    if (_touchEventObject.force > 0) {
-      _touchForce = MATH.max(round(_touchEventObject.force, 3), 0.01);
+    if (force > 0) {
+      _touchForce = MATH.max(round(force, 3), 0.01);
     } else {
       _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
     }
@@ -726,6 +721,7 @@
         return;
       }
       _initTouchForce(e);
+      console.log("start", _touchEventObject, _touchForce, _currentTouchSupportForce);
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
         _tool.color = _lastRandomColor = _getRandomColor();
@@ -773,6 +769,7 @@
         return;
       }
       _updateTouchForce(e);
+      console.log("move", _touchEventObject, _touchForce, _currentTouchSupportForce, e.touches[0], e.touches[0].force);
 
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
