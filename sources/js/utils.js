@@ -197,10 +197,10 @@
   Utils.getEventCoordX = function (e, offset, absolute) {
 
     if (absolute || typeof(e.layerX) === "undefined") {
-      if (e.type.indexOf("mouse") >= 0) {
-        return e.clientX - (offset || 0);
-      } else {
+      if (e.touches) {
         return e.touches[0].clientX - (offset || 0);
+      } else {
+        return e.clientX - (offset || 0);
       }
     } else {
       return e.layerX;
@@ -211,10 +211,10 @@
   Utils.getEventCoordY = function (e, offset, absolute) {
 
     if (absolute || typeof(e.layerY) === "undefined") {
-      if (e.type.indexOf("mouse") >= 0) {
-        return e.clientY - (offset || 0);
-      } else {
+      if (e.touches) {
         return e.touches[0].clientY - (offset || 0);
+      } else {
+        return e.clientY - (offset || 0);
       }
     } else {
       return e.layerY;

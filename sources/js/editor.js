@@ -34,7 +34,7 @@
   var _touchDown = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
-  var _frameUpdateForce = false, _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false, _touchEventObject = {};
+  var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
@@ -721,7 +721,7 @@
         return;
       }
       _initTouchForce(e);
-      console.log("start", _touchEventObject, _touchForce, _currentTouchSupportForce);
+
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
         _tool.color = _lastRandomColor = _getRandomColor();
@@ -769,7 +769,6 @@
         return;
       }
       _updateTouchForce(e);
-      console.log("move", _touchEventObject, _touchForce, _currentTouchSupportForce, e.touches[0], e.touches[0].force);
 
       _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
@@ -903,9 +902,9 @@
       });
       _coworkingIdText.addEventListener("keydown", _requestCoworking);
       _popupCoworking.parentNode.removeChild(_popupCoworking);
-      _canvas.addEventListener(Param.eventStart, _onTouchStart);
-      _canvas.addEventListener(Param.eventMove, _onTouchMove);
-      _canvas.addEventListener(Param.eventEnd, _onTouchEnd);
+      _canvas.addEventListener(Param.eventStart, _onTouchStart, false);
+      _canvas.addEventListener(Param.eventMove, _onTouchMove, false);
+      _canvas.addEventListener(Param.eventEnd, _onTouchEnd, false);
       _toolCursor.addEventListener(Param.eventStart, _onTouchStart);
       _toolCursor.addEventListener(Param.eventMove, _onTouchMove);
       _toolCursor.addEventListener(Param.eventEnd, _onTouchEnd);
