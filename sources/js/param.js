@@ -46,12 +46,14 @@
       param.eventStart = "touchstart";
       param.eventMove = "touchmove";
       param.eventEnd = "touchend";
+      param.eventOut = "";
 
     } else {
 
       param.eventStart = "mousedown";
       param.eventMove = "mousemove";
       param.eventEnd = "mouseup";
+      param.eventOut = "mouseout";
 
     }
 

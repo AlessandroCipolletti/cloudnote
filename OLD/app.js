@@ -44,7 +44,7 @@ var App = (function () {
 		},
 		requestAnimationFrame = WINDOW.requestAnimationFrame || WINDOW.mozRequestAnimationFrame || WINDOW.webkitRequestAnimationFrame ||
 		function (callback) {
-			setTimeout(callback, 25)
+			setTimeout(callback, 25);
 		},
 		PI = MATH.PI,
 		PI2 = 2 * PI,

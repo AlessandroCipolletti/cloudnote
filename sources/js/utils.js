@@ -43,6 +43,11 @@
     return MATH.atan2(x2 - x1, y2 - y1);
   };
 
+  Utils.angleDeg = function (x1, y1, x2, y2) {
+    //return MATH.atan((y2 - y1) / (x2 - x1) * 180 / MATH.PI);
+    return (y2 - y1) / (x2 - x1) * 180 / MATH.PI;
+  };
+
   Utils.addGlobalStatus = function (status) {
     Param.container.classList.add(status);
   };

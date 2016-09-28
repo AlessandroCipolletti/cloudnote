@@ -4,9 +4,9 @@
   top: 50%;
   left: 50%;
   height: 12rem; /* 240px */
-  width: 100%;
+  width: 50%;
   margin-top: -6rem; /* 120px */
-  margin-left: -50%;
+  margin-left: -25%;
   background-image: url("../img/rule.png");
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
   border-radius: 0.75rem;
@@ -15,8 +15,20 @@
 .drawith-editor__tool-rule-origin {
   width: 1px;
   height: 1px;
-  background-color: transparent;
-  position: relative;
+  background-color: red;
+  position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 1000;
+}
+
+.drawith-editor__tool-rule-gesture-one,
+.drawith-editor__tool-rule-gesture-two {
+  position: absolute;
+  background-color: black;
+  width: 10px;
+  height: 10px;
+  left: -500px;
+  top: -500px;
+  z-index: 1000;
 }
