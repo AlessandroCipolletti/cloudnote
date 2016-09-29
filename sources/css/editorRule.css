@@ -25,9 +25,9 @@
 .drawith-editor__tool-rule-gesture-one,
 .drawith-editor__tool-rule-gesture-two {
   position: absolute;
-  background-color: black;
-  width: 10px;
-  height: 10px;
+  background-color: transparent;
+  width: 1px;
+  height: 1px;
   left: -500px;
   top: -500px;
   z-index: 1000;
