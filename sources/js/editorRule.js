@@ -12,6 +12,7 @@
 
   // TODO bug con posizioni min e max se ruotato
   // TODO bug su come si calcolano gli angoli tra le dita correnti sesuperano i 90 gradi
+  // TODO quando si passa da rotazioni multiple di 45 gradi bloccare la rotazione per i 2 gradi successivi :)
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -90,7 +91,7 @@
     } else {
       _dragCurrentX = round((e.touches[0].clientX +  e.touches[1].clientX) / 2 - _gestureOriginX, 1);
       _dragCurrentY = round((e.touches[0].clientY +  e.touches[1].clientY) / 2 - _gestureOriginY, 1);
-      _currentRotation = round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle) % 360, 2);
+      _currentRotation = round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle), 2);
       _dragStartX = _dragStartY = -1;
       _rule.style.transformOrigin = _ruleTransformOrigin;
     }
