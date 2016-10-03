@@ -11,7 +11,6 @@
   };
 
   // TODO bug con posizioni min e max se ruotato
-  // TODO bug su come si calcolano gli angoli tra le dita correnti sesuperano i 90 gradi
   // TODO quando si passa da rotazioni multiple di 45 gradi bloccare la rotazione per i 2 gradi successivi :)
 
   function round (n, d) {
@@ -19,7 +18,7 @@
     return MATH.round(n * m) / m;
   }
 
-  var _rule = {}, _ruleOrigin = {}, _ruleGestureOne = {}, _ruleGestureTwo = {}, _ruleTransformOrigin = "";
+  var _rule = {}, _ruleOrigin = {}, _ruleGestureOne = {}, _ruleGestureTwo = {}, _ruleTransformOrigin = "", _touchDown = false;
   var _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _ruleWidth = 0, _ruleHeight = 0, _minX = 0, _minY = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
 
@@ -37,6 +36,7 @@
     e.stopPropagation();
     if (e.touches && e.touches.length > 2) return;
     var ruleOriginCoord = {}, gestureOneCoord = {}, gestureTwoCoor = {}, cursorX = 0, cursorY = 0;
+    _touchDown = true;
     if (_ruleWidth === 0) {
       _ruleWidth = _rule.clientWidth;
       _ruleHeight = _rule.clientHeight;
@@ -50,7 +50,6 @@
       _dragStartX = Utils.getEventCoordX(e, 0, true);
       _dragStartY = Utils.getEventCoordY(e, 0, true);
     } else {
-
       _dragLastX = _dragCurrentX;
       _dragLastY = _dragCurrentY;
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
@@ -68,7 +67,6 @@
       _startAngle = round(Utils.angleDeg(gestureOneCoord.left, gestureOneCoord.top, gestureTwoCoord.left, gestureTwoCoord.top), 2);
       _ruleTransformOrigin = round(_gestureOriginX - _startOriginX, 1) + "px " + round(_gestureOriginY - _startOriginY, 1) + "px";
       _ruleGestureOne.style.cssText = _ruleGestureTwo.style.cssText = "";
-
     }
 
   }
@@ -77,7 +75,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (e.touches && e.touches.length > 2) return;
+    if (e.touches && e.touches.length > 2 || _touchDown === false) return;
     var cursorX = 0, cursorY = 0;
     if (!e.touches || e.touches.length === 1) {
       cursorX = Utils.getEventCoordX(e, 0, true);
@@ -103,6 +101,8 @@
 
     e.preventDefault();
     e.stopPropagation();
+    if (_touchDown === false) return;
+    _touchDown = false;
     _dragLastX = _dragCurrentX;
     _dragLastY = _dragCurrentY;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
