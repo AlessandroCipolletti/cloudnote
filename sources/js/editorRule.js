@@ -7,10 +7,14 @@
   var MATH = Math;
 
   var _config = {
+    toolsSide: "left",
+    toolsWidth: 45,
+    colorsPickerHeight: 45,
+    ruleMinOffset: 75
     // TODO rule width
   };
 
-  // TODO bug con posizioni min e max se ruotato
+  // TODO bug se dopo drag a 2 dita continuo drag con 1 dito
   // TODO quando si passa da rotazioni multiple di 45 gradi bloccare la rotazione per i 2 gradi successivi :)
 
   function round (n, d) {
@@ -20,7 +24,8 @@
 
   var _rule = {}, _ruleOrigin = {}, _ruleGestureOne = {}, _ruleGestureTwo = {}, _ruleTransformOrigin = "", _touchDown = false;
   var _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
-  var _ruleWidth = 0, _ruleHeight = 0, _minX = 0, _minY = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
+  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
+  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0;
 
   function show () {
     Utils.fadeInElements(_rule);
@@ -40,8 +45,6 @@
     if (_ruleWidth === 0) {
       _ruleWidth = _rule.clientWidth;
       _ruleHeight = _rule.clientHeight;
-      _minX = -_ruleWidth / 2 - app.WIDTH / 2 + 100 * Param.pixelRatio;
-      _minY = -_ruleHeight / 2 - app.HEIGHT / 2 + 100 * Param.pixelRatio;
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
@@ -84,8 +87,8 @@
         _dragStartX = cursorX;
         _dragStartY = cursorY;
       }
-      _dragCurrentX = MATH.min(MATH.max(_dragLastX + cursorX - _dragStartX, _minX), -_minX);
-      _dragCurrentY = MATH.min(MATH.max(_dragLastY + cursorY - _dragStartY, _minY), -_minY);
+      _dragCurrentX = _dragLastX + cursorX - _dragStartX;
+      _dragCurrentY = _dragLastY + cursorY - _dragStartY;
     } else {
       _dragCurrentX = round((e.touches[0].clientX +  e.touches[1].clientX) / 2 - _gestureOriginX, 1);
       _dragCurrentY = round((e.touches[0].clientY +  e.touches[1].clientY) / 2 - _gestureOriginY, 1);
@@ -101,8 +104,20 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (_touchDown === false) return;
+    if (_touchDown === false || (e.touches && e.touches.length > 0)) return;
     _touchDown = false;
+    var rulePosition = _rule.getBoundingClientRect();
+    if (rulePosition.bottom < Param.headerSize + _config.ruleMinOffset) {  // top
+      _dragCurrentY += Param.headerSize + _config.ruleMinOffset - rulePosition.bottom;
+    } else if (rulePosition.top > app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight) {  // bottom
+      _dragCurrentY -= rulePosition.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+    }
+    if (rulePosition.right < _offsetLeft + _config.ruleMinOffset) { // left
+      _dragCurrentX += _offsetLeft + _config.ruleMinOffset - rulePosition.right;
+    } else if (rulePosition.left > app.WIDTH - _offsetRight - _config.ruleMinOffset) {  // right
+      _dragCurrentX -= rulePosition.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
+    }
+    _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     _dragLastX = _dragCurrentX;
     _dragLastY = _dragCurrentY;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
@@ -163,6 +178,12 @@
     Utils = app.Utils;
     Main = app.Main;
     _config = Utils.setConfig(params, _config);
+    _config.ruleMinOffset *= Param.pixelRatio;
+    if (_config.toolsSide === "left") {
+      _offsetLeft = _config.toolsWidth;
+    } else {
+      _offsetRight = _config.toolsWidth;
+    }
     _initDom(moduleContainer);
 
   }

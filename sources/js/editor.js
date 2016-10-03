@@ -22,6 +22,9 @@
     ],
     secondaryColors: false,
     tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
+    toolsWidth: 45,
+    colorsPickerHeight: 45,
+    ruleMinOffset: 75,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -35,7 +38,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
-  var _step = [], _stepCacheLength = 21, _currentStep = 0, _toolsWidth = 45, _colorsPickerHeight = 45;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
   var _tool = {
@@ -236,7 +239,7 @@
     // _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
     // _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
     // _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    // _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _toolsWidth : 0);
+    // _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _config.toolsWidth : 0);
     // _savedDraw.y = _coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
     // _savedDraw.r = _savedDraw.x + _savedDraw.w;
     // _savedDraw.b = _savedDraw.y - _savedDraw.h;
@@ -916,8 +919,8 @@
 
       _initSubModules();
 
-      _canvasWidth = app.WIDTH - _toolsWidth;
-      _canvasHeight = app.HEIGHT - _colorsPickerHeight - Param.headerSize;
+      _canvasWidth = app.WIDTH - _config.toolsWidth;
+      _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize;
 
       if (Param.ios && Param.isAppOnline) {
         _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize + 20 * Param.pixelRatio;
@@ -928,9 +931,9 @@
       _canvas.style.width = _canvasWidth + "px";
       _canvas.style.height = _canvasHeight + "px";
       if (_config.toolsSide === "left") {
-        _canvas.style.left = _toolsWidth + "px";
+        _canvas.style.left = _config.toolsWidth + "px";
       } else {
-        _canvas.style.right = _toolsWidth + "px";
+        _canvas.style.right = _config.toolsWidth + "px";
       }
       _saveStep();
       Main.addRotationHandler(_onRotate);
@@ -963,9 +966,9 @@
     Socket = app.Socket;
     _config = Utils.setConfig(params, _config);
     _pixelRatio = Param.pixelRatio;
-    _toolsWidth *= _pixelRatio;
-    _colorsPickerHeight *= _pixelRatio;
-    _offsetLeft = (_config.toolsSide === "left" ? _toolsWidth : 0);
+    _config.toolsWidth *= _pixelRatio;
+    _config.colorsPickerHeight *= _pixelRatio;
+    _offsetLeft = (_config.toolsSide === "left" ? _config.toolsWidth : 0);
     _offsetTop = Param.headerSize;
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _initDom();
