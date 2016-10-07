@@ -104,20 +104,24 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (_touchDown === false || (e.touches && e.touches.length > 0)) return;
-    _touchDown = false;
-    var rulePosition = _rule.getBoundingClientRect();
-    if (rulePosition.bottom < Param.headerSize + _config.ruleMinOffset) {  // top
-      _dragCurrentY += Param.headerSize + _config.ruleMinOffset - rulePosition.bottom;
-    } else if (rulePosition.top > app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight) {  // bottom
-      _dragCurrentY -= rulePosition.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+
+    if (typeof(e.touches) === "undefined" || e.touches.length === 0) {
+      _touchDown = false;
     }
-    if (rulePosition.right < _offsetLeft + _config.ruleMinOffset) { // left
-      _dragCurrentX += _offsetLeft + _config.ruleMinOffset - rulePosition.right;
-    } else if (rulePosition.left > app.WIDTH - _offsetRight - _config.ruleMinOffset) {  // right
-      _dragCurrentX -= rulePosition.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
+    if (_touchDown === false) {
+      var rulePosition = _rule.getBoundingClientRect();
+      if (rulePosition.bottom < Param.headerSize + _config.ruleMinOffset) {  // top
+        _dragCurrentY += Param.headerSize + _config.ruleMinOffset - rulePosition.bottom;
+      } else if (rulePosition.top > app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight) {  // bottom
+        _dragCurrentY -= rulePosition.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+      }
+      if (rulePosition.right < _offsetLeft + _config.ruleMinOffset) { // left
+        _dragCurrentX += _offsetLeft + _config.ruleMinOffset - rulePosition.right;
+      } else if (rulePosition.left > app.WIDTH - _offsetRight - _config.ruleMinOffset) {  // right
+        _dragCurrentX -= rulePosition.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
+      }
+      _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     }
-    _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     _dragLastX = _dragCurrentX;
     _dragLastY = _dragCurrentY;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
