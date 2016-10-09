@@ -10,8 +10,8 @@
     toolsSide: "left",
     toolsWidth: 45,
     colorsPickerHeight: 45,
-    ruleMinOffset: 75
-    // TODO rule width
+    ruleMinOffset: 50,
+    ruleWidth: 1
   };
 
   // TODO bug se dopo drag a 2 dita continuo drag con 1 dito
@@ -22,10 +22,32 @@
     return MATH.round(n * m) / m;
   }
 
-  var _rule = {}, _ruleOrigin = {}, _ruleGestureOne = {}, _ruleGestureTwo = {}, _ruleTransformOrigin = "", _touchDown = false;
+  var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
-  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0;
+  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
+
+  var _rotationToLabel = (function () {
+
+    var result = 0;
+
+    return function (deg) {
+
+      deg = MATH.abs(MATH.trunc(deg));
+      result = deg;
+      while (result > 90) {
+        result = result - 90;
+      }
+      if (deg % 180 === 0) {
+        result = 0;
+      } else if (deg % 180 > 90) {
+        result = 90 - result;
+      }
+      return result;
+
+    };
+
+  })();
 
   function show () {
     Utils.fadeInElements(_rule);
@@ -93,6 +115,8 @@
       _dragCurrentX = round((e.touches[0].clientX +  e.touches[1].clientX) / 2 - _gestureOriginX, 1);
       _dragCurrentY = round((e.touches[0].clientY +  e.touches[1].clientY) / 2 - _gestureOriginY, 1);
       _currentRotation = round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle), 2);
+      _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
+      _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
       _dragStartX = _dragStartY = -1;
       _rule.style.transformOrigin = _ruleTransformOrigin;
     }
@@ -104,22 +128,53 @@
 
     e.preventDefault();
     e.stopPropagation();
-
     if (typeof(e.touches) === "undefined" || e.touches.length === 0) {
       _touchDown = false;
     }
     if (_touchDown === false) {
-      var rulePosition = _rule.getBoundingClientRect();
-      if (rulePosition.bottom < Param.headerSize + _config.ruleMinOffset) {  // top
-        _dragCurrentY += Param.headerSize + _config.ruleMinOffset - rulePosition.bottom;
-      } else if (rulePosition.top > app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight) {  // bottom
-        _dragCurrentY -= rulePosition.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+      var centerCoord = _ruleCenter.getBoundingClientRect();
+      var deltaX = 0, deltaY = 0;
+      var currentRotationRad = _currentRotation / 180 * MATH.PI;
+      centerCoord.top = round(centerCoord.top);
+      centerCoord.left = round(centerCoord.top);
+      var outTop = Param.headerSize + _config.ruleMinOffset - centerCoord.top;
+      var outBottom = centerCoord.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+      var outLeft = _offsetLeft + _config.ruleMinOffset - centerCoord.left;
+      var outRight = centerCoord.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
+      var maxDeltaX = app.WIDTH - centerCoord.left - _config.ruleMinOffset - _offsetRight;
+      var minDeltaX = -centerCoord.left + _offsetLeft + _config.ruleMinOffset;
+      var maxDeltaY = app.HEIGHT - centerCoord.top - _config.ruleMinOffset - _config.colorsPickerHeight;
+      var minDeltaY = -centerCoord.top + Param.headerSize + _config.ruleMinOffset;
+      var sidesOut = [outTop, outBottom, outLeft, outRight].sort(function (a, b) {return a - b;}).filter(function (a) {return a > 0;});
+      var i = 0;
+      var side = sidesOut[i];
+      while (side) {
+        if (side === outTop) {
+          deltaY = outTop;
+          deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
+        } else if (side === outBottom) {
+          deltaY = -outBottom;
+          deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
+        } else if (side === outLeft) {
+          deltaX = outLeft;
+          deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
+        } else {
+          deltaX = -outRight;
+          deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
+        }
+        i++;
+        if (sidesOut.length > i && (deltaX > maxDeltaX || deltaX < minDeltaX || deltaY > maxDeltaY || deltaY < minDeltaY)) {
+          side = sidesOut[i];
+        } else {
+          side = false;
+        }
       }
-      if (rulePosition.right < _offsetLeft + _config.ruleMinOffset) { // left
-        _dragCurrentX += _offsetLeft + _config.ruleMinOffset - rulePosition.right;
-      } else if (rulePosition.left > app.WIDTH - _offsetRight - _config.ruleMinOffset) {  // right
-        _dragCurrentX -= rulePosition.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
-      }
+      deltaX = MATH.min(deltaX, maxDeltaX);
+      deltaX = MATH.max(deltaX, minDeltaX);
+      deltaY = MATH.min(deltaY, maxDeltaY);
+      deltaY = MATH.max(deltaY, minDeltaY);
+      _dragCurrentX += deltaX;
+      _dragCurrentY += deltaY;
       _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     }
     _dragLastX = _dragCurrentX;
@@ -160,8 +215,13 @@
 
       _rule = templateDom[0];
       _ruleOrigin = _rule.querySelector(".drawith-editor__tool-rule-origin");
+      _ruleCenter = _rule.querySelector(".drawith-editor__tool-rule-center");
+      _ruleLevel = _rule.querySelector(".drawith-editor__tool-rule-level");
+      _ruleLevelValue = _rule.querySelector(".drawith-editor__tool-rule-level-value");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
+      _rule.style.width = (_config.ruleWidth * app.WIDTH) + "px";
+      _rule.style.marginLeft = -(_config.ruleWidth * app.WIDTH / 2) + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);

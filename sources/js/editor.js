@@ -24,7 +24,8 @@
     tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
     toolsWidth: 45,
     colorsPickerHeight: 45,
-    ruleMinOffset: 75,
+    ruleMinOffset: 50,
+    ruleWidth: 4,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
