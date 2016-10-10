@@ -11,7 +11,8 @@
     toolsWidth: 45,
     colorsPickerHeight: 45,
     ruleMinOffset: 50,
-    ruleWidth: 1
+    ruleWidth: 1,
+    ruleRotationStep: 2
   };
 
   // TODO bug se dopo drag a 2 dita continuo drag con 1 dito
@@ -44,6 +45,29 @@
         result = 90 - result;
       }
       return result;
+
+    };
+
+  })();
+
+  var _roundAngle = (function () {
+
+    var delta = 0;
+
+    return function (deg) {
+
+      delta = deg % 45;
+      if (MATH.abs(MATH.trunc(delta)) < _config.ruleRotationStep) {
+        return deg - delta;
+      } else if(MATH.abs(MATH.trunc(delta)) > 45 - _config.ruleRotationStep) {
+        if (delta > 0) {
+          return MATH.round(deg + 45 - delta);
+        } else {
+          return MATH.round(deg - 45 - delta);
+        }
+      } else {
+        return deg;
+      }
 
     };
 
@@ -114,7 +138,7 @@
     } else {
       _dragCurrentX = round((e.touches[0].clientX +  e.touches[1].clientX) / 2 - _gestureOriginX, 1);
       _dragCurrentY = round((e.touches[0].clientY +  e.touches[1].clientY) / 2 - _gestureOriginY, 1);
-      _currentRotation = round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle), 2);
+      _currentRotation = _roundAngle(round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle), 2));
       _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
       _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
       _dragStartX = _dragStartY = -1;
