@@ -85,7 +85,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
     if (touches.length > 2) {
       _touchDown = false;
       return;
@@ -128,7 +128,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
     if (touches.length > 2 || _touchDown === false) {
       _touchDown = false;
       return;
@@ -160,7 +160,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
     if (touches.length === 0) {
       _touchDown = false;
     }
@@ -246,6 +246,12 @@
     _dragCurrentX = _dragCurrentY = _currentRotation = _dragLastX = _dragLastY = _startAngle =0;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
     _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
+    _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
+    _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
+    if (_isVisible) {
+      Editor.Tools.clickButton("rule");
+    }
+
   }
 
   function _initDom (moduleContainer) {
@@ -259,6 +265,8 @@
       _ruleLevelValue = _rule.querySelector(".drawith-editor__tool-rule-level-value");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
+      _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
+      _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);
@@ -267,7 +275,7 @@
         _rule.addEventListener("gesturechange", _onGestureChange, true);
         _rule.addEventListener("gestureend", _onGestureEnd, true);
       }
-      //Main.addRotationHandler(_onRotate);
+      Main.addRotationHandler(_onRotate);
 
     });
 
@@ -278,6 +286,7 @@
     Param = app.Param;
     Utils = app.Utils;
     Main = app.Main;
+    Editor = app.Editor;
     _config = Utils.setConfig(params, _config);
     _config.ruleMinOffset *= Param.pixelRatio;
     if (_config.toolsSide === "left") {
