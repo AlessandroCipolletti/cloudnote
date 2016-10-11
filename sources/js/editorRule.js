@@ -162,7 +162,7 @@
     e.preventDefault();
     e.stopPropagation();
     var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
-    if (touches.length === 0) {
+    if (!e.touches || touches.length === 0) {
       _touchDown = false;
     }
     if (_touchDown === false) {

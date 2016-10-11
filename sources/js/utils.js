@@ -317,10 +317,13 @@
         return touch.target === target;
       });
     }
-    return [{
-      clientX: e.clientX,
-      clientY: e.clientY
-    }];
+    if (e.target === target) {
+      return [{
+        clientX: e.clientX,
+        clientY: e.clientY
+      }];
+    }
+    return [];
 
   };
 
