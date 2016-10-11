@@ -294,6 +294,7 @@
     Editor = app.Editor;
     _config = Utils.setConfig(params, _config);
     _config.ruleMinOffset *= Param.pixelRatio;
+    _config.ruleHeight *= Param.pixelRatio;
     if (_config.toolsSide === "left") {
       _offsetLeft = _config.toolsWidth;
     } else {
