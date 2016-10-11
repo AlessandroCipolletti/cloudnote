@@ -836,7 +836,7 @@
       if (!e.touches || touches.length === 0) {
         _toolCursor.classList.add("displayNone");
       }
-      if (_touchDown === false || touches.length > 0) return;
+      if (_touchDown === false || (e.touches && touches.length > 0)) return;
       _touchDown = false;
       if (Param.supportTouch === false) {
         _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
