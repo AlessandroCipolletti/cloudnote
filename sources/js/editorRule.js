@@ -12,7 +12,8 @@
     toolsWidth: 45,
     colorsPickerHeight: 45,
     ruleMinOffset: 50,
-    ruleWidth: 4,
+    ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
+    ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
     ruleRotationStep: 3
   };
 
@@ -242,6 +243,8 @@
 
     _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
     _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
+    _rule.style.height = (_config.ruleHeight * Param.pixelRatio) + "px";
+    _rule.style.marginTop = -(_config.ruleHeight * Param.pixelRatio / 2) + "px";
     _touchDown = false;
     _dragCurrentX = _dragCurrentY = _currentRotation = _dragLastX = _dragLastY = _startAngle =0;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
@@ -267,6 +270,8 @@
       _ruleGestureTwo = templateDom[2];
       _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
       _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
+      _rule.style.height = (_config.ruleHeight * Param.pixelRatio) + "px";
+      _rule.style.marginTop = -(_config.ruleHeight * Param.pixelRatio / 2) + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);

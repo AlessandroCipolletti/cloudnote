@@ -26,6 +26,7 @@
     colorsPickerHeight: 45,
     ruleMinOffset: 50,
     ruleWidth: 4,
+    ruleHeight: 120,
     ruleRotationStep: 3,
     toolsSide: "left",
     minPxToDraw: 3,

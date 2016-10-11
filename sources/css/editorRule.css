@@ -3,8 +3,6 @@
   z-index: 70;
   top: 50%;
   left: 50%;
-  height: 12rem; /* 240px */
-  margin-top: -6rem; /* 120px */
   background-image: url("../img/rule.png");
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
   border-radius: 0.75rem;
