@@ -198,10 +198,12 @@
 
   };
 
-  Utils.getEventCoordX = function (e, offset, absolute) {
+  Utils.getEventCoordX = function (e, offset, absolute) { // e = event || touches
 
     if (absolute || typeof(e.layerX) === "undefined") {
-      if (e.touches) {
+      if (e instanceof Array) {
+        return e[0].clientX - (offset || 0);
+      } else if (e.touches) {
         return e.touches[0].clientX - (offset || 0);
       } else {
         return e.clientX - (offset || 0);
@@ -212,10 +214,12 @@
 
   };
 
-  Utils.getEventCoordY = function (e, offset, absolute) {
+  Utils.getEventCoordY = function (e, offset, absolute) { // e = event || touches
 
     if (absolute || typeof(e.layerY) === "undefined") {
-      if (e.touches) {
+      if (e instanceof Array) {
+        return e[0].clientY - (offset || 0);
+      } else if (e.touches) {
         return e.touches[0].clientY - (offset || 0);
       } else {
         return e.clientY - (offset || 0);
@@ -304,6 +308,20 @@
 
   Utils.rgbToHex = function (r, g, b) {
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  };
+
+  Utils.filterTouchesByTarget = function (e, target) {
+
+    if (e.touches) {
+      return  Array.prototype.filter.call(e.touches, function (touch) {
+        return touch.target === target;
+      });
+    }
+    return [{
+      clientX: e.clientX,
+      clientY: e.clientY
+    }];
+
   };
 
   function _initDom () {

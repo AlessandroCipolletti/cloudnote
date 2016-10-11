@@ -26,7 +26,7 @@
     colorsPickerHeight: 45,
     ruleMinOffset: 50,
     ruleWidth: 4,
-    ruleRotationStep: 2,
+    ruleRotationStep: 3,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -712,15 +712,16 @@
 
   var _onTouchStart = (function () {
 
-    var style = "", params = {};
+    var style = "", params = {}, touches = [];
 
     return function (e) {
 
       e.preventDefault();
       e.stopPropagation();
-      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
-      if ((e.touches && e.touches.length > 1) || _touchDown) {
+      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+      if ((touches.length > 1) || _touchDown) {
         _oldX = _oldMidX = _cursorX;
         _oldY = _oldMidY = _cursorY;
         return;
@@ -763,20 +764,21 @@
 
   var _onTouchMove = (function () {
 
-    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
+    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {}, touches = [];
 
     return function (e) {
 
       e.preventDefault();
       e.stopPropagation();
-      if (_touchDown === false || (e.touches && e.touches.length > 1)) {
+      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+      if (_touchDown === false || touches.length > 1) {
         _touchDown = false;
         return;
       }
       _updateTouchForce(e);
 
-      _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
       distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
       size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
 
@@ -824,19 +826,20 @@
 
   var _onTouchEnd = (function () {
 
-    var params = {};
+    var params = {}, touches = [];
 
     return function (e) {
 
       e.stopPropagation();
-      if (!e.touches || e.touches.length === 0) {
+      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+      if (!e.touches || touches.length === 0) {
         _toolCursor.classList.add("displayNone");
       }
-      if (_touchDown === false || (e.touches && e.touches.length)) return;
+      if (_touchDown === false || touches.length > 0) return;
       _touchDown = false;
       if (Param.supportTouch === false) {
-        _cursorX = Utils.getEventCoordX(e, _offsetLeft, true);
-        _cursorY = Utils.getEventCoordY(e, _offsetTop, true);
+        _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+        _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
         if (_cursorX !== _oldX && _cursorY !== _oldY) {
           params = {
             type: "end",
@@ -864,19 +867,31 @@
   })();
 
   function _onGestureStart (e) {
+
+    e.preventDefault();
+    e.stopPropagation();
     _onTouchEnd(e);
-    console.log(e);
+    // console.log(e);
+
   }
 
   function _onGestureChange (e) {
+
+    e.preventDefault();
+    e.stopPropagation();
     if (_touchDown) {
       _onTouchEnd(e);
     }
-    console.log(e);
+    // console.log(e);
+
   }
 
   function _onGestureEnd (e) {
-    console.log(e);
+
+    e.preventDefault();
+    e.stopPropagation();
+    // console.log(e);
+
   }
 
   function _onRotate (e) {

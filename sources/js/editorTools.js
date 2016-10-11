@@ -98,7 +98,7 @@
       Editor.setTool(_toolsConfig.bucket);
     },
     rule: function () {
-      _toggleTool("rule") ? Editor.Rule.show() : Editor.Rule.hide();
+      (_toggleTool("rule") ? Editor.Rule.show() : Editor.Rule.hide());
     },
     undo: function () {
       Editor.undo();
@@ -159,6 +159,14 @@
         }
       }
 
+    }
+
+  }
+
+  function clickButton (tool) {
+
+    if (_config.tools.indexOf(tool) >= 0 && _toolsFunctions.hasOwnProperty(tool)) {
+      (_toolsFunctions[tool])();
     }
 
   }
@@ -271,7 +279,8 @@
   app.module("Editor.Tools", {
     init: init,
     toggleButton: toggleButton,
-    getToolConfig: getToolConfig
+    getToolConfig: getToolConfig,
+    clickButton: clickButton
   });
 
 })(drawith);

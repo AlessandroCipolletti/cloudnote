@@ -4,6 +4,7 @@
   var Param = {};
   var Utils = {};
   var Main = {};
+  var Editor = {};
   var MATH = Math;
 
   var _config = {
@@ -11,12 +12,9 @@
     toolsWidth: 45,
     colorsPickerHeight: 45,
     ruleMinOffset: 50,
-    ruleWidth: 1,
-    ruleRotationStep: 2
+    ruleWidth: 4,
+    ruleRotationStep: 3
   };
-
-  // TODO bug se dopo drag a 2 dita continuo drag con 1 dito
-  // TODO quando si passa da rotazioni multiple di 45 gradi bloccare la rotazione per i 2 gradi successivi :)
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -24,7 +22,7 @@
   }
 
   var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
-  var _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
+  var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
 
@@ -75,17 +73,23 @@
 
   function show () {
     Utils.fadeInElements(_rule);
+    _isVisible = true;
   }
 
   function hide () {
     Utils.fadeOutElements(_rule);
+    _isVisible = false;
   }
 
   function _onTouchStart (e) {
 
     e.preventDefault();
     e.stopPropagation();
-    if (e.touches && e.touches.length > 2) return;
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    if (touches.length > 2) {
+      _touchDown = false;
+      return;
+    }
     var ruleOriginCoord = {}, gestureOneCoord = {}, gestureTwoCoor = {}, cursorX = 0, cursorY = 0;
     _touchDown = true;
     if (_ruleWidth === 0) {
@@ -95,19 +99,19 @@
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
     }
-    if (!e.touches || e.touches.length === 1) {
-      _dragStartX = Utils.getEventCoordX(e, 0, true);
-      _dragStartY = Utils.getEventCoordY(e, 0, true);
+    if (touches.length <= 1) {
+      _dragStartX = Utils.getEventCoordX(touches, 0, true);
+      _dragStartY = Utils.getEventCoordY(touches, 0, true);
     } else {
       _dragLastX = _dragCurrentX;
       _dragLastY = _dragCurrentY;
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
-      _ruleGestureOne.style.left = round(e.touches[0].clientX, 1) + "px";
-      _ruleGestureOne.style.top = round(e.touches[0].clientY - Param.headerSize, 1) + "px";
-      _ruleGestureOne.style.transformOrigin = round(ruleOriginCoord.left - e.touches[0].clientX, 1) + "px " + round(ruleOriginCoord.top - e.touches[0].clientY, 1) + "px";
-      _ruleGestureTwo.style.left = round(e.touches[1].clientX, 1) + "px";
-      _ruleGestureTwo.style.top = round(e.touches[1].clientY - Param.headerSize, 1) + "px";
-      _ruleGestureTwo.style.transformOrigin = round(ruleOriginCoord.left - e.touches[1].clientX, 1) + "px " + round(ruleOriginCoord.top - e.touches[1].clientY, 1) + "px";
+      _ruleGestureOne.style.left = round(touches[0].clientX, 1) + "px";
+      _ruleGestureOne.style.top = round(touches[0].clientY - Param.headerSize, 1) + "px";
+      _ruleGestureOne.style.transformOrigin = round(ruleOriginCoord.left - touches[0].clientX, 1) + "px " + round(ruleOriginCoord.top - touches[0].clientY, 1) + "px";
+      _ruleGestureTwo.style.left = round(touches[1].clientX, 1) + "px";
+      _ruleGestureTwo.style.top = round(touches[1].clientY - Param.headerSize, 1) + "px";
+      _ruleGestureTwo.style.transformOrigin = round(ruleOriginCoord.left - touches[1].clientX, 1) + "px " + round(ruleOriginCoord.top - touches[1].clientY, 1) + "px";
       _ruleGestureOne.style.transform = _ruleGestureTwo.style.transform = "translate3d(" + round(_startOriginX - ruleOriginCoord.left, 1) + "px, " + round(_startOriginY - ruleOriginCoord.top, 1) + "px, 0px) rotateZ(" + (-_currentRotation) + "deg)";
       gestureOneCoord = _ruleGestureOne.getBoundingClientRect();
       gestureTwoCoord = _ruleGestureTwo.getBoundingClientRect();
@@ -124,11 +128,15 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (e.touches && e.touches.length > 2 || _touchDown === false) return;
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    if (touches.length > 2 || _touchDown === false) {
+      _touchDown = false;
+      return;
+    }
     var cursorX = 0, cursorY = 0;
-    if (!e.touches || e.touches.length === 1) {
-      cursorX = Utils.getEventCoordX(e, 0, true);
-      cursorY = Utils.getEventCoordY(e, 0, true);
+    if (touches.length <= 1) {
+      cursorX = Utils.getEventCoordX(touches, 0, true);
+      cursorY = Utils.getEventCoordY(touches, 0, true);
       if (_dragStartX === -1) {
         _dragStartX = cursorX;
         _dragStartY = cursorY;
@@ -136,9 +144,9 @@
       _dragCurrentX = _dragLastX + cursorX - _dragStartX;
       _dragCurrentY = _dragLastY + cursorY - _dragStartY;
     } else {
-      _dragCurrentX = round((e.touches[0].clientX +  e.touches[1].clientX) / 2 - _gestureOriginX, 1);
-      _dragCurrentY = round((e.touches[0].clientY +  e.touches[1].clientY) / 2 - _gestureOriginY, 1);
-      _currentRotation = _roundAngle(round((Utils.angleDeg(e.touches[0].clientX, e.touches[0].clientY, e.touches[1].clientX, e.touches[1].clientY) - _startAngle), 2));
+      _dragCurrentX = round((touches[0].clientX +  touches[1].clientX) / 2 - _gestureOriginX, 1);
+      _dragCurrentY = round((touches[0].clientY +  touches[1].clientY) / 2 - _gestureOriginY, 1);
+      _currentRotation = _roundAngle(round((Utils.angleDeg(touches[0].clientX, touches[0].clientY, touches[1].clientX, touches[1].clientY) - _startAngle), 2));
       _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
       _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
       _dragStartX = _dragStartY = -1;
@@ -152,7 +160,8 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (typeof(e.touches) === "undefined" || e.touches.length === 0) {
+    var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevel));
+    if (touches.length === 0) {
       _touchDown = false;
     }
     if (_touchDown === false) {
@@ -230,7 +239,13 @@
   }
 
   function _onRotate (e) {
-    // do some stuff
+
+    _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
+    _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
+    _touchDown = false;
+    _dragCurrentX = _dragCurrentY = _currentRotation = _dragLastX = _dragLastY = _startAngle =0;
+    _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
+    _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
   }
 
   function _initDom (moduleContainer) {
@@ -244,8 +259,6 @@
       _ruleLevelValue = _rule.querySelector(".drawith-editor__tool-rule-level-value");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
-      _rule.style.width = (_config.ruleWidth * app.WIDTH) + "px";
-      _rule.style.marginLeft = -(_config.ruleWidth * app.WIDTH / 2) + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);
