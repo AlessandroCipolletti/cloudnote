@@ -8,6 +8,8 @@
   var _popupContainer = {};
   var _popupOpen = false;
   var MATH = Math;
+  var PI = MATH.PI;
+  var PI2 = PI / 2
 
   Utils.emptyFN = function () {};
 
@@ -39,12 +41,84 @@
     return MATH.round(MATH.sqrt(MATH.pow(x2 - x1, 2) + MATH.pow(y2 - y1, 2)));
   };
 
-  Utils.angle = function (x1, y1, x2, y2) {
-    return MATH.atan2(x2 - x1, y2 - y1);
+  Utils.angleRadToDeg = function (rad) {
+    return rad * 180 / PI;
+  };
+
+  Utils.angleDegToRad = function (deg) {
+    return deg * PI / 180;
+  };
+
+  Utils.radToFirstQuadrant = function (rad) {
+
+    var result = rad;
+    while (result > PI2) {
+      result = result - PI2;
+    }
+    if (rad % PI === 0) {
+      result = 0;
+    } else if (rad % PI > PI2) {
+      result = PI2 - result;
+    }
+    return result;
+
+  };
+
+  Utils.degToFirstQuadrant = function (deg) {
+
+    deg = MATH.abs(deg);
+    var result = deg;
+    while (result > 90) {
+      result = result - 90;
+    }
+    if (deg % 180 === 0) {
+      result = 0;
+    } else if (deg % 180 > 90) {
+      result = 90 - result;
+    }
+    return result;
+
+  };
+
+  Utils.coefficientM = function (x1, y1, x2, y2) {
+    return (-y2 + y1) / (x2 - x1);
+  };
+
+  Utils.angleRad = function (x1, y1, x2, y2) {
+
+    var m1 = x2 - x1;
+    var m2 = -y2 + y1;
+    if (m1 > 0 && m2 > 0) {  // primo quadrante
+      return (MATH.atan(m2 / m1));
+    } else if (m1 < 0 && m2 > 0) {  // secondo quadrante
+      return (MATH.atan(m2 / m1) +  PI);
+    } else if (m1 < 0 && m2 < 0) {  // terzo quadrante
+      return (MATH.atan(m2 / m1) + PI);
+    } else if (m1 > 0 && m2 < 0) {  // quarto quadrante
+      return (MATH.atan(m2 / m1) + PI * 2);
+    } else {
+      // multipli di 90
+      if (m1 === 0) {
+        if (m2 > 0){
+          return PI / 2;
+        } else {
+          return PI * 1.5;
+        }
+      } else {
+        if (m1 > 0) {
+          return 0;
+        } else {
+          return PI;
+        }
+      }
+    }
+
   };
 
   Utils.angleDeg = function (x1, y1, x2, y2) {
-    return MATH.atan((y2 - y1) / (x2 - x1)) * 180 / MATH.PI + (x2 - x1 < 0 ? 180 : 0);
+    // TODO meglio
+    return Utils.angleRadToDeg(Utils.angleRad(x1, y1, x2, y2));
+    //return MATH.atan((y2 - y1) / (x2 - x1)) * 180 / MATH.PI + (x2 - x1 < 0 ? 180 : 0);
   };
 
   Utils.addGlobalStatus = function (status) {

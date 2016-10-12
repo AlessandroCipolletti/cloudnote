@@ -18,6 +18,16 @@
   z-index: 1000;
 }
 
+.drawith-editor__tool-rule-start {
+  width: 1px;
+  height: 1px;
+  background-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  z-index: 100;
+}
+
 .drawith-editor__tool-rule-center {
   width: 1px;
   height: 1px;
@@ -25,7 +35,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .drawith-editor__tool-rule-level {
@@ -39,6 +49,7 @@
   border: solid 1px gray;
   opacity: 0.5;
   position: absolute;
+  z-index: 1000;
 }
 
 .drawith-editor__tool-rule-level-value {
@@ -47,6 +58,7 @@
   text-align: center;
   font-size: 1.75rem;
   font-family: sans-serif;
+  z-index: 1000;
 }
 
 .drawith-editor__tool-rule-gesture-one,
@@ -57,5 +69,5 @@
   height: 1px;
   left: -500px;
   top: -500px;
-  z-index: 1000;
+  z-index: 100;
 }

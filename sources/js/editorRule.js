@@ -14,42 +14,27 @@
     ruleMinOffset: 50,
     ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
     ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
-    ruleRotationStep: 3
+    ruleRotationStep: 3,
+    ruleMarginToDraw: 15
   };
+
+  // TODO funzioni pubbliche per settare draggable or not draggable per impedire spostamenti mentre sto anche disegnando. o forse no..
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
     return MATH.round(n * m) / m;
   }
 
-  var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
+  var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
-  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0;
+  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
 
-  var _rotationToLabel = (function () {
+  function _rotationToLabel (deg) {
+    return MATH.trunc(Utils.degToFirstQuadrant(deg));
+  }
 
-    var result = 0;
-
-    return function (deg) {
-
-      deg = MATH.abs(MATH.trunc(deg));
-      result = deg;
-      while (result > 90) {
-        result = result - 90;
-      }
-      if (deg % 180 === 0) {
-        result = 0;
-      } else if (deg % 180 > 90) {
-        result = 90 - result;
-      }
-      return result;
-
-    };
-
-  })();
-
-  var _roundAngle = (function () {
+  var _roundAngleForSteps = (function () {
 
     var delta = 0;
 
@@ -58,15 +43,15 @@
       delta = deg % 45;
       if (MATH.abs(MATH.trunc(delta)) < _config.ruleRotationStep) {
         return deg - delta;
-      } else if(MATH.abs(MATH.trunc(delta)) > 45 - _config.ruleRotationStep) {
+      }
+      if(MATH.abs(MATH.trunc(delta)) > 45 - _config.ruleRotationStep) {
         if (delta > 0) {
           return MATH.round(deg + 45 - delta);
         } else {
           return MATH.round(deg - 45 - delta);
         }
-      } else {
-        return deg;
       }
+      return deg;
 
     };
 
@@ -80,6 +65,19 @@
   function hide () {
     Utils.fadeOutElements(_rule);
     _isVisible = false;
+  }
+
+  function checkCoordNearRule (x, y) {
+
+    var centerCoord = _ruleCenter.getBoundingClientRect();
+    var startCoord = _ruleStart.getBoundingClientRect();
+    _currentCoefficientM = Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
+    var angle = Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
+    var sec = Utils.distance(x, y, centerCoord.left, centerCoord.top);
+    var tan = MATH.abs(round(sec * MATH.sin(angle)));
+    var distance = tan - _config.ruleHeight / 2;
+    var near = MATH.abs(distance) <= _config.ruleMarginToDraw;
+
   }
 
   function _onTouchStart (e) {
@@ -118,7 +116,7 @@
       gestureTwoCoord = _ruleGestureTwo.getBoundingClientRect();
       _gestureOriginX = (gestureOneCoord.left + gestureTwoCoord.left) / 2;
       _gestureOriginY = (gestureOneCoord.top + gestureTwoCoord.top) / 2;
-      _startAngle = round(Utils.angleDeg(gestureOneCoord.left, gestureOneCoord.top, gestureTwoCoord.left, gestureTwoCoord.top), 2);
+      _startAngle = round(-Utils.angleDeg(gestureOneCoord.left, gestureOneCoord.top, gestureTwoCoord.left, gestureTwoCoord.top), 2);
       _ruleTransformOrigin = round(_gestureOriginX - _startOriginX, 1) + "px " + round(_gestureOriginY - _startOriginY, 1) + "px";
       _ruleGestureOne.style.cssText = _ruleGestureTwo.style.cssText = "";
     }
@@ -147,7 +145,7 @@
     } else {
       _dragCurrentX = round((touches[0].clientX +  touches[1].clientX) / 2 - _gestureOriginX, 1);
       _dragCurrentY = round((touches[0].clientY +  touches[1].clientY) / 2 - _gestureOriginY, 1);
-      _currentRotation = _roundAngle(round((Utils.angleDeg(touches[0].clientX, touches[0].clientY, touches[1].clientX, touches[1].clientY) - _startAngle), 2));
+      _currentRotation = _roundAngleForSteps(round((-Utils.angleDeg(touches[0].clientX, touches[0].clientY, touches[1].clientX, touches[1].clientY) - _startAngle), 2));
       _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
       _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
       _dragStartX = _dragStartY = -1;
@@ -264,14 +262,15 @@
       _rule = templateDom[0];
       _ruleOrigin = _rule.querySelector(".drawith-editor__tool-rule-origin");
       _ruleCenter = _rule.querySelector(".drawith-editor__tool-rule-center");
+      _ruleStart = _rule.querySelector(".drawith-editor__tool-rule-start");
       _ruleLevel = _rule.querySelector(".drawith-editor__tool-rule-level");
       _ruleLevelValue = _rule.querySelector(".drawith-editor__tool-rule-level-value");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
       _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
       _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
-      _rule.style.height = (_config.ruleHeight * Param.pixelRatio) + "px";
-      _rule.style.marginTop = -(_config.ruleHeight * Param.pixelRatio / 2) + "px";
+      _rule.style.height = _config.ruleHeight + "px";
+      _rule.style.marginTop = -_config.ruleHeight / 2 + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);
@@ -295,6 +294,7 @@
     _config = Utils.setConfig(params, _config);
     _config.ruleMinOffset *= Param.pixelRatio;
     _config.ruleHeight *= Param.pixelRatio;
+    _config.ruleMarginToDraw *= Param.pixelRatio;
     if (_config.toolsSide === "left") {
       _offsetLeft = _config.toolsWidth;
     } else {
@@ -307,7 +307,8 @@
   app.module("Editor.Rule", {
     init: init,
     show: show,
-    hide: hide
+    hide: hide,
+    checkCoordNearRule: checkCoordNearRule
   });
 
 })(drawith);

@@ -28,6 +28,7 @@
     ruleWidth: 4,
     ruleHeight: 120,
     ruleRotationStep: 3,
+    ruleMarginToDraw: 15,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -722,6 +723,8 @@
       touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
       _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+      Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
+
       if ((touches.length > 1) || _touchDown) {
         _oldX = _oldMidX = _cursorX;
         _oldY = _oldMidY = _cursorY;
@@ -978,6 +981,7 @@
     Main = app.Main;
     Tools = app.Editor.Tools;
     ColorPicker = app.Editor.ColorPicker;
+    Rule = app.Editor.Rule;
     Rule = app.Editor.Rule;
     Dashboard = app.Dashboard;
     User = app.User;
