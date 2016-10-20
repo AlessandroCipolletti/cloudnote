@@ -602,17 +602,17 @@
 
   }
 
-  var _initTouchForce = function (e) {
+  var _initTouchForce = function (touches) {
 
-    var force = e.touches[0].force || 0;
+    var force = touches[0].force || 0;
     _currentTouchSupportForce = !!force;
     _touchForce = _oldTouchForce = MATH.max(round(force, 3), 0.01);
 
   };
 
-  var _updateTouchForce = function (e) {
+  var _updateTouchForce = function (touches) {
 
-    var force = e.touches[0].force || 0;
+    var force = touches[0].force || 0;
     _oldTouchForce = _touchForce;
     if (force > 0) {
       _touchForce = MATH.max(round(force, 3), 0.01);
@@ -725,16 +725,15 @@
       _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
       _isNearRule = Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
       if (_isNearRule) {
+        Rule.lock();
         [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
       }
-
       if ((touches.length > 1) || _touchDown) {
         _oldX = _oldMidX = _cursorX;
         _oldY = _oldMidY = _cursorY;
         return;
       }
-      _initTouchForce(e);
-
+      _initTouchForce(touches);
       _touchDown = true;
       if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
         _tool.color = _lastRandomColor = _getRandomColor();
@@ -742,14 +741,12 @@
       if (_tool.color === "") {
         _tool.color = _lastRandomColor;
       }
-
       if (_tool.cursor) {
         style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
         style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
         _toolCursor.style.cssText = style;
         _toolCursor.classList.remove("displayNone");
       }
-
       params = {
         type: "start",
         x: _cursorX,
@@ -782,8 +779,7 @@
         _touchDown = false;
         return;
       }
-      _updateTouchForce(e);
-
+      _updateTouchForce(touches);
       _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
       if (_isNearRule) {
@@ -791,20 +787,16 @@
       }
       distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
       size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
-
       if (size < 25 && distance < _config.minPxToDraw) {
         return;
       }
-
       if (_tool.cursor) {
         style = "width: " + size + "px; height: " + size + "px; ";
         style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
         _toolCursor.style.cssText = style;
       }
-
       midX = _oldX + _cursorX >> 1;
       midY = _oldY + _cursorY >> 1;
-
       params = {
         type: "move",
         x: _cursorX,
@@ -846,6 +838,9 @@
         _toolCursor.classList.add("displayNone");
       }
       if (_touchDown === false || (e.touches && touches.length > 0)) return;
+      if (_isNearRule) {
+        Rule.unlock();
+      }
       _touchDown = _isNearRule = false;
       if (Param.supportTouch === false) {
         _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
@@ -889,9 +884,9 @@
 
     e.preventDefault();
     e.stopPropagation();
-    if (_touchDown) {
-      _onTouchEnd(e);
-    }
+    // if (_touchDown) {
+    //   _onTouchEnd(e);
+    // }
     // console.log(e);
 
   }
@@ -938,7 +933,7 @@
       _toolCursor.addEventListener(Param.eventStart, _onTouchStart);
       _toolCursor.addEventListener(Param.eventMove, _onTouchMove);
       _toolCursor.addEventListener(Param.eventEnd, _onTouchEnd);
-      if (Param.supportGesture) {
+      if (false && Param.supportGesture) {
         _canvas.addEventListener("gesturestart", _onGestureStart, true);
         _canvas.addEventListener("gesturechange", _onGestureChange, true);
         _canvas.addEventListener("gestureend", _onGestureEnd, true);

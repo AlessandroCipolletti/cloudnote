@@ -18,9 +18,10 @@
     ruleMarginToDraw: 25
   };
 
-  // TODO funzioni pubbliche per settare draggable or not draggable per impedire spostamenti mentre sto anche disegnando. o forse no..
   // TODO far partire il disegno anche se tocco sul bordo laterale del righello
   // TODO pulsanti al centro per 1) bloccare il centro, 2) ruotare di 90 gradi esatti, 3) ruotare in modo speculare
+  // TODO bug height dopo rotazione
+  // TODO bul linea che sembra storta quando vai piano
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -30,7 +31,7 @@
   var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleBottom = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
-  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
+  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false, _draggable = true;
 
   function _rotationToLabel (deg) {
     return MATH.trunc(Utils.degToFirstQuadrant(deg));
@@ -67,6 +68,14 @@
   function hide () {
     Utils.fadeOutElements(_rule);
     _isVisible = false;
+  }
+
+  function lock () {
+    _draggable = false;
+  }
+
+  function unlock () {
+    _draggable = true;
   }
 
   function checkCoordNearRule (x, y) {
@@ -129,7 +138,7 @@
     e.preventDefault();
     e.stopPropagation();
     var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
-    if (touches.length > 2) {
+    if (_draggable === false || touches.length > 2) {
       _touchDown = false;
       return;
     }
@@ -172,6 +181,9 @@
     e.preventDefault();
     e.stopPropagation();
     var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
+    if (_draggable === false) {
+      return;
+    }
     if (touches.length > 2 || _touchDown === false) {
       _touchDown = false;
       return;
@@ -353,8 +365,10 @@
     init: init,
     show: show,
     hide: hide,
+    lock: lock,
+    unlock: unlock,
     checkCoordNearRule: checkCoordNearRule,
-    getCoordsNearRule: getCoordsNearRule
+    getCoordsNearRule: getCoordsNearRule,
   });
 
 })(drawith);
