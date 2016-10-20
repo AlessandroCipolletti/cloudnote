@@ -8,34 +8,37 @@
   border-radius: 0.75rem;
 }
 
-.drawith-editor__tool-rule-origin {
-  width: 1px;
-  height: 1px;
-  background-color: transparent;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 1000;
-}
-
-.drawith-editor__tool-rule-start {
-  width: 1px;
-  height: 1px;
-  background-color: transparent;
-  position: absolute;
-  top: 50%;
-  left: 0px;
-  z-index: 100;
-}
-
+.drawith-editor__tool-rule-gesture-one,
+.drawith-editor__tool-rule-gesture-two,
+.drawith-editor__tool-rule-origin,
+.drawith-editor__tool-rule-start,
 .drawith-editor__tool-rule-center {
   width: 1px;
   height: 1px;
   background-color: transparent;
   position: absolute;
+  z-index: 100;
+}
+
+.drawith-editor__tool-rule-origin {
+  top: 0px;
+  left: 0px;
+}
+
+.drawith-editor__tool-rule-start {
+  top: 50%;
+  left: 0px;
+}
+
+.drawith-editor__tool-rule-center {
   top: 50%;
   left: 50%;
-  z-index: 100;
+}
+
+.drawith-editor__tool-rule-gesture-one,
+.drawith-editor__tool-rule-gesture-two {
+  left: -500px;
+  top: -500px;
 }
 
 .drawith-editor__tool-rule-level {
@@ -59,15 +62,4 @@
   font-size: 1.75rem;
   font-family: sans-serif;
   z-index: 1000;
-}
-
-.drawith-editor__tool-rule-gesture-one,
-.drawith-editor__tool-rule-gesture-two {
-  position: absolute;
-  background-color: transparent;
-  width: 1px;
-  height: 1px;
-  left: -500px;
-  top: -500px;
-  z-index: 100;
 }

@@ -78,6 +78,7 @@
 
   function _onTouchStart (e) {
 
+    e.preventDefault();
     if (e.type.indexOf("mouse") >= 0 && e.button > 0) return;
     var target = e.target;
     if (target.classList.contains("drawith-editor-colorpicker__color")) {

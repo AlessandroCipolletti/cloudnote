@@ -15,7 +15,7 @@
     ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
     ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
     ruleRotationStep: 3,
-    ruleMarginToDraw: 15
+    ruleMarginToDraw: 20
   };
 
   // TODO funzioni pubbliche per settare draggable or not draggable per impedire spostamenti mentre sto anche disegnando. o forse no..
@@ -27,7 +27,7 @@
 
   var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
-  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0;
+  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
 
   function _rotationToLabel (deg) {
@@ -71,14 +71,45 @@
 
     var centerCoord = _ruleCenter.getBoundingClientRect();
     var startCoord = _ruleStart.getBoundingClientRect();
-    _currentCoefficientM = Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
+    _currentCoefficientM = round(Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top), 4);
+    // TODO verificare se è sopra o sotto il righello, se no devo usare come origin un altro punto da creare con coord css left 0 top 100%
+    // faccio la distanza tra il punto cliccato e le due origin, e capisco quale origin devo usare per la retta (quella piu vicina)
+    var sideRuleOriginCoord = _ruleOrigin.getBoundingClientRect();
+    _sideRuleOriginX = round(sideRuleOriginCoord.left);
+    _sideRuleOriginY = -round(sideRuleOriginCoord.top);
+    /*
     var angle = Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
     var sec = Utils.distance(x, y, centerCoord.left, centerCoord.top);
     var tan = MATH.abs(round(sec * MATH.sin(angle)));
     var distance = tan - _config.ruleHeight / 2;
     var near = MATH.abs(distance) <= _config.ruleMarginToDraw;
+    */
+    return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw;
 
   }
+
+  var getCoordsNearRule = (function () {
+
+    var m, xo, yo, x, y;
+
+    return function (xp, yp, offsetX, offsetY) {
+
+      offsetX = (offsetX || 0);
+      offsetY = (offsetY || 0);
+      xp += offsetX;
+      yp += offsetY;
+      yp *= -1;
+      m = _currentCoefficientM;
+      xo = _sideRuleOriginX;
+      yo = _sideRuleOriginY;
+      x = round((m*xo - yo + yp + xp/m) / (1/m + m));
+      y = -round(m*x - m*xo + yo);
+
+      return [x - offsetX, y - offsetY];
+
+    };
+
+  })();
 
   function _onTouchStart (e) {
 
@@ -308,7 +339,8 @@
     init: init,
     show: show,
     hide: hide,
-    checkCoordNearRule: checkCoordNearRule
+    checkCoordNearRule: checkCoordNearRule,
+    getCoordsNearRule: getCoordsNearRule
   });
 
 })(drawith);

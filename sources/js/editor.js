@@ -28,7 +28,7 @@
     ruleWidth: 4,
     ruleHeight: 120,
     ruleRotationStep: 3,
-    ruleMarginToDraw: 15,
+    ruleMarginToDraw: 20,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -38,7 +38,7 @@
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
-  var _touchDown = false;
+  var _touchDown = false, _isNearRule = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
@@ -723,7 +723,11 @@
       touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
       _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
-      Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
+      _isNearRule = Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
+      if (_isNearRule) {
+        [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
+        console.log(_cursorX, _cursorY);
+      }
 
       if ((touches.length > 1) || _touchDown) {
         _oldX = _oldMidX = _cursorX;
@@ -783,6 +787,9 @@
 
       _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
       _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+      if (_isNearRule) {
+        [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
+      }
       distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
       size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
 
@@ -840,7 +847,7 @@
         _toolCursor.classList.add("displayNone");
       }
       if (_touchDown === false || (e.touches && touches.length > 0)) return;
-      _touchDown = false;
+      _touchDown = _isNearRule = false;
       if (Param.supportTouch === false) {
         _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
         _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
