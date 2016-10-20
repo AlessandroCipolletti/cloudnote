@@ -12,7 +12,8 @@
 .drawith-editor__tool-rule-gesture-two,
 .drawith-editor__tool-rule-origin,
 .drawith-editor__tool-rule-start,
-.drawith-editor__tool-rule-center {
+.drawith-editor__tool-rule-center,
+.drawith-editor__tool-rule-bottom {
   width: 1px;
   height: 1px;
   background-color: transparent;
@@ -21,7 +22,7 @@
 }
 
 .drawith-editor__tool-rule-origin {
-  top: 0px;
+  top: -0.1rem; /* 2px */
   left: 0px;
 }
 
@@ -33,6 +34,11 @@
 .drawith-editor__tool-rule-center {
   top: 50%;
   left: 50%;
+}
+
+.drawith-editor__tool-rule-bottom {
+  top: calc(100% + 0.1rem); /* 2px */
+  left: 0px;
 }
 
 .drawith-editor__tool-rule-gesture-one,

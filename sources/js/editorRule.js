@@ -15,17 +15,19 @@
     ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
     ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
     ruleRotationStep: 3,
-    ruleMarginToDraw: 20
+    ruleMarginToDraw: 25
   };
 
   // TODO funzioni pubbliche per settare draggable or not draggable per impedire spostamenti mentre sto anche disegnando. o forse no..
+  // TODO far partire il disegno anche se tocco sul bordo laterale del righello
+  // TODO pulsanti al centro per 1) bloccare il centro, 2) ruotare di 90 gradi esatti, 3) ruotare in modo speculare
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
     return MATH.round(n * m) / m;
   }
 
-  var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
+  var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleBottom = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false;
@@ -72,11 +74,15 @@
     var centerCoord = _ruleCenter.getBoundingClientRect();
     var startCoord = _ruleStart.getBoundingClientRect();
     _currentCoefficientM = round(Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top), 4);
-    // TODO verificare se è sopra o sotto il righello, se no devo usare come origin un altro punto da creare con coord css left 0 top 100%
-    // faccio la distanza tra il punto cliccato e le due origin, e capisco quale origin devo usare per la retta (quella piu vicina)
-    var sideRuleOriginCoord = _ruleOrigin.getBoundingClientRect();
-    _sideRuleOriginX = round(sideRuleOriginCoord.left);
-    _sideRuleOriginY = -round(sideRuleOriginCoord.top);
+    var ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
+    var ruleBottomCoord = _ruleBottom.getBoundingClientRect();
+    if (Utils.distance(x, y, ruleOriginCoord.left, ruleOriginCoord.top) < Utils.distance(x, y, ruleBottomCoord.left, ruleBottomCoord.top)) {
+      _sideRuleOriginX = round(ruleOriginCoord.left);
+      _sideRuleOriginY = -round(ruleOriginCoord.top);
+    } else {
+      _sideRuleOriginX = round(ruleBottomCoord.left);
+      _sideRuleOriginY = -round(ruleBottomCoord.top);
+    }
     /*
     var angle = Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
     var sec = Utils.distance(x, y, centerCoord.left, centerCoord.top);
@@ -102,9 +108,16 @@
       m = _currentCoefficientM;
       xo = _sideRuleOriginX;
       yo = _sideRuleOriginY;
-      x = round((m*xo - yo + yp + xp/m) / (1/m + m));
-      y = -round(m*x - m*xo + yo);
-
+      if (m === 0) {
+        x = xp;
+        y = -yo;
+      } else if (isFinite(m)) {
+        x = round((m*xo - yo + yp + xp/m) / (1/m + m));
+        y = -round(m*x - m*xo + yo);
+      } else {
+        x = xo;
+        y = -yp;
+      }
       return [x - offsetX, y - offsetY];
 
     };
@@ -294,6 +307,7 @@
       _ruleOrigin = _rule.querySelector(".drawith-editor__tool-rule-origin");
       _ruleCenter = _rule.querySelector(".drawith-editor__tool-rule-center");
       _ruleStart = _rule.querySelector(".drawith-editor__tool-rule-start");
+      _ruleBottom = _rule.querySelector(".drawith-editor__tool-rule-bottom");
       _ruleLevel = _rule.querySelector(".drawith-editor__tool-rule-level");
       _ruleLevelValue = _rule.querySelector(".drawith-editor__tool-rule-level-value");
       _ruleGestureOne = templateDom[1];

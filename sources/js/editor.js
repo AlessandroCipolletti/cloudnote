@@ -28,7 +28,7 @@
     ruleWidth: 4,
     ruleHeight: 120,
     ruleRotationStep: 3,
-    ruleMarginToDraw: 20,
+    ruleMarginToDraw: 25,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
@@ -726,7 +726,6 @@
       _isNearRule = Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
       if (_isNearRule) {
         [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
-        console.log(_cursorX, _cursorY);
       }
 
       if ((touches.length > 1) || _touchDown) {
