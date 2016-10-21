@@ -14,12 +14,9 @@
     ruleMinOffset: 50,
     ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
     ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
-    ruleRotationStep: 3,
+    ruleRotationStep: 2,
     ruleMarginToDraw: 25
   };
-
-  // TODO bul linea che sembra storta quando vai piano
-  // TODO bug touch start tutto a sinistra non viene registrato
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -126,8 +123,8 @@
         x = xp;
         y = -yo;
       } else if (isFinite(m)) {
-        x = round((m*xo - yo + yp + xp/m) / (1/m + m));
-        y = -round(m*x - m*xo + yo);
+        x = round((m*xo - yo + yp + xp/m) / (1/m + m), 1);
+        y = -round(m*x - m*xo + yo, 1);
       } else {
         x = xo;
         y = -yp;
@@ -159,16 +156,19 @@
 
   function _rotate (perpendicular) {
 
+    if (perpendicular) {
+      _currentRotation = _roundAngleForSteps((_currentRotation + 90) % 360);
+    } else {
+      if (_currentRotation % 90 === 0) {
+        return;
+      }
+      _currentRotation = _roundAngleForSteps(180 - _currentRotation);
+    }
     ruleOriginCoord = _ruleCenter.getBoundingClientRect();
     _dragCurrentX = round(ruleOriginCoord.left - _startCenterX, 1);
     _dragCurrentY = round(ruleOriginCoord.top - _startCenterY, 1);
     _ruleTransformOrigin = "";
     _rule.style.transformOrigin = "50% 50%";
-    if (perpendicular) {
-      _currentRotation = _roundAngleForSteps((_currentRotation + 90) % 360);
-    } else {
-      _currentRotation = _roundAngleForSteps(180 - _currentRotation);
-    }
     _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
     _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
     _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
@@ -264,11 +264,14 @@
           _dragStartY = cursorY;
         }
         if (_dragMode === "drag" || touches[0].target === _ruleLevelValue) {
-          _dragCurrentX = round(_dragLastX + cursorX - _dragStartX, 1);
-          _dragCurrentY = round(_dragLastY + cursorY - _dragStartY, 1);
-          if (Utils.distance(_dragCurrentX, _dragCurrentY, _dragLastX, _dragLastY) > 10) {
-            _dragged = true;
+          cursorX = round(_dragLastX + cursorX - _dragStartX, 1);
+          cursorY = round(_dragLastY + cursorY - _dragStartY, 1);
+          if (touches[0].target !== _rule && Utils.distance(cursorX, cursorY, _dragLastX, _dragLastY) < 10) {
+            return;
           }
+          _dragged = true;
+          _dragCurrentX = cursorX;
+          _dragCurrentY = cursorY;
         } else {
           if (_translated) {
             ruleOriginCoord = _ruleCenter.getBoundingClientRect();

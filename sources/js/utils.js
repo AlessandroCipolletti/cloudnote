@@ -396,7 +396,8 @@
     if (targets.indexOf(e.target) >= 0) {
       return [{
         clientX: e.clientX,
-        clientY: e.clientY
+        clientY: e.clientY,
+        target: e.target
       }];
     }
     return [];

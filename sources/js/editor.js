@@ -27,12 +27,14 @@
     ruleMinOffset: 50,
     ruleWidth: 4,
     ruleHeight: 120,
-    ruleRotationStep: 3,
+    ruleRotationStep: 2,
     ruleMarginToDraw: 25,
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true
   };
+
+  // TODO bug touch start tutto a sinistra non viene registrato
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
