@@ -77,3 +77,28 @@
   font-family: sans-serif;
   z-index: 1000;
 }
+
+.drawith-editor__tool-rule-perpendicular,
+.drawith-editor__tool-rule-specular {
+  border-radius: 50%;
+  width: 5rem; /* 100px */
+  height: 5rem; /* 100px */
+  top: 50%;
+  margin-top: calc(-2.5rem - 1px); /* 51px */
+  margin-left: calc(-2.5rem - 1px); /* 51px */
+  opacity: 0.5;
+  position: absolute;
+  z-index: 1000;
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: solid 1px gray
+}
+.drawith-editor__tool-rule-perpendicular {
+  left: calc(50% - 8rem) /* 200px */;
+  background-image: url("../img/icons/perpendicular.png");
+}
+.drawith-editor__tool-rule-specular {
+  left: calc(50% + 8rem) /* 200px */;
+  background-image: url("../img/icons/specular.png");
+}

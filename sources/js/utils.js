@@ -383,14 +383,17 @@
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   };
 
-  Utils.filterTouchesByTarget = function (e, target) {
+  Utils.filterTouchesByTarget = function (e, targets) {
 
+    if (!(targets instanceof(Array))) {
+      targets = [targets];
+    }
     if (e.touches) {
       return  Array.prototype.filter.call(e.touches, function (touch) {
-        return touch.target === target;
+        return targets.indexOf(touch.target) >= 0;
       });
     }
-    if (e.target === target) {
+    if (targets.indexOf(e.target) >= 0) {
       return [{
         clientX: e.clientX,
         clientY: e.clientY

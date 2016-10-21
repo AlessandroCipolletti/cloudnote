@@ -6,6 +6,8 @@
   <div class="drawith-editor__tool-rule-level">
     <p class="drawith-editor__tool-rule-level-value">0</p>
   </div>
+  <div class="drawith-editor__tool-rule-perpendicular"></div>
+  <div class="drawith-editor__tool-rule-specular"></div>
 </div>
 <div class="drawith-editor__tool-rule-gesture-one"></div>
 <div class="drawith-editor__tool-rule-gesture-two"></div>

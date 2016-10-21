@@ -759,7 +759,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    var touches = Utils.filterTouchesByTarget(e, [_canvas, _toolCursor]);
     _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
     _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
     if ((touches.length > 1) || _touchDown) {
@@ -839,7 +839,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    var touches = Utils.filterTouchesByTarget(e, [_canvas, _toolCursor]);
     if (_touchDown === false || touches.length > 1) {
       _touchDown = false;
       return;
@@ -894,7 +894,7 @@
   function _onTouchEnd (e) {
 
     e.stopPropagation();
-    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    var touches = Utils.filterTouchesByTarget(e, [_canvas, _toolCursor]);
     if (_touchDown === false || (e.touches && touches.length > 0)) return;
     if (_isNearRule) {
       Rule.unlock();
