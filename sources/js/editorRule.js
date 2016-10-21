@@ -30,6 +30,7 @@
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false, _draggable = true, _isNearSide = false;
+  var _ruleLevelTouchStartTime = 0, _startCenterX = 0, _startCenterY = 0, _currentCenterX = 0, _currentCenterY = 0, _dragMode = "drag", _dragged = false;
 
   function _rotationToLabel (deg) {
     return MATH.trunc(Utils.degToFirstQuadrant(deg));
@@ -136,6 +137,19 @@
 
   })();
 
+  function _toggleDragMode () {
+
+    if (_dragMode === "drag") {
+      _dragMode = "rotate";
+      _ruleLevel.classList.add("drawith-editor__tool-rule-level-selected");
+      _ruleLevel.classList.remove("drawith-editor__tool-rule-level");
+    } else {
+      _dragMode = "drag";
+      _ruleLevel.classList.add("drawith-editor__tool-rule-level");
+      _ruleLevel.classList.remove("drawith-editor__tool-rule-level-selected");
+    }
+  }
+
   function _onTouchStart (e) {
 
     e.preventDefault();
@@ -152,6 +166,11 @@
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
     }
+    if (_startCenterX === 0) {
+      ruleOriginCoord = _ruleCenter.getBoundingClientRect();
+      _startCenterX = round(ruleOriginCoord.left, 1);
+      _startCenterY = round(ruleOriginCoord.top, 1);
+    }
     if (touches.length <= 1) {
       cursorX = Utils.getEventCoordX(touches, 0, true);
       cursorY = Utils.getEventCoordY(touches, 0, true);
@@ -160,11 +179,21 @@
         lock();
         [cursorX, cursorY] = getCoordsNearRule(cursorX, cursorY);
         Editor.makeTouchStartNearRule(touches, cursorX, cursorY);
-      } else {
+      } else if (_dragMode === "drag") {
         _dragStartX = cursorX;
         _dragStartY = cursorY;
+      } else {
+        ruleOriginCoord = _ruleCenter.getBoundingClientRect();
+        _currentCenterX = ruleOriginCoord.left;
+        _currentCenterY = ruleOriginCoord.top;
+        _dragCurrentX = round(ruleOriginCoord.left - _startCenterX, 1);
+        _dragCurrentY = round(ruleOriginCoord.top - _startCenterY, 1);
+        _startAngle = round(-Utils.angleDeg(ruleOriginCoord.left, ruleOriginCoord.top, cursorX, cursorY), 2) - _currentRotation;
       }
     } else {
+      if (_dragMode === "rotate") {
+        _toggleDragMode();
+      }
       _dragLastX = _dragCurrentX;
       _dragLastY = _dragCurrentY;
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
@@ -199,7 +228,8 @@
     if (_isNearSide) {
       [cursorX, cursorY] = getCoordsNearRule(Utils.getEventCoordX(touches, 0, true), Utils.getEventCoordY(touches, 0, true));
       Editor.makeTouchMoveNearRule(touches, cursorX, cursorY);
-    } else if (_draggable){
+    } else if (_draggable) {
+      _dragged = true;
       if (touches.length <= 1) {
         cursorX = Utils.getEventCoordX(touches, 0, true);
         cursorY = Utils.getEventCoordY(touches, 0, true);
@@ -207,8 +237,16 @@
           _dragStartX = cursorX;
           _dragStartY = cursorY;
         }
-        _dragCurrentX = _dragLastX + cursorX - _dragStartX;
-        _dragCurrentY = _dragLastY + cursorY - _dragStartY;
+        if (_dragMode === "drag" || touches[0].target === _ruleLevelValue) {
+          _dragCurrentX = round(_dragLastX + cursorX - _dragStartX, 1);
+          _dragCurrentY = round(_dragLastY + cursorY - _dragStartY, 1);
+        } else {
+          _ruleTransformOrigin = "";
+          _rule.style.transformOrigin = "50% 50%";
+          _currentRotation = _roundAngleForSteps(round((-Utils.angleDeg(_currentCenterX, _currentCenterY, cursorX, cursorY) - _startAngle), 2));
+          _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
+          _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
+        }
       } else {
         _dragCurrentX = round((touches[0].clientX +  touches[1].clientX) / 2 - _gestureOriginX, 1);
         _dragCurrentY = round((touches[0].clientY +  touches[1].clientY) / 2 - _gestureOriginY, 1);
@@ -232,6 +270,7 @@
       _touchDown = false;
     }
     if (_touchDown === false) {
+      _dragged = false;
       if (_isNearSide) {
         unlock();
         _isNearSide = false;
@@ -288,6 +327,23 @@
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
     _startAngle = 0;
 
+  }
+
+  function _onLevelTouchStart (e) {
+    if (!e.touches || e.touches.length === 1) {
+      _ruleLevelTouchStartTime = new Date().getTime();
+    }
+  }
+
+  function _onLevelTouchEnd (e) {
+
+    if (_ruleLevelTouchStartTime + 200 > new Date().getTime() && _dragged === false &&(!e.touches || e.touches.length === 0)) {
+      e.preventDefault();
+      e.stopPropagation();
+      _toggleDragMode();
+      _ruleLevelTouchStartTime = 0;
+      _touchDown = false;
+    }
   }
 
   function _onGestureStart (e) {
@@ -350,6 +406,8 @@
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);
+      _ruleLevelValue.addEventListener(Param.eventStart, _onLevelTouchStart);
+      _ruleLevelValue.addEventListener(Param.eventEnd, _onLevelTouchEnd);
       if (Param.supportGesture) {
         _rule.addEventListener("gesturestart", _onGestureStart, true);
         _rule.addEventListener("gesturechange", _onGestureChange, true);

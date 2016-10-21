@@ -37,7 +37,7 @@
 }
 
 .drawith-editor__tool-rule-bottom {
-  top: calc(100% + 0.1rem); /* 2px */
+  top: calc(100% + 0.15rem); /* 3px */
   left: 0px;
 }
 
@@ -47,18 +47,26 @@
   top: -500px;
 }
 
-.drawith-editor__tool-rule-level {
+.drawith-editor__tool-rule-level,
+.drawith-editor__tool-rule-level-selected {
   border-radius: 50%;
   width: 6rem; /* 120px */
   height: 6rem; /* 120px */
   top: 50%;
   left: 50%;
-  margin-top: -3rem; /* 60px */
-  margin-left: -3rem; /* 60px */
-  border: solid 1px gray;
   opacity: 0.5;
   position: absolute;
   z-index: 1000;
+}
+.drawith-editor__tool-rule-level {
+  margin-top: calc(-3rem - 1px); /* 61px */
+  margin-left: calc(-3rem - 1px); /* 61px */
+  border: solid 1px gray;
+}
+.drawith-editor__tool-rule-level-selected {
+  margin-top: calc(-3rem - 4px); /* 64px */
+  margin-left: calc(-3rem - 4px); /* 64px */
+  border: solid 4px gray;
 }
 
 .drawith-editor__tool-rule-level-value {
