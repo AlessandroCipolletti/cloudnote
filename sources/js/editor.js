@@ -712,79 +712,89 @@
     //_checkCoord(params.x, params.y);
   }
 
-  var _onTouchStart = (function () {
+  function makeTouchStartNearRule (touches, x, y) {
 
-    var style = "", params = {}, touches = [];
-
-    return function (e) {
-
-      e.preventDefault();
-      e.stopPropagation();
-      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
-      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
-      _isNearRule = Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
-      if (_isNearRule) {
-        Rule.lock();
-        [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
-      }
-      if ((touches.length > 1) || _touchDown) {
-        _oldX = _oldMidX = _cursorX;
-        _oldY = _oldMidY = _cursorY;
-        return;
-      }
+    if (_touchDown === false) {
+      _cursorX = x - _offsetLeft;
+      _cursorY = y - _offsetTop;
+      _isNearRule = true;
       _initTouchForce(touches);
-      _touchDown = true;
-      if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
-        _tool.color = _lastRandomColor = _getRandomColor();
-      }
-      if (_tool.color === "") {
-        _tool.color = _lastRandomColor;
-      }
-      if (_tool.cursor) {
-        style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
-        style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
-        _toolCursor.style.cssText = style;
-        _toolCursor.classList.remove("displayNone");
-      }
-      params = {
-        type: "start",
-        x: _cursorX,
-        y: _cursorY,
-        force: _touchForce,
-        size: _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1)
-      };
-      _stepStart(_context, params, _tool);
-      if (_coworking) {
-        _coworkingSteps.push(params);
-      }
+      __touchStart();
+    }
 
-      _oldMidX = _cursorX;
-      _oldMidY = _cursorY;
+  }
 
+  function __touchStart () {
+
+    _touchDown = true;
+    if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
+      _tool.color = _lastRandomColor = _getRandomColor();
+    }
+    if (_tool.color === "") {
+      _tool.color = _lastRandomColor;
+    }
+    if (_tool.cursor) {
+      var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
+      style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";
+      _toolCursor.style.cssText = style;
+      _toolCursor.classList.remove("displayNone");
+    }
+    var params = {
+      type: "start",
+      x: _cursorX,
+      y: _cursorY,
+      force: _touchForce,
+      size: _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1)
     };
+    _stepStart(_context, params, _tool);
+    if (_coworking) {
+      _coworkingSteps.push(params);
+    }
+    _oldMidX = _cursorX;
+    _oldMidY = _cursorY;
 
-  })();
+  }
 
-  var _onTouchMove = (function () {
+  function _onTouchStart (e) {
 
-    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {}, touches = [];
+    e.preventDefault();
+    e.stopPropagation();
+    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+    if ((touches.length > 1) || _touchDown) {
+      _oldX = _oldMidX = _cursorX;
+      _oldY = _oldMidY = _cursorY;
+      _toolCursor.classList.add("displayNone");
+      return;
+    }
+    _isNearRule = Rule.checkCoordNearRule(_cursorX + _offsetLeft, _cursorY + _offsetTop);
+    if (_isNearRule) {
+      Rule.lock();
+      [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
+    }
+    _initTouchForce(touches);
+    __touchStart();
 
-    return function (e) {
+  }
 
-      e.preventDefault();
-      e.stopPropagation();
-      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
-      if (_touchDown === false || touches.length > 1) {
-        _touchDown = false;
-        return;
-      }
+  function makeTouchMoveNearRule (touches, x, y) {
+
+    if (_touchDown) {
+      _cursorX = x - _offsetLeft;
+      _cursorY = y - _offsetTop;
       _updateTouchForce(touches);
-      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
-      if (_isNearRule) {
-        [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
-      }
+      __touchMove();
+    }
+
+  }
+
+  var __touchMove = (function () {
+
+    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
+
+    return function () {
+
       distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
       size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
       if (size < 25 && distance < _config.minPxToDraw) {
@@ -816,7 +826,6 @@
       if (_coworking) {
         _coworkingSteps.push(params);
       }
-
       _oldMidX = midX;
       _oldMidY = midY;
       _oldTouchForce = _touchForce;
@@ -826,50 +835,73 @@
 
   })();
 
-  var _onTouchEnd = (function () {
+  function _onTouchMove (e) {
 
-    var params = {}, touches = [];
+    e.preventDefault();
+    e.stopPropagation();
+    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    if (_touchDown === false || touches.length > 1) {
+      _touchDown = false;
+      return;
+    }
+    _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+    _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+    if (_isNearRule) {
+      [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
+    }
+    _updateTouchForce(touches);
+    __touchMove();
 
-    return function (e) {
+  }
 
-      e.stopPropagation();
-      touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
-      if (!e.touches || touches.length === 0) {
-        _toolCursor.classList.add("displayNone");
-      }
-      if (_touchDown === false || (e.touches && touches.length > 0)) return;
-      if (_isNearRule) {
-        Rule.unlock();
-      }
-      _touchDown = _isNearRule = false;
-      if (Param.supportTouch === false) {
-        _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
-        _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
-        if (_cursorX !== _oldX && _cursorY !== _oldY) {
-          params = {
-            type: "end",
-            x: _cursorX,
-            y: _cursorY,
-            size: _tool.size,
-            oldMidX: _oldMidX,
-            oldMidY: _oldMidY,
-            oldX: _oldX,
-            oldY: _oldY
-          };
-          _stepEnd(_context, params, _tool);
-          if (_coworking) {
-            _coworkingSteps.push(params);
-          }
+  function makeTouchEndNearRule (x, y) {
+
+    __touchEnd();
+
+  }
+
+  function __touchEnd () {
+
+    _touchDown = _isNearRule = false;
+    _toolCursor.classList.add("displayNone");
+    if (Param.supportTouch === false) {
+      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
+      if (_cursorX !== _oldX && _cursorY !== _oldY) {
+        var params = {
+          type: "end",
+          x: _cursorX,
+          y: _cursorY,
+          size: _tool.size,
+          oldMidX: _oldMidX,
+          oldMidY: _oldMidY,
+          oldX: _oldX,
+          oldY: _oldY
+        };
+        _stepEnd(_context, params, _tool);
+        if (_coworking) {
+          _coworkingSteps.push(params);
         }
       }
-      if (_coworking) {
-        _coworkingSendSteps();
-      }
-      _saveStep();
+    }
+    if (_coworking) {
+      _coworkingSendSteps();
+    }
+    _saveStep();
 
-    };
+  }
 
-  })();
+  function _onTouchEnd (e) {
+
+    e.stopPropagation();
+    var touches = Utils.filterTouchesByTarget(e, _canvas).concat(Utils.filterTouchesByTarget(e, _toolCursor));
+    if (_touchDown === false || (e.touches && touches.length > 0)) return;
+    if (_isNearRule) {
+      Rule.unlock();
+    }
+    __touchEnd();
+
+  }
 
   function _onGestureStart (e) {
 
@@ -1013,6 +1045,9 @@
     redo: redo,
     clear: clear,
     changePaper: changePaper,
+    makeTouchStartNearRule: makeTouchStartNearRule,
+    makeTouchMoveNearRule: makeTouchMoveNearRule,
+    makeTouchEndNearRule: makeTouchEndNearRule,
     onSocketMessage: onSocketMessage,
     startCoworking: startCoworking,
     stopCoworking: stopCoworking

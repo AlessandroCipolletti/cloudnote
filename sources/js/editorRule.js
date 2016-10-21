@@ -18,9 +18,7 @@
     ruleMarginToDraw: 25
   };
 
-  // TODO far partire il disegno anche se tocco sul bordo laterale del righello
   // TODO pulsanti al centro per 1) bloccare il centro, 2) ruotare di 90 gradi esatti, 3) ruotare in modo speculare
-  // TODO bug height dopo rotazione
   // TODO bul linea che sembra storta quando vai piano
 
   function round (n, d) {
@@ -30,8 +28,8 @@
 
   var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleBottom = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
-  var _ruleWidth = 0, _ruleHeight = 0, _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
-  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false, _draggable = true;
+  var _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
+  var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false, _draggable = true, _isNearSide = false;
 
   function _rotationToLabel (deg) {
     return MATH.trunc(Utils.degToFirstQuadrant(deg));
@@ -78,7 +76,7 @@
     _draggable = true;
   }
 
-  function checkCoordNearRule (x, y) {
+  function checkCoordNearRule (x, y, inside) {
 
     var centerCoord = _ruleCenter.getBoundingClientRect();
     var startCoord = _ruleStart.getBoundingClientRect();
@@ -99,7 +97,12 @@
     var distance = tan - _config.ruleHeight / 2;
     var near = MATH.abs(distance) <= _config.ruleMarginToDraw;
     */
-    return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw;
+    if (inside === true) {
+      return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw / 2;
+    } else {
+      return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw;
+    }
+
 
   }
 
@@ -138,22 +141,29 @@
     e.preventDefault();
     e.stopPropagation();
     var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
-    if (_draggable === false || touches.length > 2) {
+    if (_isNearSide === true || _draggable === false || touches.length > 2) {
       _touchDown = false;
       return;
     }
     var ruleOriginCoord = {}, gestureOneCoord = {}, gestureTwoCoor = {}, cursorX = 0, cursorY = 0;
     _touchDown = true;
-    if (_ruleWidth === 0) {
-      _ruleWidth = _rule.clientWidth;
-      _ruleHeight = _rule.clientHeight;
+    if (_startOriginX === 0) {
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
     }
     if (touches.length <= 1) {
-      _dragStartX = Utils.getEventCoordX(touches, 0, true);
-      _dragStartY = Utils.getEventCoordY(touches, 0, true);
+      cursorX = Utils.getEventCoordX(touches, 0, true);
+      cursorY = Utils.getEventCoordY(touches, 0, true);
+      if (checkCoordNearRule(cursorX, cursorY, true)) {
+        _isNearSide = true;
+        lock();
+        [cursorX, cursorY] = getCoordsNearRule(cursorX, cursorY);
+        Editor.makeTouchStartNearRule(touches, cursorX, cursorY);
+      } else {
+        _dragStartX = cursorX;
+        _dragStartY = cursorY;
+      }
     } else {
       _dragLastX = _dragCurrentX;
       _dragLastY = _dragCurrentY;
@@ -181,33 +191,35 @@
     e.preventDefault();
     e.stopPropagation();
     var touches = Utils.filterTouchesByTarget(e, _rule).concat(Utils.filterTouchesByTarget(e, _ruleLevelValue));
-    if (_draggable === false) {
-      return;
-    }
     if (touches.length > 2 || _touchDown === false) {
       _touchDown = false;
       return;
     }
     var cursorX = 0, cursorY = 0;
-    if (touches.length <= 1) {
-      cursorX = Utils.getEventCoordX(touches, 0, true);
-      cursorY = Utils.getEventCoordY(touches, 0, true);
-      if (_dragStartX === -1) {
-        _dragStartX = cursorX;
-        _dragStartY = cursorY;
+    if (_isNearSide) {
+      [cursorX, cursorY] = getCoordsNearRule(Utils.getEventCoordX(touches, 0, true), Utils.getEventCoordY(touches, 0, true));
+      Editor.makeTouchMoveNearRule(touches, cursorX, cursorY);
+    } else if (_draggable){
+      if (touches.length <= 1) {
+        cursorX = Utils.getEventCoordX(touches, 0, true);
+        cursorY = Utils.getEventCoordY(touches, 0, true);
+        if (_dragStartX === -1) {
+          _dragStartX = cursorX;
+          _dragStartY = cursorY;
+        }
+        _dragCurrentX = _dragLastX + cursorX - _dragStartX;
+        _dragCurrentY = _dragLastY + cursorY - _dragStartY;
+      } else {
+        _dragCurrentX = round((touches[0].clientX +  touches[1].clientX) / 2 - _gestureOriginX, 1);
+        _dragCurrentY = round((touches[0].clientY +  touches[1].clientY) / 2 - _gestureOriginY, 1);
+        _currentRotation = _roundAngleForSteps(round((-Utils.angleDeg(touches[0].clientX, touches[0].clientY, touches[1].clientX, touches[1].clientY) - _startAngle), 2));
+        _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
+        _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
+        _dragStartX = _dragStartY = -1;
+        _rule.style.transformOrigin = _ruleTransformOrigin;
       }
-      _dragCurrentX = _dragLastX + cursorX - _dragStartX;
-      _dragCurrentY = _dragLastY + cursorY - _dragStartY;
-    } else {
-      _dragCurrentX = round((touches[0].clientX +  touches[1].clientX) / 2 - _gestureOriginX, 1);
-      _dragCurrentY = round((touches[0].clientY +  touches[1].clientY) / 2 - _gestureOriginY, 1);
-      _currentRotation = _roundAngleForSteps(round((-Utils.angleDeg(touches[0].clientX, touches[0].clientY, touches[1].clientX, touches[1].clientY) - _startAngle), 2));
-      _ruleLevel.style.transform = "rotateZ(" + (-_currentRotation) + "deg)";
-      _ruleLevelValue.innerHTML = _rotationToLabel(_currentRotation);
-      _dragStartX = _dragStartY = -1;
-      _rule.style.transformOrigin = _ruleTransformOrigin;
+      _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     }
-    _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
 
   }
 
@@ -220,50 +232,56 @@
       _touchDown = false;
     }
     if (_touchDown === false) {
-      var centerCoord = _ruleCenter.getBoundingClientRect();
-      var deltaX = 0, deltaY = 0;
-      var currentRotationRad = _currentRotation / 180 * MATH.PI;
-      centerCoord.top = round(centerCoord.top);
-      centerCoord.left = round(centerCoord.top);
-      var outTop = Param.headerSize + _config.ruleMinOffset - centerCoord.top;
-      var outBottom = centerCoord.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
-      var outLeft = _offsetLeft + _config.ruleMinOffset - centerCoord.left;
-      var outRight = centerCoord.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
-      var maxDeltaX = app.WIDTH - centerCoord.left - _config.ruleMinOffset - _offsetRight;
-      var minDeltaX = -centerCoord.left + _offsetLeft + _config.ruleMinOffset;
-      var maxDeltaY = app.HEIGHT - centerCoord.top - _config.ruleMinOffset - _config.colorsPickerHeight;
-      var minDeltaY = -centerCoord.top + Param.headerSize + _config.ruleMinOffset;
-      var sidesOut = [outTop, outBottom, outLeft, outRight].sort(function (a, b) {return a - b;}).filter(function (a) {return a > 0;});
-      var i = 0;
-      var side = sidesOut[i];
-      while (side) {
-        if (side === outTop) {
-          deltaY = outTop;
-          deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
-        } else if (side === outBottom) {
-          deltaY = -outBottom;
-          deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
-        } else if (side === outLeft) {
-          deltaX = outLeft;
-          deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
-        } else {
-          deltaX = -outRight;
-          deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
+      if (_isNearSide) {
+        unlock();
+        _isNearSide = false;
+        Editor.makeTouchEndNearRule();
+      } else if (_draggable === true) {
+        var centerCoord = _ruleCenter.getBoundingClientRect();
+        var deltaX = 0, deltaY = 0;
+        var currentRotationRad = _currentRotation / 180 * MATH.PI;
+        centerCoord.top = round(centerCoord.top);
+        centerCoord.left = round(centerCoord.top);
+        var outTop = Param.headerSize + _config.ruleMinOffset - centerCoord.top;
+        var outBottom = centerCoord.top - (app.HEIGHT - _config.ruleMinOffset - _config.colorsPickerHeight);
+        var outLeft = _offsetLeft + _config.ruleMinOffset - centerCoord.left;
+        var outRight = centerCoord.left - (app.WIDTH - _offsetRight - _config.ruleMinOffset);
+        var maxDeltaX = app.WIDTH - centerCoord.left - _config.ruleMinOffset - _offsetRight;
+        var minDeltaX = -centerCoord.left + _offsetLeft + _config.ruleMinOffset;
+        var maxDeltaY = app.HEIGHT - centerCoord.top - _config.ruleMinOffset - _config.colorsPickerHeight;
+        var minDeltaY = -centerCoord.top + Param.headerSize + _config.ruleMinOffset;
+        var sidesOut = [outTop, outBottom, outLeft, outRight].sort(function (a, b) {return a - b;}).filter(function (a) {return a > 0;});
+        var i = 0;
+        var side = sidesOut[i];
+        while (side) {
+          if (side === outTop) {
+            deltaY = outTop;
+            deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
+          } else if (side === outBottom) {
+            deltaY = -outBottom;
+            deltaX = deltaY * MATH.cos(currentRotationRad) / MATH.sin(currentRotationRad);
+          } else if (side === outLeft) {
+            deltaX = outLeft;
+            deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
+          } else {
+            deltaX = -outRight;
+            deltaY = deltaX * MATH.sin(currentRotationRad) / MATH.cos(currentRotationRad);
+          }
+          i++;
+          if (sidesOut.length > i && (deltaX > maxDeltaX || deltaX < minDeltaX || deltaY > maxDeltaY || deltaY < minDeltaY)) {
+            side = sidesOut[i];
+          } else {
+            side = false;
+          }
         }
-        i++;
-        if (sidesOut.length > i && (deltaX > maxDeltaX || deltaX < minDeltaX || deltaY > maxDeltaY || deltaY < minDeltaY)) {
-          side = sidesOut[i];
-        } else {
-          side = false;
-        }
+        deltaX = MATH.min(deltaX, maxDeltaX);
+        deltaX = MATH.max(deltaX, minDeltaX);
+        deltaY = MATH.min(deltaY, maxDeltaY);
+        deltaY = MATH.max(deltaY, minDeltaY);
+        _dragCurrentX += deltaX;
+        _dragCurrentY += deltaY;
+        _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
       }
-      deltaX = MATH.min(deltaX, maxDeltaX);
-      deltaX = MATH.max(deltaX, minDeltaX);
-      deltaY = MATH.min(deltaY, maxDeltaY);
-      deltaY = MATH.max(deltaY, minDeltaY);
-      _dragCurrentX += deltaX;
-      _dragCurrentY += deltaY;
-      _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
     }
     _dragLastX = _dragCurrentX;
     _dragLastY = _dragCurrentY;
@@ -297,9 +315,10 @@
 
     _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
     _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
-    _rule.style.height = (_config.ruleHeight * Param.pixelRatio) + "px";
-    _rule.style.marginTop = -(_config.ruleHeight * Param.pixelRatio / 2) + "px";
+    _rule.style.height = _config.ruleHeight + "px";
+    _rule.style.marginTop = -_config.ruleHeight / 2 + "px";
     _touchDown = false;
+    _startOriginX  =_startOriginY = 0;
     _dragCurrentX = _dragCurrentY = _currentRotation = _dragLastX = _dragLastY = _startAngle =0;
     _dragStartX = _dragStartY = _gestureOriginX = _gestureOriginY = -1;
     _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
