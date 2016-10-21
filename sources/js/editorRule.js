@@ -18,7 +18,6 @@
     ruleMarginToDraw: 25
   };
 
-  // TODO pulsanti al centro per 1) bloccare il centro, 2) ruotare di 90 gradi esatti, 3) ruotare in modo speculare
   // TODO bul linea che sembra storta quando vai piano
   // TODO bug touch start tutto a sinistra non viene registrato
 
@@ -357,8 +356,8 @@
           deltaY = MATH.max(deltaY, minDeltaY);
           _dragCurrentX += deltaX;
           _dragCurrentY += deltaY;
+          _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
         }
-        _rule.style.transform = "translate3d(" + (_dragCurrentX) + "px, " + _dragCurrentY + "px, 0px) rotateZ(" + _currentRotation + "deg)";
       }
     }
     _dragLastX = _dragCurrentX;
