@@ -1,3 +1,10 @@
+/*
+  Documentations:
+    Bazier curve:
+      http://en.wikipedia.org/wiki/B%C3%A9zier_curve
+
+*/
+
 (function (app) {
 
   // Dependencies
@@ -539,7 +546,7 @@
     context.globalAlpha = alpha;
     context.fillStyle = color;
     var angle = 0, radius = 0, w = 0;
-    for (var i = size * (size + 1); i--; ) {
+    for (var i = size * size; i--; ) {
       angle = random(PI2, true);
       radius = random(size) + 1;
       w = random(2) + 1;
@@ -548,6 +555,25 @@
         y + radius * MATH.sin(angle),
         w,
         (w === 2 ? 1 : random(2) + 1)
+      );
+    }
+
+  }
+
+  function _particlesTest (context, x, y, alpha, color, size) {
+
+    context.globalAlpha = alpha * 0.75;
+    context.fillStyle = color;
+    var angle = 0, radius = 0, w = 0;
+    for (var i = size * (size + 1); i--; ) {
+      // angle = random(PI2, true);
+      // radius = random(size) + 1;
+      // w = random(2) + 1;
+      context.fillRect(
+        x + random(size + 1) - 1,
+        y + random(size + 1) - 1,
+        1,
+        1
       );
     }
 
@@ -569,16 +595,47 @@
 
   }
 
+  var quadraticBezierLength = (function () {
+
+    var a, b, A, B, C, Sabc, A_2, A_32, C_2, BA;
+
+    return function (p0, p1, p2) {
+
+      a = {
+        x: p0.x - 2 * p1.x + p2.x,
+        y: p0.y - 2 * p1.y + p2.y
+      };
+      b = {
+        x: 2 * p1.x - 2 * p0.x,
+        y: 2 * p1.y - 2 * p0.y
+      };
+      A = 4 * (a.x * a.x + a.y * a.y);
+      B = 4 * (a.x * b.x + a.y * b.y);
+      C = b.x * b.x + b.y * b.y;
+      Sabc = 2 * MATH.sqrt(A+B+C);
+      A_2 = MATH.sqrt(A);
+      A_32 = 2 * A * A_2;
+      C_2 = 2 * MATH.sqrt(C);
+      BA = B / A_2;
+      // if (BA === -C_2 && a.x !=0 && a.y != 0 && b.x != 0 && b.y != 0) {
+      //   BA += 1;
+      // }
+
+      return (A_32 * Sabc + A_2 * B * (Sabc - C_2) + (4 * C * A - B * B) * MATH.log((2 * A_2 + BA + Sabc) / (BA + C_2))) / (4 * A_32);
+
+    };
+
+  })();
+
   function _getQuadraticBezierValue (t, p1, p2, p3) {
-    var iT = 1 - t;
-    return iT * iT * p1 + 2 * iT * t * p2 + t * t * p3;
+    return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
   function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
 
+    var baseForce = MATH.min(oldTouchForce,  0.3);
+    var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
     delta = 1 / delta;
-    var baseForce = MATH.min(oldTouchForce,  0.75);
-    var deltaForce = MATH.min(touchForce, 0.75) - baseForce;
     for (var i = 0; i <= 1; i = i + delta) {
       _particles(
         context,
@@ -793,7 +850,7 @@
 
   var __touchMove = (function () {
 
-    var distance = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
+    var distance = 0, curveLength = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
 
     return function () {
 
@@ -809,12 +866,14 @@
       }
       midX = _oldX + _cursorX >> 1;
       midY = _oldY + _cursorY >> 1;
+      distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
+      curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
       params = {
         type: "move",
         x: _cursorX,
         y: _cursorY,
         size: size,
-        delta: round(distance / (size - 1), 2),
+        delta: round((curveLength || distance) / (size - 1), 2),
         oldMidX: _oldMidX,
         oldMidY: _oldMidY,
         oldX: _oldX,
