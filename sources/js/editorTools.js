@@ -28,7 +28,7 @@
     },
     pencil: {
       name: "pencil",
-      size: 3,
+      size: 2,
       forceFactor: 0,
       speedFactor: 0,
       shape: "particles",
@@ -46,7 +46,7 @@
     },
     pen: {
       name: "pen",
-      size: 2,
+      size: 1,
       forceFactor: 2.5,
       speedFactor: 0,
       shape: "circle",

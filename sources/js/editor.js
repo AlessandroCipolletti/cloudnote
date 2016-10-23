@@ -857,12 +857,10 @@
   }
 
   function makeTouchEndNearRule (x, y) {
-
     __touchEnd();
-
   }
 
-  function __touchEnd () {
+  function __touchEnd (touches) {
 
     _touchDown = _isNearRule = false;
     _toolCursor.classList.add("displayNone");
@@ -901,7 +899,7 @@
     if (_isNearRule) {
       Rule.unlock();
     }
-    __touchEnd();
+    __touchEnd(touches);
 
   }
 

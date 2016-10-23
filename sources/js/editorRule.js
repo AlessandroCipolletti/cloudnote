@@ -18,6 +18,10 @@
     ruleMarginToDraw: 25
   };
 
+  // TODO cambiare dimensione background;
+  // TODO migliorare matita
+  // TODO bug il righello si sposta di un px quando fisso il centro e lo ruoto
+
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
     return MATH.round(n * m) / m;
@@ -194,11 +198,9 @@
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
-    }
-    if (_startCenterX === 0) {
-      ruleOriginCoord = _ruleCenter.getBoundingClientRect();
-      _startCenterX = round(ruleOriginCoord.left, 1);
-      _startCenterY = round(ruleOriginCoord.top, 1);
+      _startCenterX =  _startOriginX + _config.ruleWidth / 2;
+      _startCenterY =  1*Param.pixelRatio + _startOriginY + _config.ruleHeight / 2;
+      // debugger;
     }
     if (touches.length <= 1) {
       cursorX = Utils.getEventCoordX(touches, 0, true);
@@ -449,8 +451,9 @@
       _specularButton = _rule.querySelector(".drawith-editor__tool-rule-specular");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
-      _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
-      _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
+      _config.ruleWidth *= MATH.max(app.WIDTH, app.HEIGHT);
+      _rule.style.width = _config.ruleWidth + "px";
+      _rule.style.marginLeft = -_config.ruleWidth / 2 + "px";
       _rule.style.height = _config.ruleHeight + "px";
       _rule.style.marginTop = -_config.ruleHeight / 2 + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
