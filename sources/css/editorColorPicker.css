@@ -2,80 +2,61 @@
 .drawith-editor-colorpicker__container {
   background-color: rgba(250, 250, 250, 0.9);
   width: 100%;
-  height: 100%;
+  height: 5.5rem;
   position: absolute;
-  top: 0rem;
+  bottom: 0rem;
   left: 0rem;
-  transition: transform 0.6s;
-  transform: translate3d(0rem, calc(100% - 4.6rem), 0rem); /* 92px */
   z-index: 110;
 }
-.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-colorpicker__container {
-  transform: translate3d(0rem, 0rem, 0rem);
-}
-
-/* PRIMARY SECONDARY */
-.drawith-editor-colorpicker__primary, .drawith-editor-colorpicker__secondary {
-  display: flex;
+.drawith-editor-colorpicker__colors-container {
   position: absolute;
-  justify-content: space-between;
-  left: 0rem;
-  width: calc(100% - 0.5rem);
-}
-.drawith-editor-colorpicker__primary {
-  flex-flow: row nowrap;
-  height: 4.5rem; /* 90px */
+  height: 100%;
+  width: calc(100% - 7rem);
   top: 0rem;
+  left: 7rem;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 }
-.drawith-editor-colorpicker__secondary {
-  flex-flow: column wrap;
-  top: 4.5rem;  /* 90px */
-  height: calc(100% - 4.5rem); /* 90px */
+.drawith-editor-colorpicker__colors-container > div {
+  height: 100%;
 }
 
 /* COLORS */
 .drawith-editor-colorpicker__color {
-  width: 2.5rem;  /* 50px */
-  height: 2.5rem; /* 50px */
+  width: 3.7rem;  /* 74px */
+  height: 3.7rem; /* 74px */
   border-radius: 50%;
-  box-shadow: 0rem -0.05rem 0.15rem 0rem rgba(50, 50, 50, 0.75), inset 0rem 0rem 0.15rem 0rem black;
-}
-.drawith-editor-colorpicker__primary .drawith-editor-colorpicker__color {
-  margin: 1rem 0.25rem; /* 20px 5px */
-}
-.drawith-editor-colorpicker__secondary .drawith-editor-colorpicker__color {
-  margin: 1.2rem; /* 20px */
+  box-shadow: 0rem -0.05rem 0.2rem 0rem rgba(50, 50, 50, 0.75), inset 0rem 0rem 0.15rem 0rem black;
+  margin: 0.9rem 0.3rem; /* 18px 6px */
+  display: inline-block;
 }
 .drawith-editor-colorpicker__color-selected::before {
   content: '';
-  display: inline-block;
+  display: block;
   width: calc(100% - 0.7rem);   /* 14px */
   height: calc(100% - 0.7rem);  /* 14px */
   margin: 0.2rem; /* 4px */
   border-radius: 50%;
-  box-shadow: inset 0rem 0rem 0.25rem 0rem rgba(0, 0, 0, 0.75);
+  box-shadow: inset 0rem 0rem 0.35rem 0rem rgba(0, 0, 0, 0.75);
   border: solid 0.15rem white;
 }
 
-/* RANDOM */  /* SHOW HIDE */
-.drawith-editor-colorpicker__random-container, .drawith-editor-colorpicker__showhide-container {
-  width: 5.5rem; /* 110px */
+/* RANDOM */
+.drawith-editor-colorpicker__random-container {
+  width: 7rem; /* 110px */
   height: 100%;
   display: inline-block;
 }
-.drawith-editor-colorpicker__random, .drawith-editor-colorpicker__showhide {
+.drawith-editor-colorpicker__random {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  margin: auto;
+  margin: 0.5rem 1.5rem;
   border-radius: 50%;
-}
-.drawith-editor-colorpicker__random {
-  height: 4rem;
-  width: 4rem;
-  background-size: 90%;
-  margin-top: 0.25rem;
-  background-position: 0.2rem 0.2rem ;
+  height: 4.5rem;
+  width: 4.5rem;
+  background-size: 103%;
+  background-position: center;
   background-image: url("../img/icons/random.png");
 }
 .drawith-editor-colorpicker__random.drawith-editor-colorpicker__random-locked {
@@ -83,15 +64,6 @@
 }
 .drawith-editor-colorpicker__random-selected {
   box-shadow: 0rem 0rem 0.75rem 0rem rgba(0, 0, 0, 1);
-}
-.drawith-editor-colorpicker__showhide {
-  height: 60%;
-  width: 40%;
-  margin-top: 12.5%;
-  background-image: url("../img/icons/add.png");
-  transition: transform 1.5s;
-  transform-origin: 50% 50%;
-}
-.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-colorpicker__showhide {
-  transform: rotate(-45deg)
+  border: solid 0.15rem yellow;
+  margin: 0.35rem 1.35rem;
 }

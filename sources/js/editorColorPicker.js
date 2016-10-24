@@ -7,8 +7,7 @@
   var Main = {};
 
   var _config = {
-    primaryColors: [],
-    secondaryColors: false
+    primaryColors: []
   };
 
   var _container, _isOpen = false;
@@ -78,7 +77,7 @@
 
   function _onTouchStart (e) {
 
-    e.preventDefault();
+    // e.preventDefault();
     if (e.type.indexOf("mouse") >= 0 && e.button > 0) return;
     var target = e.target;
     if (target.classList.contains("drawith-editor-colorpicker__color")) {
@@ -97,40 +96,34 @@
 
   }
 
+  function _onTouchMove (e) {
+
+  }
+
+  function _onTouchEnd (e) {
+
+  }
+
   function _onRotate (e) {
     // do some stuff
   }
 
   function _initDom (moduleContainer) {
 
-    var primaryColorNumber = Math.min(round((app.WIDTH - 55 * Param.pixelRatio) / (30 * Param.pixelRatio)), _config.primaryColors.length);
-    var primaryColors = _config.primaryColors.splice(0, primaryColorNumber);
-
-    var secondaryColors = false;
-    if (_config.secondaryColors) {
-      secondaryColors = [];
-      var colorsNumber = Math.trunc(app.WIDTH / (64 * Param.pixelRatio)) *
-        Math.trunc((app.HEIGHT - Param.headerSize - (75 * Param.pixelRatio)) / (64 * Param.pixelRatio)) - 1;
-      var columnIntUnit = round(256 * 256 * 256 / colorsNumber);
-      for (var i = 0; i < colorsNumber; i++) {
-        secondaryColors.push("#" + Utils.intToHex(columnIntUnit * i));
-      }
-      secondaryColors.push("#FFF");
-    }
-
     Main.loadTemplate("editorColorPicker", {
-      primaryColors: primaryColors,
-      secondaryColors: secondaryColors
+      primaryColors: _config.primaryColors,
     }, moduleContainer, function (templateDom) {
 
       _container = templateDom;
       _randomButtom = _container.querySelector(".drawith-editor-colorpicker__random");
-      _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      // _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      // _container.addEventListener(Param.eventMove, _onTouchMove, true);
+      // _container.addEventListener(Param.eventEnd, _onTouchEnd, true);
+      _container.querySelector(".drawith-editor-colorpicker__colors-container > div").style.width = (_config.primaryColors.length * 40 * Param.pixelRatio) + "px";
 
     });
 
-
-    Main.addRotationHandler(_onRotate);
+    //Main.addRotationHandler(_onRotate);
 
   }
 
