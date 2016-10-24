@@ -2,6 +2,8 @@
   Documentations:
     Bazier curve:
       http://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    Display Flex:
+      https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
 */
 
@@ -34,7 +36,7 @@
     ruleMinOffset: 50,
     ruleWidth: 4,
     ruleHeight: 120,
-    ruleRotationStep: 2,
+    ruleRotationStep: 3,
     ruleMarginToDraw: 25,
     toolsSide: "left",
     minPxToDraw: 3,
@@ -541,7 +543,7 @@
 
   }
 
-  function _particles (context, x, y, alpha, color, size) {
+  function _particlesCircle (context, x, y, alpha, color, size) {
 
     context.globalAlpha = alpha;
     context.fillStyle = color;
@@ -560,15 +562,11 @@
 
   }
 
-  function _particlesTest (context, x, y, alpha, color, size) {
+  function _particlesRect (context, x, y, alpha, color, size) {
 
     context.globalAlpha = alpha * 0.75;
     context.fillStyle = color;
-    var angle = 0, radius = 0, w = 0;
     for (var i = size * (size + 1); i--; ) {
-      // angle = random(PI2, true);
-      // radius = random(size) + 1;
-      // w = random(2) + 1;
       context.fillRect(
         x + random(size + 1) - 1,
         y + random(size + 1) - 1,
@@ -597,10 +595,11 @@
 
   var quadraticBezierLength = (function () {
 
-    var a, b, A, B, C, Sabc, A_2, A_32, C_2, BA;
+    var a, b, A, B, C, Sabc, A_2, A_32, C_2, BA, M;
 
     return function (p0, p1, p2) {
 
+      M = MATH;
       a = {
         x: p0.x - 2 * p1.x + p2.x,
         y: p0.y - 2 * p1.y + p2.y
@@ -612,16 +611,15 @@
       A = 4 * (a.x * a.x + a.y * a.y);
       B = 4 * (a.x * b.x + a.y * b.y);
       C = b.x * b.x + b.y * b.y;
-      Sabc = 2 * MATH.sqrt(A+B+C);
-      A_2 = MATH.sqrt(A);
+      Sabc = 2 * M.sqrt(A+B+C);
+      A_2 = M.sqrt(A);
       A_32 = 2 * A * A_2;
-      C_2 = 2 * MATH.sqrt(C);
+      C_2 = 2 * M.sqrt(C);
       BA = B / A_2;
       // if (BA === -C_2 && a.x !=0 && a.y != 0 && b.x != 0 && b.y != 0) {
       //   BA += 1;
       // }
-
-      return (A_32 * Sabc + A_2 * B * (Sabc - C_2) + (4 * C * A - B * B) * MATH.log((2 * A_2 + BA + Sabc) / (BA + C_2))) / (4 * A_32);
+      return (A_32 * Sabc + A_2 * B * (Sabc - C_2) + (4 * C * A - B * B) * M.log((2 * A_2 + BA + Sabc) / (BA + C_2))) / (4 * A_32);
 
     };
 
@@ -633,11 +631,11 @@
 
   function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
 
-    var baseForce = MATH.min(oldTouchForce,  0.3);
+    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha
     var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
     delta = 1 / delta;
     for (var i = 0; i <= 1; i = i + delta) {
-      _particles(
+      _particlesCircle(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
@@ -738,7 +736,7 @@
       _circle(context, x, y, tool.color, params.size);
     } else if (tool.shape === "particles") {
       //context.shadowColor = "#000000";
-      _particles(context, x, y, params.force, tool.color, tool.size);
+      _particlesRect(context, x, y, params.force, tool.color, tool.size);
     }
     if (tool.name === "eraser") {
       _oldX = x;

@@ -14,13 +14,13 @@
     ruleMinOffset: 50,
     ruleWidth: 4,     // rule.width = _config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)
     ruleHeight: 120,  // rule.height = _config.ruleHeight * Param.pixelRatio
-    ruleRotationStep: 2,
+    ruleRotationStep: 3,
     ruleMarginToDraw: 25
   };
 
   // TODO cambiare dimensione background;
-  // TODO migliorare matita
   // TODO bug il righello si sposta di un px quando fisso il centro e lo ruoto
+  // TODO bug linea spostata dopo rotazione
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;

@@ -13,6 +13,10 @@
   };
 
   // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
+  // sub tools come oggetto figlio di ogni tool
+  // se presente, trovare un modo automatico nell'interfaccia di permetterne la selezione
+  // ogni elemento dei sub tool contiene chiave valore per i parametri del tool che modifica
+
   var _container = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
@@ -28,7 +32,7 @@
     },
     pencil: {
       name: "pencil",
-      size: 2,
+      size: 4,
       forceFactor: 0,
       speedFactor: 0,
       shape: "particles",
