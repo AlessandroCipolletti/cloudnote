@@ -56,9 +56,6 @@
     document.body.appendChild(_container);
     app.Param.container = _container;
     window.addEventListener(app.Param.eventResize, _onRotate, false);
-    document.addEventListener(app.Param.eventMove, function (e) {
-      e.preventDefault();
-    });
 
   }
 

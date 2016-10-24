@@ -5,18 +5,15 @@
   var Utils = {};
   var Editor = {};
   var Main = {};
+  var MATH = Math;
 
   var _config = {
-    primaryColors: []
+    colors: []
   };
 
-  var _container, _isOpen = false;
-  var _randomButtom = {};
+  var _container = {}, _randomButtom = {}, _colorsContainer = {};
+  var _dragged = false, _touchDown = false, _currentScroll = 0;
   var _selectedValue = "random";
-  var round = function (n, d) {
-    var m = d ? Math.pow(10, d) : 1;
-    return Math.round(n * m) / m;
-  };
 
   function _selectColor (target) {
 
@@ -28,9 +25,6 @@
     }
     target.classList.add("drawith-editor-colorpicker__color-selected");
     _selectedValue = target.getAttribute("data-color");
-    if (_isOpen) {
-      _hide();
-    }
     Editor.setTool({
       color: _selectedValue,
       randomColor: false
@@ -51,9 +45,6 @@
       _selectedValue = "random";
     }
     _randomButtom.classList.add("drawith-editor-colorpicker__random-selected");
-    if (_isOpen) {
-      _hide();
-    }
     Editor.setTool({
       color: "",
       randomColor: (last ? "last" : true)
@@ -61,24 +52,23 @@
 
   }
 
-  function _show () {
-
-    Utils.addGlobalStatus("drawith__EDITOR-COLORPICKER-OPEN");
-    _isOpen = true;
-
-  }
-
-  function _hide () {
-
-    Utils.removeGlobalStatus("drawith__EDITOR-COLORPICKER-OPEN");
-    _isOpen = false;
-
-  }
-
   function _onTouchStart (e) {
 
-    // e.preventDefault();
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0) return;
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0) {
+      e.preventDefault();
+      return;
+    }
+    _currentScroll = _colorsContainer.scrollLeft;
+
+  }
+
+  function _onTouchEnd (e) {
+
+    e.preventDefault();
+    if (MATH.abs(_currentScroll - _colorsContainer.scrollLeft) > 10) {
+      return;
+    }
+    _currentScroll = 0;
     var target = e.target;
     if (target.classList.contains("drawith-editor-colorpicker__color")) {
       if (target.classList.contains("drawith-editor-colorpicker__color-selected") === false) {
@@ -86,44 +76,24 @@
       }
     } else if (target.classList.contains("drawith-editor-colorpicker__random")) {
       _selectRandom(_selectedValue === "random");
-    } else if (target.classList.contains("drawith-editor-colorpicker__showhide")) {
-      if (_isOpen) {
-        _hide();
-      } else {
-        _show();
-      }
     }
 
-  }
-
-  function _onTouchMove (e) {
-
-  }
-
-  function _onTouchEnd (e) {
-
-  }
-
-  function _onRotate (e) {
-    // do some stuff
   }
 
   function _initDom (moduleContainer) {
 
     Main.loadTemplate("editorColorPicker", {
-      primaryColors: _config.primaryColors,
+      colors: _config.colors,
     }, moduleContainer, function (templateDom) {
 
       _container = templateDom;
       _randomButtom = _container.querySelector(".drawith-editor-colorpicker__random");
-      // _container.addEventListener(Param.eventStart, _onTouchStart, true);
-      // _container.addEventListener(Param.eventMove, _onTouchMove, true);
-      // _container.addEventListener(Param.eventEnd, _onTouchEnd, true);
-      _container.querySelector(".drawith-editor-colorpicker__colors-container > div").style.width = (_config.primaryColors.length * 40 * Param.pixelRatio) + "px";
+      _colorsContainer = _container.querySelector(".drawith-editor-colorpicker__colors-container");
+      _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      _container.addEventListener(Param.eventEnd, _onTouchEnd, true);
+      _container.querySelector(".drawith-editor-colorpicker__colors-container > div").style.width = (_config.colors.length * 49 * Param.pixelRatio) + "px";
 
     });
-
-    //Main.addRotationHandler(_onRotate);
 
   }
 

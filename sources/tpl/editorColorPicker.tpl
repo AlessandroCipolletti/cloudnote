@@ -5,7 +5,7 @@
   </div>
   <div class="drawith-editor-colorpicker__colors-container">
     <div>
-      {{#each primaryColors}}
+      {{#each colors}}
         <div class="drawith-editor-colorpicker__color" data-color="{{this}}" style="background-color: {{this}}"></div>
       {{/each}}
     </div>

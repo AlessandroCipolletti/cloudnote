@@ -23,7 +23,7 @@
   var Socket = {};
 
   var _config = {
-    primaryColors: [
+    colors: [
       "#000001", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
       "#0022ef", "#000688", "#6d0088", "#ddb8ff", "#b8ccff", "#ffb8e5", "#88004a", "#663300", "#883600", "#a00000",
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
