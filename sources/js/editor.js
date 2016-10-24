@@ -42,8 +42,6 @@
     hightPerformance: true
   };
 
-  // TODO bug touch start tutto a sinistra non viene registrato
-
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;

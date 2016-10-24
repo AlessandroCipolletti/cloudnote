@@ -81,29 +81,33 @@
 
   function checkCoordNearRule (x, y, inside) {
 
-    var centerCoord = _ruleCenter.getBoundingClientRect();
-    var startCoord = _ruleStart.getBoundingClientRect();
-    _currentCoefficientM = round(Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top), 4);
-    var ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
-    var ruleBottomCoord = _ruleBottom.getBoundingClientRect();
-    if (Utils.distance(x, y, ruleOriginCoord.left, ruleOriginCoord.top) < Utils.distance(x, y, ruleBottomCoord.left, ruleBottomCoord.top)) {
-      _sideRuleOriginX = round(ruleOriginCoord.left);
-      _sideRuleOriginY = -round(ruleOriginCoord.top);
+    if (_isVisible) {
+      var centerCoord = _ruleCenter.getBoundingClientRect();
+      var startCoord = _ruleStart.getBoundingClientRect();
+      _currentCoefficientM = round(Utils.coefficientM(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top), 4);
+      var ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
+      var ruleBottomCoord = _ruleBottom.getBoundingClientRect();
+      if (Utils.distance(x, y, ruleOriginCoord.left, ruleOriginCoord.top) < Utils.distance(x, y, ruleBottomCoord.left, ruleBottomCoord.top)) {
+        _sideRuleOriginX = round(ruleOriginCoord.left);
+        _sideRuleOriginY = -round(ruleOriginCoord.top);
+      } else {
+        _sideRuleOriginX = round(ruleBottomCoord.left);
+        _sideRuleOriginY = -round(ruleBottomCoord.top);
+      }
+      /*
+      var angle = Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
+      var sec = Utils.distance(x, y, centerCoord.left, centerCoord.top);
+      var tan = MATH.abs(round(sec * MATH.sin(angle)));
+      var distance = tan - _config.ruleHeight / 2;
+      var near = MATH.abs(distance) <= _config.ruleMarginToDraw;
+      */
+      if (inside === true) {
+        return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw / 2;
+      } else {
+        return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw;
+      }
     } else {
-      _sideRuleOriginX = round(ruleBottomCoord.left);
-      _sideRuleOriginY = -round(ruleBottomCoord.top);
-    }
-    /*
-    var angle = Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top);
-    var sec = Utils.distance(x, y, centerCoord.left, centerCoord.top);
-    var tan = MATH.abs(round(sec * MATH.sin(angle)));
-    var distance = tan - _config.ruleHeight / 2;
-    var near = MATH.abs(distance) <= _config.ruleMarginToDraw;
-    */
-    if (inside === true) {
-      return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw / 2;
-    } else {
-      return MATH.abs(MATH.abs(round(Utils.distance(x, y, centerCoord.left, centerCoord.top) * MATH.sin(Utils.angleRad(x, y, centerCoord.left, centerCoord.top) - Utils.angleRad(startCoord.left, startCoord.top, centerCoord.left, centerCoord.top)))) - _config.ruleHeight / 2) <= _config.ruleMarginToDraw;
+      return false;
     }
 
 
