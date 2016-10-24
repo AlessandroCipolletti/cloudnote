@@ -29,7 +29,7 @@
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
-    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo", "coworkingStart", "coworkingStop", "paper", "save", "clear"],  // "exit"
+    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo" /* ,"coworkingStart", "coworkingStop" */, "paper", "save", "clear"],  // "exit"
     toolsWidth: 45,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,

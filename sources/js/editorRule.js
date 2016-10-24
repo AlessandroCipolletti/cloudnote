@@ -20,7 +20,6 @@
 
   // TODO cambiare dimensione background;
   // TODO bug il righello si sposta di un px quando fisso il centro e lo ruoto
-  // TODO bug linea spostata dopo rotazione
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -28,7 +27,7 @@
   }
 
   var _rule = {}, _ruleOrigin = {}, _ruleCenter = {}, _ruleStart = {}, _ruleBottom = {}, _ruleLevel = {}, _ruleLevelValue = {}, _ruleGestureOne = {}, _ruleGestureTwo = {};
-  var _perpendicularButton = {}, _specularButton = {}, _translated = false;
+  var _perpendicularButton = {}, _specularButton = {}, _translated = false, _ruleWidth = 0;
   var _isVisible = false, _dragStartX = -1, _dragStartY = -1, _dragCurrentX = 0, _dragCurrentY = 0, _dragLastX = 0, _dragLastY = 0, _currentRotation = 0;
   var _startOriginX = 0, _startOriginY = 0, _startAngle = 0, _currentCoefficientM = 0, _sideRuleOriginX = 0, _sideRuleOriginY = 0;
   var _gestureOriginX = 0, _gestureOriginY = 0, _offsetLeft = 0, _offsetRight = 0, _ruleTransformOrigin = "", _touchDown = false, _draggable = true, _isNearSide = false;
@@ -202,7 +201,7 @@
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
       _startOriginX = round(ruleOriginCoord.left, 1);
       _startOriginY = round(ruleOriginCoord.top, 1);
-      _startCenterX =  _startOriginX + _config.ruleWidth / 2;
+      _startCenterX =  _startOriginX + _ruleWidth / 2;
       _startCenterY =  1*Param.pixelRatio + _startOriginY + _config.ruleHeight / 2;
       // debugger;
     }
@@ -423,8 +422,9 @@
 
   function _onRotate (e) {
 
-    _rule.style.width = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT)) + "px";
-    _rule.style.marginLeft = -(_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT) / 2) + "px";
+    _ruleWidth = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT));
+    _rule.style.width = _ruleWidth + "px";
+    _rule.style.marginLeft = -_ruleWidth / 2 + "px";
     _rule.style.height = _config.ruleHeight + "px";
     _rule.style.marginTop = -_config.ruleHeight / 2 + "px";
     _touchDown = false;
@@ -455,9 +455,9 @@
       _specularButton = _rule.querySelector(".drawith-editor__tool-rule-specular");
       _ruleGestureOne = templateDom[1];
       _ruleGestureTwo = templateDom[2];
-      _config.ruleWidth *= MATH.max(app.WIDTH, app.HEIGHT);
-      _rule.style.width = _config.ruleWidth + "px";
-      _rule.style.marginLeft = -_config.ruleWidth / 2 + "px";
+      _ruleWidth = (_config.ruleWidth * MATH.max(app.WIDTH, app.HEIGHT));
+      _rule.style.width = _ruleWidth + "px";
+      _rule.style.marginLeft = -_ruleWidth / 2 + "px";
       _rule.style.height = _config.ruleHeight + "px";
       _rule.style.marginTop = -_config.ruleHeight / 2 + "px";
       _rule.addEventListener(Param.eventStart, _onTouchStart);
