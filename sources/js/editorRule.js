@@ -203,7 +203,6 @@
       _startOriginY = round(ruleOriginCoord.top, 1);
       _startCenterX =  _startOriginX + _ruleWidth / 2;
       _startCenterY =  1*Param.pixelRatio + _startOriginY + _config.ruleHeight / 2;
-      // debugger;
     }
     if (touches.length <= 1) {
       cursorX = Utils.getEventCoordX(touches, 0, true);

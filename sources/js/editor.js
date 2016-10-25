@@ -29,7 +29,7 @@
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
-    tools: ["marker", "pen", "crayon", "pencil", "eraser", "bucket", "rule", "undo", "redo" /* ,"coworkingStart", "coworkingStop" */, "paper", "save", "clear"],  // "exit"
+    tools: ["marker", "pencil", "eraser", "bucket", "rule", "undo", "redo", "paper", "save", "clear"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
     toolsWidth: 45,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
@@ -626,13 +626,31 @@
     return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
-  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
+  function _curvedParticlesCircleLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
 
-    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha
+    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha, passato come parametro per i coworking step
     var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
     delta = 1 / delta;
     for (var i = 0; i <= 1; i = i + delta) {
       _particlesCircle(
+        context,
+        _getQuadraticBezierValue(i, fromX, midX, toX),
+        _getQuadraticBezierValue(i, fromY, midY, toY),
+        baseForce + deltaForce * i,
+        color,
+        size
+      );
+    }
+
+  }
+
+  function _curvedParticlesRectLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
+
+    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha, passato come parametro per i coworking step
+    var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
+    delta = 1 / delta;
+    for (var i = 0; i <= 1; i = i + delta) {
+      _particlesRect(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
@@ -731,8 +749,10 @@
     } else if (tool.shape === "circle") {
       //context.shadowColor = _tool.color;
       _circle(context, x, y, tool.color, params.size);
-    } else if (tool.shape === "particles") {
+    } else if (tool.shape === "particlesRect") {
       //context.shadowColor = "#000000";
+      _particlesRect(context, x, y, params.force, tool.color, tool.size);
+    } else if (tool.shape === "particlesCircle") {
       _particlesRect(context, x, y, params.force, tool.color, tool.size);
     }
     if (tool.name === "eraser") {
@@ -749,8 +769,10 @@
 
     if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
-    } else if (tool.shape === "particles") {
-      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    } else if (tool.shape === "particlesCircle") {
+      _curvedParticlesCircleLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    } else if (tool.shape === "particlesRect") {
+      _curvedParticlesRectLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     }
     if (tool.name === "eraser") {
       _oldX = params.x;

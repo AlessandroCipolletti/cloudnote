@@ -21,6 +21,7 @@
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
   var _toolsConfig = {
+    /*
     crayon: {
       name: "crayon",
       size: 9,
@@ -30,14 +31,36 @@
       globalCompositeOperation: "source-over",
       cursor: false
     },
+    */
     pencil: {
       name: "pencil",
-      size: 4,
+      size: 2,
       forceFactor: 0,
       speedFactor: 0,
-      shape: "particles",
+      //maxForce: 0.3, // TODO
+      shape: "particlesRect",
       globalCompositeOperation: "source-over",
-      cursor: false
+      cursor: false,
+      versions: {
+        "2h": {
+          size: 2,
+          shape: "particlesRect",
+          maxForce: 0.3,
+          icon: ""
+        },
+        "hb": {
+          size: 2,
+          shape: "particlesCircle",
+          maxForce: 0.3,
+          icon: ""
+        },
+        "2b": {
+          size: 4,
+          shape: "particlesCircle",
+          maxForce: 0.3,
+          icon: ""
+        }
+      }
     },
     maker: {
       name: "marker",
@@ -46,8 +69,35 @@
       speedFactor: 0,
       shape: "circle",
       globalCompositeOperation: "source-over",
-      cursor: false
+      cursor: false,
+      versions: {
+        "xs": {
+          size: 1,
+          forceFactor: 2.5,
+          icon: ""
+        },
+        "s": {
+          size: 5,
+          forceFactor: 2,
+          icon: ""
+        },
+        "m": {
+          size: 10,
+          icon: ""
+        },
+        "l": {
+          size: 15,
+          forceFactor: 1.3,
+          icon: ""
+        },
+        "xl": {
+          size: 25,
+          forceFactor: 1.1,
+          icon: ""
+        }
+      }
     },
+    /*
     pen: {
       name: "pen",
       size: 1,
@@ -57,14 +107,33 @@
       globalCompositeOperation: "source-over",
       cursor: false
     },
+    */
     eraser: {
       name: "eraser",
       size: 12,
-      forceFactor: 5,
+      forceFactor: 2.5,
       speedFactor: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
-      cursor: true
+      cursor: true,
+      versions: {
+        "xs": {
+          size: 6,
+          icon: ""
+        },
+        "s": {
+          size: 12,
+          icon: ""
+        },
+        "m": {
+          size: 24,
+          icon: ""
+        },
+        "l": {
+          size: 48,
+          icon: ""
+        }
+      }
     },
     bucket: {
       name: "bucket",
