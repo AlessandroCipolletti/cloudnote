@@ -626,31 +626,14 @@
     return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
-  function _curvedParticlesCircleLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
+  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
 
     var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha, passato come parametro per i coworking step
     var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
+    var particles = (circleShape ? _particlesCircle : _particlesRect);
     delta = 1 / delta;
     for (var i = 0; i <= 1; i = i + delta) {
-      _particlesCircle(
-        context,
-        _getQuadraticBezierValue(i, fromX, midX, toX),
-        _getQuadraticBezierValue(i, fromY, midY, toY),
-        baseForce + deltaForce * i,
-        color,
-        size
-      );
-    }
-
-  }
-
-  function _curvedParticlesRectLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY) {
-
-    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha, passato come parametro per i coworking step
-    var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
-    delta = 1 / delta;
-    for (var i = 0; i <= 1; i = i + delta) {
-      _particlesRect(
+      particles(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
@@ -769,10 +752,8 @@
 
     if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
-    } else if (tool.shape === "particlesCircle") {
-      _curvedParticlesCircleLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
-    } else if (tool.shape === "particlesRect") {
-      _curvedParticlesRectLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
+    } else if (tool.shape === "particlesCircle" || tool.shape === "particlesRect") {
+      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
     }
     if (tool.name === "eraser") {
       _oldX = params.x;

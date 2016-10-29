@@ -9,7 +9,7 @@
   var _popupOpen = false;
   var MATH = Math;
   var PI = MATH.PI;
-  var PI2 = PI / 2
+  var PI2 = PI / 2;
 
   Utils.emptyFN = function () {};
 

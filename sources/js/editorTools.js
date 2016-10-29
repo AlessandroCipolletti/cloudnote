@@ -43,22 +43,31 @@
       cursor: false,
       versions: {
         "2h": {
-          size: 2,
-          shape: "particlesRect",
-          maxForce: 0.3,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 2,
+            shape: "particlesRect",
+            maxForce: 0.3
+          }
         },
         "hb": {
-          size: 2,
-          shape: "particlesCircle",
-          maxForce: 0.3,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 2,
+            shape: "particlesCircle",
+            maxForce: 0.3
+          }
         },
         "2b": {
-          size: 4,
-          shape: "particlesCircle",
-          maxForce: 0.3,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 4,
+            shape: "particlesCircle",
+            maxForce: 0.3
+          }
         }
       }
     },
@@ -71,30 +80,56 @@
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: {
+        size: {
+          type: "slider",
+          min: 1,
+          max: 100,
+          start: 10
+        },
+        alpha: {
+          type: "slider",
+          min: 0.1,
+          max: 1,
+          start: 1
+        },
+        /*
         "xs": {
-          size: 1,
-          forceFactor: 2.5,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 1,
+            forceFactor: 2.5
+          }
         },
         "s": {
-          size: 5,
-          forceFactor: 2,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 5,
+            forceFactor: 2
+          }
         },
         "m": {
-          size: 10,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 10
+          }
         },
         "l": {
-          size: 15,
-          forceFactor: 1.3,
-          icon: ""
+          type: "button",
+          icon: "",
+          params: {
+            size: 15,
+            forceFactor: 1.3
+          }
         },
         "xl": {
-          size: 25,
-          forceFactor: 1.1,
-          icon: ""
+          type: "button",
+          icon: "",
+
         }
+        */
       }
     },
     /*
