@@ -1,28 +1,44 @@
-.drawith-editor-tools__container {
+.drawith-editor-tools__container,
+.drawith-editor-tools__versions-container {
   position: absolute;
   top: 0rem;
   width: 4.5rem;  /* 90px */
   height: calc(100% - 4.5rem);  /* 90px */
   background-color: rgba(250, 250, 250, 0.9);
-  transition: transform 0.6s;
-  transform: translate3d(0rem, 0rem, 0rem);
-  z-index: 100;
   display: flex;
   flex-flow: column nowrap;
   padding-top: 0.5rem;
 }
+.drawith-editor-tools__container {
+  z-index: 110;
+}
+.drawith-editor-tools__versions-container {
+  z-index: 100;
+}
 
-.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__container {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__container,
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__versions-container {
   left: 0rem;
 }
-.drawith__EDITOR-TOOLS-LEFT.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-tools__container {
-  transform: translate3d(-4.5rem, 0rem, 0rem); /* 90px */
-}
-.drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__container {
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__container,
+.drawith__EDITOR-TOOLS-LEFT .drawith-editor-tools__versions-container {
   right: 0rem;
 }
-.drawith__EDITOR-TOOLS-RIGHT.drawith__EDITOR-COLORPICKER-OPEN .drawith-editor-tools__container {
-  transform: translate3d(4.5rem, 0rem, 0rem);  /* 90px */
+
+.drawith-editor-tools__versions {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  transition: transform 0.6s, opacity 0.6s;
+  transform: translate3d(0rem, 0rem, 0rem);
+  background-color: red;
+  opacity: 0;
+}
+.drawith-editor-tools__versions-open {
+  transform: translate3d(100%, 0rem, 0rem);
+  opacity: 1;
 }
 
 .drawith-editor-tools__tool {

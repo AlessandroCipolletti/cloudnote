@@ -5,3 +5,17 @@
   {{/each}}
 
 </div>
+
+<div class="drawith-editor-tools__versions-container">
+
+  {{#each tools}}
+    {{#if this.versions}}
+      <div class="drawith-editor-tools__versions drawith-editor-tools__versions-{{this.name}}">
+        {{#each this.versions}}
+
+        {{/each}}
+      </div>
+    {{/if}}
+  {{/each}}
+
+</div>

@@ -560,7 +560,7 @@
   }
 
   function _particlesRect (context, x, y, alpha, color, size) {
-
+    // TODO invece che +- 1 --> +- size/2
     context.globalAlpha = alpha * 0.75;
     context.fillStyle = color;
     for (var i = size * (size + 1); i--; ) {

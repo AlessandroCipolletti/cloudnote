@@ -17,7 +17,7 @@
   // se presente, trovare un modo automatico nell'interfaccia di permetterne la selezione
   // ogni elemento dei sub tool contiene chiave valore per i parametri del tool che modifica
 
-  var _container = {};
+  var _toolsContainer = {}, _versionsContainer = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
   var _toolsConfig = {
@@ -71,7 +71,7 @@
         }
       }
     },
-    maker: {
+    marker: {
       name: "marker",
       size: 10,
       forceFactor: 1.5,
@@ -84,14 +84,25 @@
           type: "slider",
           min: 1,
           max: 100,
-          start: 10
+          start: 10,
+          decimals: 0
         },
         alpha: {
           type: "slider",
           min: 0.1,
           max: 1,
-          start: 1
-        },
+          start: 1,
+          decimals: 1
+        }
+        // TODO BLUR
+        /*, blur: {
+          type: "slider",
+          min: 1,
+          max: 50,
+          decimals: 0
+        }
+        */
+
         /*
         "xs": {
           type: "button",
@@ -181,10 +192,15 @@
     }
   };
   var _toolsFunctions = {
-    marker: function () {
-      _selectTool("marker");
-      Editor.setTool(_toolsConfig.maker);
+    marker: function (selected) {
+      if (selected) {
+        _toggleVersions("marker");
+      } else {
+        _selectTool("marker");
+        Editor.setTool(_toolsConfig.marker);
+      }
     },
+    /*
     pen: function () {
       _selectTool("pen");
       Editor.setTool(_toolsConfig.pen);
@@ -193,13 +209,22 @@
       _selectTool("crayon");
       Editor.setTool(_toolsConfig.crayon);
     },
-    pencil: function () {
-      _selectTool("pencil");
-      Editor.setTool(_toolsConfig.pencil);
+    */
+    pencil: function (selected) {
+      if (selected) {
+        _toggleVersions("pencil");
+      } else {
+        _selectTool("pencil");
+        Editor.setTool(_toolsConfig.pencil);
+      }
     },
-    eraser: function () {
-      _selectTool("eraser");
-      Editor.setTool(_toolsConfig.eraser);
+    eraser: function (selected) {
+      if (selected) {
+        _toggleVersions("eraser");
+      } else {
+        _selectTool("eraser");
+        Editor.setTool(_toolsConfig.eraser);
+      }
     },
     bucket: function () {
       _selectTool("bucket");
@@ -279,18 +304,37 @@
 
   }
 
+  function closeVersions () {
+
+    var opened = _versionsContainer.querySelector(".drawith-editor-tools__versions-open");
+    if (opened) {
+      opened.classList.remove("drawith-editor-tools__versions-open");
+    }
+
+  }
+
+  function _toggleVersions (tool) {
+
+    if (_toolsConfig[tool].versions) {
+      _versionsContainer.querySelector(".drawith-editor-tools__versions-" + tool).classList.toggle("drawith-editor-tools__versions-open");
+    }
+
+  }
+
   function _selectTool (tool) {
 
-    var selected = _container.querySelector(".drawith-editor-tools__tool-selected");
+    var selected = _toolsContainer.querySelector(".drawith-editor-tools__tool-selected");
     if (selected) {
       selected.classList.remove("drawith-editor-tools__tool-selected");
     }
-    _container.querySelector(".drawith-editor-tools__tool-" + tool).classList.add("drawith-editor-tools__tool-selected");
+    _toolsContainer.querySelector(".drawith-editor-tools__tool-" + tool).classList.add("drawith-editor-tools__tool-selected");
+    closeVersions();
+    _toggleVersions(tool);
 
   }
 
   function _toggleTool (tool) {
-    return _container.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
+    return _toolsContainer.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
   }
 
   function _onTouchStart (e) {
@@ -300,13 +344,12 @@
     var target = e.target;
     if (
       target.classList.contains("drawith-editor-tools__tool") &&
-      target.classList.contains("drawith-editor-tools__tool-selected") === false &&
       target.classList.contains("disabled") === false
     ) {
 
       var tool = target.getAttribute("data-tool");
       if (_toolsFunctions.hasOwnProperty(tool)) {
-        (_toolsFunctions[tool])();
+        (_toolsFunctions[tool])(target.classList.contains("drawith-editor-tools__tool-selected"));
       }
 
     }
@@ -336,7 +379,8 @@
     for (var i = 0, l = _config.tools.length; i < l; i++) {
       tools.push({
         name: _config.tools[i],
-        disabled: disabled.indexOf(_config.tools[i]) >= 0
+        disabled: disabled.indexOf(_config.tools[i]) >= 0,
+        versions: _toolsConfig[_config.tools[i]] ? _toolsConfig[_config.tools[i]].versions : false
       });
     }
 
@@ -346,27 +390,28 @@
       tools: tools
     }, moduleContainer, function (templateDom) {
 
-      _container = templateDom;
-      _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      _toolsContainer = templateDom[0];
+      _versionsContainer = templateDom[1];
+      _toolsContainer.addEventListener(Param.eventStart, _onTouchStart, true);
       if (_config.tools.indexOf("undo") >= 0) {
-        _undoButton = _container.querySelector(".drawith-editor-tools__tool-undo");
+        _undoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-undo");
       }
       if (_config.tools.indexOf("redo") >= 0) {
-        _redoButton = _container.querySelector(".drawith-editor-tools__tool-redo");
+        _redoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-redo");
       }
       if (_config.tools.indexOf("save") >= 0) {
-        _saveButton = _container.querySelector(".drawith-editor-tools__tool-save");
+        _saveButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-save");
       }
       if (_config.tools.indexOf("clear") >= 0) {
-        _clearButton = _container.querySelector(".drawith-editor-tools__tool-clear");
+        _clearButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-clear");
       }
       if (_config.tools.indexOf("paper") >= 0) {
-        _paperButton = _container.querySelector(".drawith-editor-tools__tool-paper");
+        _paperButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-paper");
         _paperButton.classList.add("paper-squares");
       }
       (_toolsFunctions[_config.tools[0]])();
 
-      Main.addRotationHandler(_onRotate);
+      //Main.addRotationHandler(_onRotate);
 
     });
 
@@ -388,7 +433,8 @@
     init: init,
     toggleButton: toggleButton,
     getToolConfig: getToolConfig,
-    clickButton: clickButton
+    clickButton: clickButton,
+    closeVersions: closeVersions
   });
 
 })(drawith);
