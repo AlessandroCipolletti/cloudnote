@@ -12,7 +12,11 @@
     {{#if this.versions}}
       <div class="drawith-editor-tools__versions drawith-editor-tools__versions-{{this.name}}">
         {{#each this.versions}}
+          {{#if this.button}}
+            <div class="drawith-editor-tools__versions-button" data-versionsIndex="{{@index}}"><p>{{this.name}}</p></div>
+          {{else if this.slider}}
 
+          {{/if}}
         {{/each}}
       </div>
     {{/if}}

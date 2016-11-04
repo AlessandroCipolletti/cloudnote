@@ -17,175 +17,121 @@
   // se presente, trovare un modo automatico nell'interfaccia di permetterne la selezione
   // ogni elemento dei sub tool contiene chiave valore per i parametri del tool che modifica
 
-  var _toolsContainer = {}, _versionsContainer = {};
+  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
-  var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0];
+  var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false;
   var _toolsConfig = {
-    /*
-    crayon: {
-      name: "crayon",
-      size: 9,
-      forceFactor: 0,
-      speedFactor: 0,
-      shape: "particles",
-      globalCompositeOperation: "source-over",
-      cursor: false
-    },
-    */
     pencil: {
       name: "pencil",
       size: 2,
       forceFactor: 0,
       speedFactor: 0,
-      //maxForce: 0.3, // TODO
+      maxForce: 0.3,
       shape: "particlesRect",
       globalCompositeOperation: "source-over",
       cursor: false,
-      versions: {
-        "2h": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 2,
-            shape: "particlesRect",
-            maxForce: 0.3
-          }
-        },
-        "hb": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 2,
-            shape: "particlesCircle",
-            maxForce: 0.3
-          }
-        },
-        "2b": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 4,
-            shape: "particlesCircle",
-            maxForce: 0.3
-          }
+      versions: [{
+        name : "2H",
+        button: true,
+        slider: false,
+        //type: "button",
+        icon: "",
+        params: {
+          size: 2,
+          shape: "particlesRect",
+          maxForce: 0.3
         }
-      }
+      }, {
+        name: "HB",
+        button: true,
+        slider: false,
+        //type: "button",
+        icon: "",
+        params: {
+          size: 2,
+          shape: "particlesCircle",
+          maxForce: 0.3
+        }
+      }, {
+        name : "2B",
+        button: true,
+        slider: false,
+        //type: "button",
+        icon: "",
+        params: {
+          size: 4,
+          shape: "particlesCircle",
+          maxForce: 0.3
+        }
+      }]
     },
     marker: {
       name: "marker",
       size: 10,
       forceFactor: 1.5,
       speedFactor: 0,
+      maxForce: 1,
       shape: "circle",
       globalCompositeOperation: "source-over",
       cursor: false,
-      versions: {
-        size: {
-          type: "slider",
-          min: 1,
-          max: 100,
-          start: 10,
-          decimals: 0
-        },
-        alpha: {
-          type: "slider",
-          min: 0.1,
-          max: 1,
-          start: 1,
-          decimals: 1
-        }
-        // TODO BLUR
-        /*, blur: {
-          type: "slider",
-          min: 1,
-          max: 50,
-          decimals: 0
-        }
-        */
-
-        /*
-        "xs": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 1,
-            forceFactor: 2.5
-          }
-        },
-        "s": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 5,
-            forceFactor: 2
-          }
-        },
-        "m": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 10
-          }
-        },
-        "l": {
-          type: "button",
-          icon: "",
-          params: {
-            size: 15,
-            forceFactor: 1.3
-          }
-        },
-        "xl": {
-          type: "button",
-          icon: "",
-
-        }
-        */
+      versions: [{
+        param: "size",
+        button: false,
+        slider: true,
+        //type: "slider",
+        min: 1,
+        max: 100,
+        start: 10,
+        decimals: 0
+      }, {
+        param: "alpha",
+        button: false,
+        slider: true,
+        //type: "slider",
+        min: 0.1,
+        max: 1,
+        start: 1,
+        decimals: 1
       }
+      // TODO BLUR
+      /*, {
+        name : "blur",
+        button: false,
+        slider: true,
+        //type: "slider",
+        min: 1,
+        max: 50,
+        decimals: 0
+      }
+      */
+      ]
     },
-    /*
-    pen: {
-      name: "pen",
-      size: 1,
-      forceFactor: 2.5,
-      speedFactor: 0,
-      shape: "circle",
-      globalCompositeOperation: "source-over",
-      cursor: false
-    },
-    */
     eraser: {
       name: "eraser",
       size: 12,
       forceFactor: 2.5,
       speedFactor: 1,
+      maxForce: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
       cursor: true,
-      versions: {
-        "xs": {
-          size: 6,
-          icon: ""
-        },
-        "s": {
-          size: 12,
-          icon: ""
-        },
-        "m": {
-          size: 24,
-          icon: ""
-        },
-        "l": {
-          size: 48,
-          icon: ""
-        }
-      }
+      versions: [{
+        param: "size",
+        button: false,
+        slider: true,
+        //type: "slider",
+        min: 1,
+        max: 100,
+        start: 10,
+        decimals: 0
+      }]
     },
     bucket: {
       name: "bucket",
       size: 1,
       forceFactor: 1,
       speedFactor: 1,
+      maxForce: 1,
       shape: "",
       globalCompositeOperation: "source-over",
       cursor: false
@@ -200,16 +146,6 @@
         Editor.setTool(_toolsConfig.marker);
       }
     },
-    /*
-    pen: function () {
-      _selectTool("pen");
-      Editor.setTool(_toolsConfig.pen);
-    },
-    crayon: function () {
-      _selectTool("crayon");
-      Editor.setTool(_toolsConfig.crayon);
-    },
-    */
     pencil: function (selected) {
       if (selected) {
         _toggleVersions("pencil");
@@ -252,22 +188,16 @@
       Editor.clear();
     },
     paper: function () {
-
       _currentPaper = _papers[(_papers.indexOf(_currentPaper) + 1) % _papers.length];
       _paperButton.classList.remove("paper-squares", "paper-lines", "paper-white");
       _paperButton.classList.add("paper-" + _papers[(_papers.indexOf(_currentPaper) + 1) % _papers.length]);
       Editor.changePaper(_currentPaper);
-
     },
     exit: function () {
       Editor.hide();
       Dashboard.show();
     }
   };
-
-  function getToolConfig (tool) {
-    return _toolsConfig[tool] || {};
-  }
 
   function toggleButton (tool, enabled) {
 
@@ -309,14 +239,25 @@
     var opened = _versionsContainer.querySelector(".drawith-editor-tools__versions-open");
     if (opened) {
       opened.classList.remove("drawith-editor-tools__versions-open");
+      clearTimeout(_versionsTimeout);
+      _versionsTimeout = false;
     }
 
   }
 
   function _toggleVersions (tool) {
 
-    if (_toolsConfig[tool].versions) {
-      _versionsContainer.querySelector(".drawith-editor-tools__versions-" + tool).classList.toggle("drawith-editor-tools__versions-open");
+    var versions = _versionsContainer.querySelector(".drawith-editor-tools__versions-" + tool);
+    if (versions) {
+      if (versions.classList.contains("drawith-editor-tools__versions-open")) {
+        clearTimeout(_versionsTimeout);
+        _versionsTimeout = false;
+        versions.classList.remove("drawith-editor-tools__versions-open");
+      } else {
+        versions.classList.add("drawith-editor-tools__versions-open");
+        clearTimeout(_versionsTimeout);
+        _versionsTimeout = setTimeout(closeVersions, 4000);
+      }
     }
 
   }
@@ -337,7 +278,35 @@
     return _toolsContainer.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
   }
 
-  function _onTouchStart (e) {
+  function _selectVersionButton (tool, version) {
+
+    var params = _toolsConfig[tool].versions[version].params;
+    for (var param in params) {
+      _toolsConfig[tool][param] = params[param];
+    }
+    Editor.setTool(_toolsConfig.pencil);
+
+  }
+
+  function _pencilVersionsTouchStart (e) {
+
+    e.preventDefault();
+    e.stopPropagation();
+    var target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
+    if (
+      target.classList.contains("drawith-editor-tools__versions-button") &&
+      !target.classList.contains("drawith-editor-tools__versions-button-selected")
+    ) {
+      _pencilVersions.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
+      target.classList.add("drawith-editor-tools__versions-button-selected");
+      clearTimeout(_versionsTimeout);
+      _versionsTimeout = setTimeout(closeVersions, 4000);
+      _selectVersionButton("pencil", target.getAttribute("data-versionsIndex"));
+    }
+
+  }
+
+  function _onToolsTouchStart (e) {
 
     e.preventDefault();
     e.stopPropagation();
@@ -392,7 +361,8 @@
 
       _toolsContainer = templateDom[0];
       _versionsContainer = templateDom[1];
-      _toolsContainer.addEventListener(Param.eventStart, _onTouchStart, true);
+      _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
+
       if (_config.tools.indexOf("undo") >= 0) {
         _undoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-undo");
       }
@@ -410,6 +380,10 @@
         _paperButton.classList.add("paper-squares");
       }
       (_toolsFunctions[_config.tools[0]])();
+      _toolsContainer.addEventListener(Param.eventStart, _onToolsTouchStart, true);
+      _pencilVersions.addEventListener(Param.eventStart, _pencilVersionsTouchStart, true);
+
+      _pencilVersions.querySelector(".drawith-editor-tools__versions-button").classList.add("drawith-editor-tools__versions-button-selected")
 
       //Main.addRotationHandler(_onRotate);
 
@@ -432,7 +406,6 @@
   app.module("Editor.Tools", {
     init: init,
     toggleButton: toggleButton,
-    getToolConfig: getToolConfig,
     clickButton: clickButton,
     closeVersions: closeVersions
   });

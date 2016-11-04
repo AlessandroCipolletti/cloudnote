@@ -22,6 +22,9 @@
   var User = {};
   var Socket = {};
 
+  // TODO max force tool
+  // TODO particlesRect centrato
+
   var _config = {
     colors: [
       "#000001", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
@@ -56,6 +59,7 @@
   var _tool = {
     name: "",
     size: 25,
+    maxForce: 1,
     forceFactor: 2,
     speedFactor: 0,
     color: "",
@@ -294,8 +298,7 @@
   }
 
   function setTool (tool) {
-    // questa viene chiamata dal modulo che creerà la barra laterale dei tools su tool change
-    // TODO: devo tener conto anche che potrebbe essere il righello
+
     var key;
     for (key in tool) {
       if (typeof (_tool[key]) !== "undefined") {
@@ -560,7 +563,7 @@
   }
 
   function _particlesRect (context, x, y, alpha, color, size) {
-    // TODO invece che +- 1 --> +- size/2
+
     context.globalAlpha = alpha * 0.75;
     context.fillStyle = color;
     for (var i = size * (size + 1); i--; ) {
@@ -628,7 +631,7 @@
 
   function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
 
-    var baseForce = MATH.min(oldTouchForce,  0.3);  // TODO usare un parametro di _tool per maxAlpha, passato come parametro per i coworking step
+    var baseForce = MATH.min(oldTouchForce,  0.3);
     var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
     var particles = (circleShape ? _particlesCircle : _particlesRect);
     delta = 1 / delta;
