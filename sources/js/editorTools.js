@@ -17,7 +17,7 @@
   // se presente, trovare un modo automatico nell'interfaccia di permetterne la selezione
   // ogni elemento dei sub tool contiene chiave valore per i parametri del tool che modifica
 
-  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {};
+  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {}, _markerVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false;
   var _toolsConfig = {
@@ -34,8 +34,6 @@
         name : "2H",
         button: true,
         slider: false,
-        //type: "button",
-        icon: "",
         params: {
           size: 2,
           shape: "particlesRect",
@@ -45,8 +43,6 @@
         name: "HB",
         button: true,
         slider: false,
-        //type: "button",
-        icon: "",
         params: {
           size: 2,
           shape: "particlesCircle",
@@ -56,10 +52,17 @@
         name : "2B",
         button: true,
         slider: false,
-        //type: "button",
-        icon: "",
         params: {
           size: 4,
+          shape: "particlesCircle",
+          maxForce: 0.3
+        }
+      }, {
+        name : "XL",
+        button: true,
+        slider: false,
+        params: {
+          size: 9,
           shape: "particlesCircle",
           maxForce: 0.3
         }
@@ -75,10 +78,50 @@
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
+        name : "XS",
+        button: true,
+        slider: false,
+        params: {
+          size: 1,
+          forceFactor: 3
+        }
+      }, {
+        name : "S",
+        button: true,
+        slider: false,
+        params: {
+          size: 5,
+          forceFactor: 2.5
+        }
+      }, {
+        name : "M",
+        button: true,
+        slider: false,
+        params: {
+          size: 15,
+          forceFactor: 2
+        }
+      }, {
+        name : "L",
+        button: true,
+        slider: false,
+        params: {
+          size: 25,
+          forceFactor: 1.5
+        }
+      }, {
+        name : "XL",
+        button: true,
+        slider: false,
+        params: {
+          size: 40,
+          forceFactor: 1.2
+        }
+      }
+      /*{
         param: "size",
         button: false,
         slider: true,
-        //type: "slider",
         min: 1,
         max: 100,
         start: 10,
@@ -87,7 +130,6 @@
         param: "alpha",
         button: false,
         slider: true,
-        //type: "slider",
         min: 0.1,
         max: 1,
         start: 1,
@@ -109,13 +151,14 @@
     eraser: {
       name: "eraser",
       size: 12,
-      forceFactor: 2.5,
+      forceFactor: 3,
       speedFactor: 1,
       maxForce: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
       cursor: true,
-      versions: [{
+      versions: [
+        /*{
         param: "size",
         button: false,
         slider: true,
@@ -124,6 +167,42 @@
         max: 100,
         start: 10,
         decimals: 0
+      } */
+      {
+        name : "XS",
+        button: true,
+        slider: false,
+        params: {
+          size: 1
+        }
+      }, {
+        name : "S",
+        button: true,
+        slider: false,
+        params: {
+          size: 5
+        }
+      }, {
+        name : "M",
+        button: true,
+        slider: false,
+        params: {
+          size: 15
+        }
+      }, {
+        name : "L",
+        button: true,
+        slider: false,
+        params: {
+          size: 25
+        }
+      }, {
+        name : "XL",
+        button: true,
+        slider: false,
+        params: {
+          size: 40
+        }
       }]
     },
     bucket: {
@@ -278,30 +357,39 @@
     return _toolsContainer.querySelector(".drawith-editor-tools__tool-" + tool).classList.toggle("drawith-editor-tools__tool-activated");
   }
 
-  function _selectVersionButton (tool, version) {
+  function _selectVersionButton (tool, version, notSave) {
 
     var params = _toolsConfig[tool].versions[version].params;
     for (var param in params) {
       _toolsConfig[tool][param] = params[param];
     }
-    Editor.setTool(_toolsConfig.pencil);
+    if (!notSave) {
+      Editor.setTool(_toolsConfig[tool]);
+    }
 
   }
 
-  function _pencilVersionsTouchStart (e) {
+  function _versionsTouchStart (tool, e) {
 
     e.preventDefault();
     e.stopPropagation();
-    var target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
+    var container, target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
+    if (tool === "pencil") {
+      container = _pencilVersions;
+    } else if (tool === "marker") {
+      container = _markerVersions;
+    } else if (tool === "eraser") {
+      container = _eraserVersions;
+    }
     if (
       target.classList.contains("drawith-editor-tools__versions-button") &&
       !target.classList.contains("drawith-editor-tools__versions-button-selected")
     ) {
-      _pencilVersions.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
+      container.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
       target.classList.add("drawith-editor-tools__versions-button-selected");
       clearTimeout(_versionsTimeout);
       _versionsTimeout = setTimeout(closeVersions, 4000);
-      _selectVersionButton("pencil", target.getAttribute("data-versionsIndex"));
+      _selectVersionButton(tool, target.getAttribute("data-versionsIndex"));
     }
 
   }
@@ -362,6 +450,8 @@
       _toolsContainer = templateDom[0];
       _versionsContainer = templateDom[1];
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
+      _markerVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-marker");
+      _eraserVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-eraser");
 
       if (_config.tools.indexOf("undo") >= 0) {
         _undoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-undo");
@@ -381,9 +471,18 @@
       }
       (_toolsFunctions[_config.tools[0]])();
       _toolsContainer.addEventListener(Param.eventStart, _onToolsTouchStart, true);
-      _pencilVersions.addEventListener(Param.eventStart, _pencilVersionsTouchStart, true);
+      _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
+      _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
+      _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
 
-      _pencilVersions.querySelector(".drawith-editor-tools__versions-button").classList.add("drawith-editor-tools__versions-button-selected")
+      _selectTool("marker");
+      _selectVersionButton("marker", 1);
+      _selectVersionButton("pencil", 0, true);
+      _selectVersionButton("eraser", 1, true);
+      //_pencilVersions.querySelector(".drawith-editor-tools__versions-button").classList.add("drawith-editor-tools__versions-button-selected");
+      _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
+      _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
+      _eraserVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
 
       //Main.addRotationHandler(_onRotate);
 
