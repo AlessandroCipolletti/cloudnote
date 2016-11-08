@@ -24,6 +24,8 @@
 
   // TODO max force tool
   // TODO particlesRect centrato
+  // TODO bug prima pressione rilevata è più alta del normale
+  // TODO bug min width e max width immagine dopo bucket
 
   var _config = {
     colors: [
@@ -686,7 +688,6 @@
 
   function _coworkingDrawSteps (data) {
 
-    //var tool = Tools.getToolConfig(data.tool);
     var steps = data.steps;
     _contextCoworking.clearRect(0, 0, _canvasCoworking.width, _canvasCoworking.height);
     if (data.tool.globalCompositeOperation === "destination-out") {

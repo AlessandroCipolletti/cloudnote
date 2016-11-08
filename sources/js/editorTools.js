@@ -98,7 +98,7 @@
         button: true,
         slider: false,
         params: {
-          size: 15,
+          size: 17,
           forceFactor: 2
         }
       }, {
@@ -106,7 +106,7 @@
         button: true,
         slider: false,
         params: {
-          size: 25,
+          size: 30,
           forceFactor: 1.5
         }
       }, {
@@ -114,7 +114,7 @@
         button: true,
         slider: false,
         params: {
-          size: 40,
+          size: 50,
           forceFactor: 1.2
         }
       }
@@ -187,21 +187,21 @@
         button: true,
         slider: false,
         params: {
-          size: 15
+          size: 17
         }
       }, {
         name : "L",
         button: true,
         slider: false,
         params: {
-          size: 25
+          size: 30
         }
       }, {
         name : "XL",
         button: true,
         slider: false,
         params: {
-          size: 40
+          size: 50
         }
       }]
     },
@@ -478,11 +478,10 @@
       _selectTool("marker");
       _selectVersionButton("marker", 1);
       _selectVersionButton("pencil", 0, true);
-      _selectVersionButton("eraser", 1, true);
-      //_pencilVersions.querySelector(".drawith-editor-tools__versions-button").classList.add("drawith-editor-tools__versions-button-selected");
+      _selectVersionButton("eraser", 2, true);
       _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
       _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
-      _eraserVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
+      _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
 
       //Main.addRotationHandler(_onRotate);
 
