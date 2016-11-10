@@ -152,7 +152,7 @@
       name: "eraser",
       size: 12,
       forceFactor: 3,
-      speedFactor: 1,
+      speedFactor: 0.5,
       maxForce: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
@@ -173,35 +173,43 @@
         button: true,
         slider: false,
         params: {
-          size: 1
+          size: 1,
+          cursor: false
         }
       }, {
         name : "S",
         button: true,
         slider: false,
         params: {
-          size: 5
+          size: 7,
+          cursor: true
         }
       }, {
         name : "M",
         button: true,
         slider: false,
         params: {
-          size: 17
+          size: 22,
+          forceFactor: 2,
+          cursor: true
         }
       }, {
         name : "L",
         button: true,
         slider: false,
         params: {
-          size: 30
+          size: 40,
+          forceFactor: 1.75,
+          cursor: true
         }
       }, {
         name : "XL",
         button: true,
         slider: false,
         params: {
-          size: 50
+          size: 75,
+          forceFactor: 2,
+          cursor: true
         }
       }]
     },

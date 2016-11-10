@@ -23,7 +23,6 @@
   var Socket = {};
 
   // TODO max force tool
-  // TODO particlesRect centrato
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug min width e max width immagine dopo bucket
 
@@ -568,10 +567,11 @@
 
     context.globalAlpha = alpha * 0.75;
     context.fillStyle = color;
+    var s2 = size / 2;
     for (var i = size * (size + 1); i--; ) {
       context.fillRect(
-        x + random(size + 1) - 1,
-        y + random(size + 1) - 1,
+        x + random(size) - s2,
+        y + random(size) - s2,
         1,
         1
       );
