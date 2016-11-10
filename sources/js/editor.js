@@ -22,9 +22,10 @@
   var User = {};
   var Socket = {};
 
-  // TODO max force tool
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug min width e max width immagine dopo bucket
+  // TODO bug bucket with black thin line
+  // TODO scroll per colonna strumenti su schermi piccoli
 
   var _config = {
     colors: [
@@ -565,7 +566,7 @@
 
   function _particlesRect (context, x, y, alpha, color, size) {
 
-    context.globalAlpha = alpha * 0.75;
+    context.globalAlpha = alpha;
     context.fillStyle = color;
     var s2 = size / 2;
     for (var i = size * (size + 1); i--; ) {
@@ -633,8 +634,7 @@
 
   function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
 
-    var baseForce = MATH.min(oldTouchForce,  0.3);
-    var deltaForce = MATH.min(touchForce, 0.3) - baseForce;
+    touchForce = touchForce - oldTouchForce;
     var particles = (circleShape ? _particlesCircle : _particlesRect);
     delta = 1 / delta;
     for (var i = 0; i <= 1; i = i + delta) {
@@ -642,7 +642,7 @@
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
-        baseForce + deltaForce * i,
+        oldTouchForce + touchForce * i,
         color,
         size
       );
@@ -666,7 +666,7 @@
 
     var force = touches[0].force || 0;
     _currentTouchSupportForce = !!force;
-    _touchForce = _oldTouchForce = MATH.max(round(force, 3), 0.01);
+    _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.01), _tool.maxForce);
 
   };
 
@@ -675,7 +675,7 @@
     var force = touches[0].force || 0;
     _oldTouchForce = _touchForce;
     if (force > 0) {
-      _touchForce = MATH.max(round(force, 3), 0.01);
+      _touchForce = MATH.min(MATH.max(round(force, 3), 0.01), _tool.maxForce);
     } else {
       _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
     }

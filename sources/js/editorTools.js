@@ -21,53 +21,6 @@
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false;
   var _toolsConfig = {
-    pencil: {
-      name: "pencil",
-      size: 2,
-      forceFactor: 0,
-      speedFactor: 0,
-      maxForce: 0.3,
-      shape: "particlesRect",
-      globalCompositeOperation: "source-over",
-      cursor: false,
-      versions: [{
-        name : "2H",
-        button: true,
-        slider: false,
-        params: {
-          size: 2,
-          shape: "particlesRect",
-          maxForce: 0.3
-        }
-      }, {
-        name: "HB",
-        button: true,
-        slider: false,
-        params: {
-          size: 2,
-          shape: "particlesCircle",
-          maxForce: 0.3
-        }
-      }, {
-        name : "2B",
-        button: true,
-        slider: false,
-        params: {
-          size: 4,
-          shape: "particlesCircle",
-          maxForce: 0.3
-        }
-      }, {
-        name : "XL",
-        button: true,
-        slider: false,
-        params: {
-          size: 9,
-          shape: "particlesCircle",
-          maxForce: 0.3
-        }
-      }]
-    },
     marker: {
       name: "marker",
       size: 10,
@@ -147,6 +100,53 @@
       }
       */
       ]
+    },
+    pencil: {
+      name: "pencil",
+      size: 2,
+      forceFactor: 0,
+      speedFactor: 0,
+      maxForce: 0.3,
+      shape: "particlesRect",
+      globalCompositeOperation: "source-over",
+      cursor: false,
+      versions: [{
+        name : "2H",
+        button: true,
+        slider: false,
+        params: {
+          size: 2,
+          shape: "particlesRect",
+          maxForce: 0.2
+        }
+      }, {
+        name: "HB",
+        button: true,
+        slider: false,
+        params: {
+          size: 2,
+          shape: "particlesCircle",
+          maxForce: 0.3
+        }
+      }, {
+        name : "2B",
+        button: true,
+        slider: false,
+        params: {
+          size: 4,
+          shape: "particlesCircle",
+          maxForce: 0.3
+        }
+      }, {
+        name : "XL",
+        button: true,
+        slider: false,
+        params: {
+          size: 9,
+          shape: "particlesCircle",
+          maxForce: 0.5
+        }
+      }]
     },
     eraser: {
       name: "eraser",
