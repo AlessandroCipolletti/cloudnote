@@ -13,7 +13,7 @@
 
   var _dom = {}, _overlay = {}, _message = {}, _confirmButton = {}, _cancelButton = {}, _panel = {}, _panelClose = {};
   var _stack = [];  // se arrivano più log allo stesso tempo, creo stack e li mostro uno alla volta
-  var _isOpen = false, _autoCloseTimeout = false, _panelIsOpen = false;
+  var _isOpen = false, _autoCloseTimeout = false, _panelIsOpen = false, _currentIsMandatory = false;
 
   function _setType (type) {
     _dom.className = "drawith-messages__container drawith-messages__container-" + type;
@@ -22,6 +22,7 @@
   function _show (mandatory) {
 
     _isOpen = true;
+    _currentIsMandatory = mandatory;
     if (mandatory) {
       Utils.addGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
       Utils.fadeInElements(_overlay);
@@ -36,8 +37,11 @@
 
     _isOpen = false;
     Utils.removeGlobalStatus("drawith__MESSAGE-OPEN");
-    Utils.removeGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
-    Utils.fadeOutElements(_overlay);
+    if (_currentIsMandatory) {
+      Utils.removeGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
+      Utils.fadeOutElements(_overlay);
+      _currentIsMandatory = false;
+    }
     if (_autoCloseTimeout) {
       clearTimeout(_autoCloseTimeout);
       _autoCloseTimeout = false;
@@ -64,7 +68,8 @@
     if (_isOpen) {
       _stack.push({
         type: type,
-        msg: msg
+        msg: msg,
+        mandatory: mandatory
       });
     } else {
       _setType(type);

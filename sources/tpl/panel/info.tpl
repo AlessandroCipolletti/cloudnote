@@ -13,7 +13,7 @@
       <a href="mailto:cipolletti.alessandro@gmail.com">cipolletti.alessandro@gmail.com</a><br>
       <!--From Italy  in Paris<br>-->
       <small>Version {{version}}</small><br>
-      <small>In the next major update: Facebook login, user profiles and news feed</small><br>
+      <small>In the next major update: Facebook login, user profiles and news feed for drawings</small><br>
     </div>
   </div>
   <div class="drawith-panel__header-info-legal">
