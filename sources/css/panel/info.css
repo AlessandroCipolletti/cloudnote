@@ -10,7 +10,7 @@
   height: 12%;
   overflow: hidden;
 }
-.drawith__IPHONE .drawith-panel__header-info-title {
+.drawith__PHONE .drawith-panel__header-info-title {
   display: none;
 }
 .drawith-panel__header-info-title img {
@@ -29,7 +29,7 @@
   justify-content: center;
   align-items: center;
 }
-.drawith__IPHONE .drawith-panel__header-info-subtitle {
+.drawith__PHONE .drawith-panel__header-info-subtitle {
   font-size: 1.9rem;
   height: 20%;
   width: 70%;
@@ -43,7 +43,7 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
-.drawith__IPHONE .drawith-panel__header-info-draw {
+.drawith__PHONE .drawith-panel__header-info-draw {
   height: 40%;
 }
 
@@ -57,7 +57,7 @@
   width: 95% !important;
   padding: 0 2.5%;
 }
-.drawith__IPHONE .drawith-panel__header-info-text {
+.drawith__PHONE .drawith-panel__header-info-text {
   height: 35%;
   line-height: 1.6rem;
 }
@@ -82,6 +82,6 @@
   justify-content: center;
   align-items: flex-end;
 }
-.drawith__IPHONE .drawith-panel__header-info-legal {
+.drawith__PHONE .drawith-panel__header-info-legal {
   font-size: 1rem;
 }

@@ -33,9 +33,13 @@
       apiVersion: "v2.2"
     };
 
+    // TODO .android, .isPhone, .isTablet
+    param.android = false;
     param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
     param.ipad = /iPad/.test(navigator.userAgent);
+    param.isTablet = param.ipad;
     param.iphone = param.ios && !param.ipad;
+    param.isPhone = param.iphone;
     param.isMobile = (navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)) instanceof Array;
     param.isDesktop = !param.isMobile;
     param.isAppOnline = (document.location.host.toLowerCase() === param.appName);

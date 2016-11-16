@@ -4,6 +4,7 @@
   top: 50%;
   left: 50%;
   background-image: url("../img/rule.png");
+  background-size: contain;
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
   border-radius: 0.75rem;
 }
@@ -58,15 +59,28 @@
   position: absolute;
   z-index: 1000;
 }
+.drawith__PHONE .drawith-editor__tool-rule-level,
+.drawith__PHONE .drawith-editor__tool-rule-level-selected {
+  width: 4rem;
+  height: 4rem;
+}
 .drawith-editor__tool-rule-level {
-  margin-top: calc(-3rem - 1px); /* 61px */
-  margin-left: calc(-3rem - 1px); /* 61px */
-  border: solid 1px gray;
+  margin-top: -3.05rem; /* 61px */
+  margin-left: -3.05rem; /* 61px */
+  border: solid 0.05rem gray;
+}
+.drawith__PHONE .drawith-editor__tool-rule-level {
+  margin-top: -2.05rem;
+  margin-left: -2.05rem;
 }
 .drawith-editor__tool-rule-level-selected {
-  margin-top: calc(-3rem - 4px); /* 64px */
-  margin-left: calc(-3rem - 4px); /* 64px */
-  border: solid 4px gray;
+  margin-top: -3.2rem; /* 64px */
+  margin-left: -3.2rem; /* 64px */
+  border: solid 0.2rem gray;
+}
+.drawith__PHONE .drawith-editor__tool-rule-level-selected {
+  margin-top: -2.2rem;
+  margin-left: -2.2rem;
 }
 
 .drawith-editor__tool-rule-level-value {
@@ -77,6 +91,10 @@
   font-family: sans-serif;
   z-index: 1000;
 }
+.drawith__PHONE .drawith-editor__tool-rule-level-value {
+  line-height: 4rem;
+  width: 4rem;
+}
 
 .drawith-editor__tool-rule-perpendicular,
 .drawith-editor__tool-rule-specular {
@@ -84,8 +102,8 @@
   width: 5rem; /* 100px */
   height: 5rem; /* 100px */
   top: 50%;
-  margin-top: calc(-2.5rem - 1px); /* 51px */
-  margin-left: calc(-2.5rem - 1px); /* 51px */
+  margin-top: -2.55rem; /* 51px */
+  margin-left: -2.55rem; /* 51px */
   opacity: 0.5;
   position: absolute;
   z-index: 1000;
@@ -94,11 +112,25 @@
   background-position: center;
   border: solid 1px gray
 }
+.drawith__PHONE .drawith-editor__tool-rule-perpendicular,
+.drawith__PHONE .drawith-editor__tool-rule-specular {
+  width: 3rem;
+  height: 3rem;
+  margin-top: -1.55rem;
+  margin-left: -1.55rem;
+}
+
 .drawith-editor__tool-rule-perpendicular {
-  left: calc(50% - 8rem) /* 200px */;
+  left: calc(50% - 8rem);
   background-image: url("../img/icons/perpendicular.png");
 }
+.drawith__PHONE .drawith-editor__tool-rule-perpendicular {
+  left: calc(50% - 5rem);
+}
 .drawith-editor__tool-rule-specular {
-  left: calc(50% + 8rem) /* 200px */;
+  left: calc(50% + 8rem);
   background-image: url("../img/icons/specular.png");
+}
+.drawith__PHONE .drawith-editor__tool-rule-specular {
+  left: calc(50% + 5rem);
 }

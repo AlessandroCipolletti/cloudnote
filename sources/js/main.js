@@ -79,6 +79,11 @@
 
     if (app.Param.isMobile) {
       app.Utils.addGlobalStatus("drawith__MOBILE");
+      if (app.Param.isPhone) {
+        app.Utils.addGlobalStatus("drawith__PHONE");
+      } else if (app.Param.isTablet) {
+        app.Utils.addGlobalStatus("drawith__TABLET");
+      }
     } else {
       app.Utils.addGlobalStatus("drawith__DESKTOP");
     }
@@ -89,6 +94,8 @@
       } else {
         app.Utils.addGlobalStatus("drawith__IPHONE");
       }
+    } else if (app.Param.android) {
+      app.Utils.addGlobalStatus("drawith__ANDROID");
     }
 
   }
@@ -153,7 +160,9 @@
     //   fbApiVersion: app.Param.fb.apiVersion
     // });
     // app.Dashboard.init();
-    app.Editor.init();
+    app.Editor.init({
+      ruleHeight: app.Param.iphone ? 90 : 120
+    });
 
     _initialised = true;
 
