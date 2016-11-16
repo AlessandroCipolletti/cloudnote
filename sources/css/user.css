@@ -45,8 +45,5 @@
 }
 
 .drawith-user__header-button {
-  border-radius: 50%;
   background-image: url("../img/user.png");
-  background-size: contain;
-  background-repeat: no-repeat;
 }

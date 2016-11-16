@@ -4,6 +4,7 @@
   var Param = {};
   var Utils = {};
   var Main = {};
+  var Messages = {};
 
   var _config = {
 
@@ -47,9 +48,24 @@
     Param = app.Param;
     Utils = app.Utils;
     Main = app.Main;
+    Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _initDom();
     Param.headerSize = 50.5 * Param.pixelRatio;
+
+    Main.loadTemplate("panel/info", {
+
+    }, Param.container, function (templateDom) {
+
+      templateDom.parentNode.removeChild(templateDom);
+      var infoButton = Utils.createDom("drawith-header__info-button");
+      infoButton.addEventListener(Param.eventStart, function (e) {
+        e.preventDefault();
+        Messages.panel(templateDom);
+      });
+      addButton(infoButton, "right");
+
+    });
 
   }
 

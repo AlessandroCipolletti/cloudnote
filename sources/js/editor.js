@@ -26,6 +26,7 @@
   // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
   // TODO scroll per colonna strumenti su schermi piccoli
+  // TODO if desktop rule sempre in mood rotazione al centro
 
   var _config = {
     colors: [
@@ -35,7 +36,7 @@
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
     tools: ["marker", "pencil", "eraser", "bucket", "rule", "undo", "redo", "paper", "save", "clear"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
-    toolsWidth: 45,
+    toolsWidth: 50,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
     ruleWidth: 4,

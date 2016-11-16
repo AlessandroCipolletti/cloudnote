@@ -27,4 +27,14 @@
   height: 4rem; /* 80px */
   margin: 0.5rem 1.25rem; /* 10px 25px */
   position: absolute;
+  border-radius: 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.drawith-header__info-button {
+  background-image: url("../img/icons/info.png");
+  background-size: 85%;
 }

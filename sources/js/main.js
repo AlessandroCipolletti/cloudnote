@@ -74,6 +74,24 @@
     return (e.nodeName !== "#text");
   }
 
+  function _addEnviromentGlobalStatus () {
+
+    if (app.Param.isMobile) {
+      app.Utils.addGlobalStatus("drawith__MOBILE");
+    } else {
+      app.Utils.addGlobalStatus("drawith__DESKTOP");
+    }
+    if (app.Param.ios) {
+      app.Utils.addGlobalStatus("drawith__IOS");
+      if (app.Param.ipad) {
+        app.Utils.addGlobalStatus("drawith__IPAD");
+      } else {
+        app.Utils.addGlobalStatus("drawith__IPHONE");
+      }
+    }
+
+  }
+
   function addRotationHandler (handler) {
     _rotationHandler.push(handler);
   }
@@ -124,6 +142,7 @@
     app.HEIGHT = window.innerHeight;
 
     app.Utils.init();
+    _addEnviromentGlobalStatus();
 
     app.Messages.init();
     app.Socket.init();

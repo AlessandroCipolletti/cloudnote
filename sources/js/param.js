@@ -32,10 +32,14 @@
       apiVersion: "v2.2"
     };
 
-    param.isAppOnline = (document.location.host.toLowerCase() === param.appName);
     param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    param.ipad = /iPad/.test(navigator.userAgent);
+    param.iphone = param.ios && !param.ipad;
+    param.isMobile = (navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)) instanceof Array;
+    param.isDesktop = !param.isMobile;
+    param.isAppOnline = (document.location.host.toLowerCase() === param.appName);
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
-    // TODO pixelRatio ihhone plus ; if isDesktop, controllare funzionamento viewport, altrimenti 1
+    // TODO pixelRatio iphone plus ; if isDesktop, controllare funzionamento viewport, altrimenti 1
     param.pixelRatio = param.ios ? 2 : window.devicePixelRatio;
     param.scale = 1 / param.pixelRatio;
     param.supportTouch = ("ontouchstart" in window);

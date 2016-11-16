@@ -111,3 +111,13 @@ html, body {
   width: 1.6rem;  /* 36px */
   margin: 0rem 0.6rem -0.5rem -0.3rem;
 }
+
+.drawith-panel-content {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+}

@@ -4,18 +4,11 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #8470ff;
-  opacity: 0;
-  transition: opacity 200ms;
-  display: none;
+  background-color: rgba(146, 84, 255, 0.3);
   z-index: 750;
 }
-.drawith__MESSAGE-MANDATORY-OPEN .drawith-messages__overlay {
-  display: block;
-  opacity: 0.3;
-}
 
-.drawith-messages__panel {
+.drawith-messages__container {
   width: auto;
   height: 2.5rem;
   display: block;
@@ -30,7 +23,7 @@
   transform: translateX(-50%) translateY(-110%);
   transition: transform 200ms;
 }
-.drawith-messages__panel-text {
+.drawith-messages__container-text {
   font-size: 1.5rem;
   line-height: 2.5rem;
   height: 2.5rem;
@@ -38,7 +31,7 @@
   margin: auto;
   white-space: nowrap;
 }
-.drawith-messages__panel-button-ok, .drawith-messages__panel-button-cancel {
+.drawith-messages__container-button-ok, .drawith-messages__container-button-cancel {
   border: solid 1px white;
   display: none;
   align-items: center;
@@ -47,23 +40,23 @@
   cursor: pointer;
 }
 
-.drawith__MESSAGE-OPEN .drawith-messages__panel {
+.drawith__MESSAGE-OPEN .drawith-messages__container {
   transform: translateX(-50%) translateY(0%);
   z-index: 750;
   border-radius: 0 0 0.7rem 0.7rem;
 }
-.drawith__MESSAGE-MANDATORY-OPEN .drawith-messages__panel {
+.drawith__MESSAGE-MANDATORY-OPEN.drawith__MESSAGE-OPEN .drawith-messages__container {
   transform: translateX(-50%) translateY(10rem);
   z-index: 1000;
 }
 
 
 /* ALERT*/
-.drawith-messages__panel.drawith-messages__panel-alert {
+.drawith-messages__container.drawith-messages__container-alert {
   height: auto;
   width: 100%;
 }
-.drawith-messages__panel-alert {
+.drawith-messages__container-alert {
   background-color: #eee;
   background-image: url("../img/icons/alert.png");
   display: flex;
@@ -71,52 +64,87 @@
   align-items: center;
   justify-content: space-around;
 }
-.drawith-messages__panel-alert .drawith-messages__panel-text {
+.drawith-messages__container-alert .drawith-messages__container-text {
   color: black;
   max-width: 85%;
   margin: 0rem 2.5%;
 }
-.drawith-messages__panel-alert .drawith-messages__panel-button-ok {
+.drawith-messages__container-alert .drawith-messages__container-button-ok {
   width: 8rem;
   height: 4rem;
   float: right;
   border-color: black;
   display: flex;
 }
-.drawith-messages__panel-alert .drawith-messages__panel-button-cancel,
-.drawith-messages__panel-alert .drawith-messages__panel-input {
+.drawith-messages__container-alert .drawith-messages__container-button-cancel,
+.drawith-messages__container-alert .drawith-messages__container-input {
   display: none;
 }
 
 /* INFO manca icona */
-.drawith-messages__panel-info {
+.drawith-messages__container-info {
   background-color: #4D82D6;
   background-image: url("../img/icons/info.png");
 }
-.drawith-messages__panel-info .drawith-messages__panel-button-ok,
-.drawith-messages__panel-info .drawith-messages__panel-button-cancel,
-.drawith-messages__panel-info .drawith-messages__panel-input {
+.drawith-messages__container-info .drawith-messages__container-button-ok,
+.drawith-messages__container-info .drawith-messages__container-button-cancel,
+.drawith-messages__container-info .drawith-messages__container-input {
   display: none;
 }
 
 /* SUCCESS manca icona */
-.drawith-messages__panel-success {
+.drawith-messages__container-success {
   background-color: #57BF57;
   background-image: url("../img/icons/success.png");
 }
-.drawith-messages__panel-success .drawith-messages__panel-button-ok,
-.drawith-messages__panel-success .drawith-messages__panel-button-cancel,
-.drawith-messages__panel-success .drawith-messages__panel-input {
+.drawith-messages__container-success .drawith-messages__container-button-ok,
+.drawith-messages__container-success .drawith-messages__container-button-cancel,
+.drawith-messages__container-success .drawith-messages__container-input {
   display: none;
 }
 
 /* ERROR manca icona */
-.drawith-messages__panel-error {
+.drawith-messages__container-error {
   background-color: #E1715B;
   background-image: url("../img/icons/error.png");
 }
-.drawith-messages__panel-error .drawith-messages__panel-button-ok,
-.drawith-messages__panel-error .drawith-messages__panel-button-cancel,
-.drawith-messages__panel-error .drawith-messages__panel-input {
+.drawith-messages__container-error .drawith-messages__container-button-ok,
+.drawith-messages__container-error .drawith-messages__container-button-cancel,
+.drawith-messages__container-error .drawith-messages__container-input {
   display: none;
+}
+
+.drawith-messages__panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70rem;
+  max-width: 75%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  border: solid 0.05rem gray;
+  border-radius: 0.5rem;
+  z-index: 1000;
+  background-color: white;
+  overflow: hidden;
+}
+.drawith__IPHONE .drawith-messages__panel {
+  max-width: 90%;
+  width: 90%;
+}
+
+.drawith-messages__panel-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.5rem;
+  background-position: 0.75rem 0.75rem;
+  background-repeat: no-repeat;
+  background-image: url("../img/icons/x.png");
+  background-color: rgba(255, 255, 255, 0.9);
+  background-size: 2.5rem;
+  z-index: 1010;
+  cursor: pointer;
 }
