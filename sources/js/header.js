@@ -54,7 +54,7 @@
     Param.headerSize = 50.5 * Param.pixelRatio;
 
     Main.loadTemplate("panel/info", {
-
+      version: Param.appVersion
     }, Param.container, function (templateDom) {
 
       templateDom.parentNode.removeChild(templateDom);

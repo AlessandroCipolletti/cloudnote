@@ -20,7 +20,8 @@
   param.init = function (params) {
 
     _setConfig(params);
-    param.appName = "drawith.me";
+    param.appName = app.NAME;
+    param.appVersion = app.VERSION;
     param.templatePath = "tpl/";
     param.cssPath = "css/";
 

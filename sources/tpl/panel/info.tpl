@@ -12,7 +12,7 @@
       <big>Alessandro Cipolletti</big><br>
       <a href="mailto:cipolletti.alessandro@gmail.com">cipolletti.alessandro@gmail.com</a><br>
       <!--From Italy  in Paris<br>-->
-      <small>Version 1.0</small><br>
+      <small>Version {{version}}</small><br>
       <small>In the next major update: Facebook login, user profiles and news feed</small><br>
     </div>
   </div>

@@ -1,7 +1,8 @@
 (function (app) {
 
   var _config = {
-    testDebug: true
+    testDebug: true,
+    version: 1.0
   };
 
   var _container = {};
@@ -14,7 +15,7 @@
 
     app.WIDTH = window.innerWidth;
     app.HEIGHT = window.innerHeight;
-    console.log("rotate:", app.WIDTH, app.HEIGHT);
+    // console.log("rotate:", app.WIDTH, app.HEIGHT);
 
     if (app.Param.supportOrientation) {
       var orientation = window.orientation;
