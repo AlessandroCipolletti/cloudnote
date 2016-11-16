@@ -6,20 +6,18 @@
   var Main = {};
   var Editor = {};
   var Dashboard = {};
+  var MATH = Math;
 
   var _config = {
     tools: [],
     toolsSide: "left"
   };
 
-  // TODO aggiungere doppio tap su tool, per scorrere verso sinistra la barra degli strumenti e poter scegliere la dimensione o altre cose
-  // sub tools come oggetto figlio di ogni tool
-  // se presente, trovare un modo automatico nell'interfaccia di permetterne la selezione
-  // ogni elemento dei sub tool contiene chiave valore per i parametri del tool che modifica
+  // TODO sub tools di tipo slider
 
   var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {}, _markerVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
-  var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false;
+  var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false, _currentScroll = 0, _toolsMaxScroll = 0;
   var _toolsConfig = {
     marker: {
       name: "marker",
@@ -404,19 +402,37 @@
 
   function _onToolsTouchStart (e) {
 
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0) {
+      e.preventDefault();
+      return;
+    }
+    if (_toolsContainer.scrollTop === 0) {
+      _currentScroll = _toolsContainer.scrollTop = 1;
+    } else if (_toolsContainer.scrollTop === _toolsMaxScroll) {
+      _currentScroll = _toolsContainer.scrollTop = _toolsMaxScroll - 1;
+    } else {
+      _currentScroll = _toolsContainer.scrollTop;
+    }
+
+  }
+
+  function _onToolsTouchEnd (e) {
+
     e.preventDefault();
     e.stopPropagation();
+    if (MATH.abs(_currentScroll - _toolsContainer.scrollTop) > 10) {
+      return;
+    }
+    _currentScroll = 0;
     var target = e.target;
     if (
       target.classList.contains("drawith-editor-tools__tool") &&
       target.classList.contains("disabled") === false
     ) {
-
       var tool = target.getAttribute("data-tool");
       if (_toolsFunctions.hasOwnProperty(tool)) {
         (_toolsFunctions[tool])(target.classList.contains("drawith-editor-tools__tool-selected"));
       }
-
     }
 
   }
@@ -460,6 +476,7 @@
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
       _markerVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-marker");
       _eraserVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-eraser");
+      _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
 
       if (_config.tools.indexOf("undo") >= 0) {
         _undoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-undo");
@@ -479,6 +496,7 @@
       }
       (_toolsFunctions[_config.tools[0]])();
       _toolsContainer.addEventListener(Param.eventStart, _onToolsTouchStart, true);
+      _toolsContainer.addEventListener(Param.eventEnd, _onToolsTouchEnd, true);
       _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
       _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
       _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);

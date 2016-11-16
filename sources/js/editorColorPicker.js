@@ -65,6 +65,7 @@
   function _onTouchEnd (e) {
 
     e.preventDefault();
+    e.stopPropagation();
     if (MATH.abs(_currentScroll - _colorsContainer.scrollLeft) > 10) {
       return;
     }
