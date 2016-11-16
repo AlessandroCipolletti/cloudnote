@@ -26,7 +26,6 @@
   // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
   // TODO scroll per colonna strumenti su schermi piccoli
-  // TODO if desktop rule sempre in mood rotazione al centro
 
   var _config = {
     colors: [
@@ -919,6 +918,10 @@
   }
 
   function makeTouchEndNearRule (x, y) {
+    if (x) {
+      _cursorX = x;
+      _cursorY = y;
+    }
     __touchEnd();
   }
 
@@ -927,8 +930,6 @@
     _touchDown = _isNearRule = false;
     _toolCursor.classList.add("displayNone");
     if (Param.supportTouch === false) {
-      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
-      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
       if (_cursorX !== _oldX && _cursorY !== _oldY) {
         var params = {
           type: "end",
@@ -960,6 +961,10 @@
     if (_touchDown === false || (e.touches && touches.length > 0)) return;
     if (_isNearRule) {
       Rule.unlock();
+    }
+    if (Param.supportTouch === false) {
+      _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
+      _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
     }
     __touchEnd(touches);
 

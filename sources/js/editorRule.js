@@ -18,8 +18,9 @@
     ruleMarginToDraw: 25
   };
 
-  // TODO cambiare dimensione background;
+  // TODO piccolo bug linee sottili non molto dritte
   // TODO bug il righello si sposta di un px quando fisso il centro e lo ruoto
+  // TODO some bugs on desktop
 
   function round (n, d) {
     var m = d ? MATH.pow(10, d) : 1;
@@ -319,7 +320,11 @@
       if (_isNearSide) {
         unlock();
         _isNearSide = false;
-        Editor.makeTouchEndNearRule();
+        if (Param.supportTouch === false) {
+          Editor.makeTouchEndNearRule(Utils.getEventCoordX(touches, _offsetLeft, true), Utils.getEventCoordY(touches, _offsetLeft, true));
+        } else {
+          Editor.makeTouchEndNearRule();
+        }
       } else if (_draggable === true) {
         var centerCoord = _ruleCenter.getBoundingClientRect();
         var deltaX = 0, deltaY = 0;
@@ -462,11 +467,15 @@
       _rule.addEventListener(Param.eventStart, _onTouchStart);
       _rule.addEventListener(Param.eventMove, _onTouchMove);
       _rule.addEventListener(Param.eventEnd, _onTouchEnd);
-      _ruleLevelValue.addEventListener(Param.eventStart, _onButtonsTouchStart);
+      if (Param.isMobile) {
+        _ruleLevelValue.addEventListener(Param.eventStart, _onButtonsTouchStart);
+        _ruleLevelValue.addEventListener(Param.eventEnd, _onButtonsTouchEnd);
+      } else {
+        _toggleDragMode();
+      }
       _perpendicularButton.addEventListener(Param.eventStart, _onButtonsTouchStart);
-      _specularButton.addEventListener(Param.eventStart, _onButtonsTouchStart);
-      _ruleLevelValue.addEventListener(Param.eventEnd, _onButtonsTouchEnd);
       _perpendicularButton.addEventListener(Param.eventEnd, _onButtonsTouchEnd);
+      _specularButton.addEventListener(Param.eventStart, _onButtonsTouchStart);
       _specularButton.addEventListener(Param.eventEnd, _onButtonsTouchEnd);
       if (Param.supportGesture) {
         _rule.addEventListener("gesturestart", _onGestureStart, true);
