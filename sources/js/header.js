@@ -60,7 +60,14 @@
       templateDom.parentNode.removeChild(templateDom);
       var infoButton = Utils.createDom("drawith-header__info-button");
       infoButton.addEventListener(Param.eventStart, function (e) {
-        e.preventDefault();
+        function preventDefault (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        preventDefault(e);
+        templateDom.addEventListener(Param.eventStart, preventDefault);
+        templateDom.addEventListener(Param.eventMove, preventDefault);
+        templateDom.addEventListener(Param.eventEnd, preventDefault);
         Messages.panel(templateDom);
       });
       addButton(infoButton, "right");

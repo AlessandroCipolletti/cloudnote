@@ -25,7 +25,7 @@
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
-  // TODO scroll per colonna strumenti su schermi piccoli
+  // TODO bug min e max con bucket e undo
 
   var _config = {
     colors: [
