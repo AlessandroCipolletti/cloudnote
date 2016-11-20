@@ -25,7 +25,6 @@
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
-  // TODO bug min e max con bucket e undo
 
   var _config = {
     colors: [
@@ -352,7 +351,6 @@
 
     var step = _step[_currentStep + 1];
     if (step) {
-
       var tot = _step.length - _currentStep - 2;
       _currentStep = _currentStep + 1;
       _clear();
@@ -364,7 +362,6 @@
         Tools.toggleButton("save", true);
       }
       Tools.toggleButton("redo", true);
-
     }
 
   }
@@ -444,8 +441,8 @@
   var _bucket = (function () {
 
     var tolerance = 8;
-    var pixelCompare = function (i,targetcolor,fillcolor,data,length,tolerance) {
-    	if (i<0||i>=length) return false; //out of bounds
+    var pixelCompare = function (i, targetcolor, fillcolor, data, length, tolerance) {
+    	if (i < 0 || i >= length) return false; //out of bounds
       if (i === 0) {
         _minX = _minY = 0;
       }
@@ -453,34 +450,34 @@
         _maxX = _canvasWidth;
         _maxY = _canvasHeight;
       }
-    	if (data[i+3]===0 && fillcolor.a>0) return (targetcolor[3] === 0);  //surface is invisible and fill is visible
+    	if (data[i + 3] === 0 && fillcolor.a > 0) return (targetcolor[3] === 0);  //surface is invisible and fill is visible
 
     	if (
-    		MATH.abs(targetcolor[3] - fillcolor.a)<=tolerance &&
-    		MATH.abs(targetcolor[0] - fillcolor.r)<=tolerance &&
-    		MATH.abs(targetcolor[1] - fillcolor.g)<=tolerance &&
-    		MATH.abs(targetcolor[2] - fillcolor.b)<=tolerance
+    		MATH.abs(targetcolor[3] - fillcolor.a) <= tolerance &&
+    		MATH.abs(targetcolor[0] - fillcolor.r) <= tolerance &&
+    		MATH.abs(targetcolor[1] - fillcolor.g) <= tolerance &&
+    		MATH.abs(targetcolor[2] - fillcolor.b) <= tolerance
     	) return false; //target is same as fill
 
     	if (
-    		(targetcolor[3] === data[i+3]) &&
-    		(targetcolor[0] === data[i]  ) &&
-    		(targetcolor[1] === data[i+1]) &&
-    		(targetcolor[2] === data[i+2])
+    		(targetcolor[3] === data[i + 3]) &&
+    		(targetcolor[0] === data[i]) &&
+    		(targetcolor[1] === data[i + 1]) &&
+    		(targetcolor[2] === data[i + 2])
     	) return true; //target matches surface
 
     	if (
-    		MATH.abs(targetcolor[3] - data[i+3])<=(255-tolerance) &&
-    		MATH.abs(targetcolor[0] - data[i]  )<=tolerance &&
-    		MATH.abs(targetcolor[1] - data[i+1])<=tolerance &&
-    		MATH.abs(targetcolor[2] - data[i+2])<=tolerance
+    		MATH.abs(targetcolor[3] - data[i + 3]) <= (255 - tolerance) &&
+    		MATH.abs(targetcolor[0] - data[i]) <= tolerance &&
+    		MATH.abs(targetcolor[1] - data[i + 1]) <= tolerance &&
+    		MATH.abs(targetcolor[2] - data[i + 2]) <= tolerance
     	) return true; //target to surface within tolerance
 
     	return false; //no match
     };
 
-    var pixelCompareAndSet = function (i,targetcolor,fillcolor,data,length,tolerance) {
-    	if(pixelCompare(i,targetcolor,fillcolor,data,length,tolerance)) {
+    var pixelCompareAndSet = function (i, targetcolor, fillcolor, data, length, tolerance) {
+    	if(pixelCompare(i, targetcolor, fillcolor, data, length, tolerance)) {
     		//fill the color
     		data[i]   = fillcolor.r;
     		data[i+1] = fillcolor.g;
@@ -508,20 +505,20 @@
     	var e = i, w = i, me, mw, w2 = _canvasWidth * 4;
     	var targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
 
-    	if(!pixelCompare(i,targetcolor,fillcolor,data,length,tolerance)) { return false; }
+    	if(!pixelCompare(i, targetcolor, fillcolor, data, length, tolerance)) { return false; }
     	Q.push(i);
     	while(Q.length) {
     		i = Q.pop();
-    		if(pixelCompareAndSet(i,targetcolor,fillcolor,data,length,tolerance)) {
+    		if(pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance)) {
     			e = i;
     			w = i;
-    			mw = parseInt(i/w2)*w2; //left bound
-    			me = mw+w2;             //right bound
-    			while(mw<w && mw<(w-=4) && pixelCompareAndSet(w,targetcolor,fillcolor,data,length,tolerance)); //go left until edge hit
-    			while(me>e && me>(e+=4) && pixelCompareAndSet(e,targetcolor,fillcolor,data,length,tolerance)); //go right until edge hit
-    			for(var j=w;j<e;j+=4) {
-    				if(j-w2>=0     && pixelCompare(j-w2,targetcolor,fillcolor,data,length,tolerance)) Q.push(j-w2); //queue y-1
-    				if(j+w2<length && pixelCompare(j+w2,targetcolor,fillcolor,data,length,tolerance)) Q.push(j+w2); //queue y+1
+    			mw = parseInt(i / w2) * w2;  //left bound
+    			me = mw + w2;  //right bound
+    			while (mw < w && mw<(w-=4) && pixelCompareAndSet(w, targetcolor, fillcolor, data, length, tolerance)); //go left until edge hit
+    			while (me > e && me>(e+=4) && pixelCompareAndSet(e, targetcolor, fillcolor, data, length, tolerance)); //go right until edge hit
+    			for (var j = w; j < e; j += 4) {
+    				if (j - w2 >= 0     && pixelCompare(j - w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j - w2); //queue y-1
+    				if (j + w2 < length && pixelCompare(j + w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j + w2); //queue y+1
     			}
     		}
     	}

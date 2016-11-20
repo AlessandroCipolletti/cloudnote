@@ -153,7 +153,7 @@
     _addEnviromentGlobalStatus();
 
     app.Messages.init();
-    app.Socket.init();
+    //app.Socket.init();
     app.Header.init();
     // app.User.init({
     //   fbAppId: app.Param.fb.appId,
