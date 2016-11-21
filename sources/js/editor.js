@@ -21,10 +21,12 @@
   var Dashboard = {};
   var User = {};
   var Socket = {};
+  var Folder = {};
 
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
+  // TODO periodicamente salvare una bozza se
 
   var _config = {
     colors: [
@@ -33,7 +35,7 @@
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
-    tools: ["marker", "pencil", "eraser", "bucket", "rule", "undo", "redo", "paper", "save", "clear"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
+    tools: ["marker", "pencil", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
     toolsWidth: 50,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
@@ -52,7 +54,7 @@
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false, _isNearRule = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
-  var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0;
+  var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
   var _step = [], _stepCacheLength = 21, _currentStep = 0;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
@@ -279,8 +281,36 @@
 
   function _saveToLocal () {
 
-    Messages.error("TODO");
+    Utils.setSpinner(true);
+    if (_minX >= 0) {
+      var draw = {}; // with id se già generato
+      draw.id = _localDbDrawId;
+      Folder.saveNew(draw);
+    }
+    hide();
+    clear();
+    Folder.show();
     Utils.setSpinner(false);
+
+  }
+
+  function _draft () {
+
+    // salva una bozza in folder, e la prima volta riceve l'id del disegno nuovo
+    // poi si salva sempre in quello
+    // se quando esco il disegno è vuoto, cancello la bozza
+    var draw;
+    _localDbDrawId = Folder.saveDraft(draw);
+    Messages.error("ToDo");
+    Messages.info("Draft saved");
+
+  }
+
+  function exit () {
+
+    hide();
+    Folder.show();
+    // Dashboard.show();
 
   }
 
@@ -336,10 +366,10 @@
     if (_coworking === false) {
       if (_step.length > 1) {
         Tools.toggleButton("undo", true);
-        Tools.toggleButton("save", true);
+        // Tools.toggleButton("save", true);
       } else {
         Tools.toggleButton("undo", false);
-        Tools.toggleButton("save", false);
+        // Tools.toggleButton("save", false);
       }
       Tools.toggleButton("redo", false);
     }
@@ -357,9 +387,9 @@
       _restoreStep(step);
       if (tot === 0) {
         Tools.toggleButton("undo", false);
-        Tools.toggleButton("save", false);
+        // Tools.toggleButton("save", false);
       } else {
-        Tools.toggleButton("save", true);
+        // Tools.toggleButton("save", true);
       }
       Tools.toggleButton("redo", true);
     }
@@ -374,7 +404,7 @@
       _clear();
       _restoreStep(step);
       Tools.toggleButton("undo", true);
-      Tools.toggleButton("save", true);
+      // Tools.toggleButton("save", true);
       if (_currentStep <= 0) {
         Tools.toggleButton("redo", false);
       }
@@ -395,10 +425,9 @@
       return;
     }
     _clear();
-    //_draft = {};
     _saveStep();
     Tools.toggleButton("redo", false);
-    Tools.toggleButton("save", false);
+    // Tools.toggleButton("save", false);
 
   }
 
@@ -1081,6 +1110,7 @@
     Dashboard = app.Dashboard;
     User = app.User;
     Socket = app.Socket;
+    Folder = app.Folder;
     _config = Utils.setConfig(params, _config);
     _pixelRatio = Param.pixelRatio;
     _config.toolsWidth *= _pixelRatio;
@@ -1101,6 +1131,7 @@
     init: init,
     show: show,
     hide: hide,
+    exit: exit,
     save: save,
     setTool: setTool,
     undo: undo,

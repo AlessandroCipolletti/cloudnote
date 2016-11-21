@@ -279,8 +279,7 @@
       Editor.changePaper(_currentPaper);
     },
     exit: function () {
-      Editor.hide();
-      Dashboard.show();
+      Editor.exit();
     }
   };
 
@@ -456,7 +455,7 @@
   function _initDom (moduleContainer) {
 
     var tools = [];
-    var disabled = ["undo", "redo", "save"];
+    var disabled = ["undo", "redo"];  // "save"
     for (var i = 0, l = _config.tools.length; i < l; i++) {
       tools.push({
         name: _config.tools[i],
@@ -470,7 +469,7 @@
     Main.loadTemplate("editorTools", {
       tools: tools
     }, moduleContainer, function (templateDom) {
-
+      
       _toolsContainer = templateDom[0];
       _versionsContainer = templateDom[1];
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
@@ -508,7 +507,6 @@
       _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
       _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
       _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
-
       //Main.addRotationHandler(_onRotate);
 
     });

@@ -51,7 +51,7 @@
 }
 
 
-/* ALERT*/
+/* ALERT */
 .drawith-messages__container.drawith-messages__container-alert {
   height: auto;
   width: 100%;
@@ -81,7 +81,7 @@
   display: none;
 }
 
-/* INFO manca icona */
+/* INFO */
 .drawith-messages__container-info {
   background-color: #4D82D6;
   background-image: url("../img/icons/info.png");
@@ -92,7 +92,7 @@
   display: none;
 }
 
-/* SUCCESS manca icona */
+/* SUCCESS */
 .drawith-messages__container-success {
   background-color: #57BF57;
   background-image: url("../img/icons/success.png");
@@ -103,7 +103,7 @@
   display: none;
 }
 
-/* ERROR manca icona */
+/* ERROR */
 .drawith-messages__container-error {
   background-color: #E1715B;
   background-image: url("../img/icons/error.png");
@@ -114,6 +114,7 @@
   display: none;
 }
 
+/* PANEL */
 .drawith-messages__panel {
   position: absolute;
   top: 50%;

@@ -17,15 +17,22 @@
     app.HEIGHT = window.innerHeight;
     // console.log("rotate:", app.WIDTH, app.HEIGHT);
 
-    if (app.Param.supportOrientation) {
-      var orientation = window.orientation;
-      e.deltaOrientation = _lastOrientation - orientation;
-      _lastOrientation = orientation;
+    app.Utils.removeGlobalStatus("drawith__LANDSCAPE");
+    app.Utils.removeGlobalStatus("drawith__PORTRAIT");
+    if (app.WIDTH >= app.HEIGHT) {
+      app.Utils.addGlobalStatus("drawith__LANDSCAPE");
     } else {
-      e.deltaOrientation = 0;
+      app.Utils.addGlobalStatus("drawith__PORTRAIT");
     }
 
     if (_initialised) {
+      if (app.Param.supportOrientation) {
+        var orientation = window.orientation;
+        e.deltaOrientation = _lastOrientation - orientation;
+        _lastOrientation = orientation;
+      } else {
+        e.deltaOrientation = 0;
+      }
       for (var i in _rotationHandler) {
         _rotationHandler[i](e);
       }
@@ -165,6 +172,7 @@
       ruleHeight: app.Param.iphone ? 90 : 120
     });
 
+    _onRotate();
     _initialised = true;
 
   }
