@@ -1,0 +1,55 @@
+.drawith-folder__container {
+  position: absolute;
+  background-color: rgba(250, 250, 250, 0.9);
+  background-color: white;
+  left: 0rem;
+  width: 100%;
+  z-index: 50;
+}
+
+.drawith-folder__topbar {
+  position: absolute;
+  border-bottom: solid 1px rgb(220, 220, 220);
+  top: 0px;
+  left: 0rem;
+  width: 100%;
+  z-index: 60;
+}
+
+.drawith-folder__topbar-button {
+  float: left;
+  width: 5rem;
+  height: 100%;
+  margin: 0 2rem;
+  background-position: center;
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-image: url("../img/icons/delete.png");
+  z-index: 70;
+}
+
+.drawith-folder__drawings-container {
+  width: 100%;
+  position: absolute;
+  left: 0rem;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: scroll;
+  align-content: flex-start;
+}
+
+.drawith-folder__drawing {
+  width: 200px;
+  height: 150px;
+  border: solid 1px rgb(220, 220, 220);
+  border-radius: 0.75rem;
+  box-shadow: inset 0px 0px 0.5rem 0.1rem rgba(220, 220, 220, 0.5);
+  margin: 2rem;
+  cursor: pointer;
+  background: url("../img/new.png") no-repeat center, url("../img/paper/white.png");
+  background-size: contain, auto;
+}
+.drawith-folder__drawing.drawith-folder__drawing-new {
+  background: url("../img/new.png") no-repeat center, url("../img/paper/white.png");
+  background-size: 45%, auto;
+}

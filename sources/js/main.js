@@ -160,6 +160,7 @@
     //   fbApiVersion: app.Param.fb.apiVersion
     // });
     // app.Dashboard.init();
+    app.Folder.init();
     app.Editor.init({
       ruleHeight: app.Param.iphone ? 90 : 120
     });

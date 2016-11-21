@@ -1054,9 +1054,8 @@
         _canvas.style.right = _config.toolsWidth + "px";
       }
       _saveStep();
-      Main.addRotationHandler(_onRotate);
-
-      show();
+      // Main.addRotationHandler(_onRotate);
+      // show();
 
     });
 
@@ -1078,7 +1077,6 @@
     Main = app.Main;
     Tools = app.Editor.Tools;
     ColorPicker = app.Editor.ColorPicker;
-    Rule = app.Editor.Rule;
     Rule = app.Editor.Rule;
     Dashboard = app.Dashboard;
     User = app.User;
