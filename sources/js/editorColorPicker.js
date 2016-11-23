@@ -54,7 +54,7 @@
 
   function _onTouchStart (e) {
 
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0) {
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }

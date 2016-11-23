@@ -401,7 +401,7 @@
 
   function _onToolsTouchStart (e) {
 
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0) {
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }
@@ -469,7 +469,7 @@
     Main.loadTemplate("editorTools", {
       tools: tools
     }, moduleContainer, function (templateDom) {
-      
+
       _toolsContainer = templateDom[0];
       _versionsContainer = templateDom[1];
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");

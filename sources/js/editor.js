@@ -289,8 +289,8 @@
     }
     hide();
     clear();
-    Folder.show();
-    Utils.setSpinner(false);
+    Folder.show(true);
+    // Utils.setSpinner(false);
 
   }
 

@@ -1,5 +1,11 @@
 /*
   Documentations:
+    openDatabase:
+      https://goo.gl/CTDKiZ
+      // fix db.changeVersion
+      http://stackoverflow.com/questions/18052225/db-changeversion-doesnt-work-as-expected
+    SQLite:
+      http://sqlite.org/autoinc.html
 
 */
 
@@ -18,15 +24,20 @@
 
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0;
+  var _db = {}, _dbJustCreated = false, _currentLoadedDrawings = -1;
   var _selectText = "Select", _doneText = "Done";
 
-  function show () {
+  function show (spinner, forceReload) {
 
     // TODO questo modulo va cambiato. non è su init che bisogna riempire il container ma su show. per aggiungere il disegno appena salvato
     // in più quel metodo sarà utile anche per aggiornare la grafica dopo il cestino
     Utils.addGlobalStatus("drawith__FOLDER-OPEN");
-    _drawingsContainer.scrollTop = 0;
+    _loadContent(forceReload);
     Utils.fadeInElements(_container);
+
+    if (spinner) {
+      Utils.setSpinner(false);
+    }
 
   }
 
@@ -73,6 +84,34 @@
 
   }
 
+  function _rows2Array (rows) {
+
+    var result = [];
+    for (var i = 0; i < rows.length; i++) {
+      result.push(rows.item(i));
+    }
+    return result;
+
+  }
+
+  function _loadContent (force) {
+
+    _db.transaction(function (tx) {
+      tx.executeSql("SELECT * FROM Drawings", [], function (tx, result) {
+        if (force || result.rows.length !== _currentLoadedDrawings.length) {
+          _currentLoadedDrawings = _rows2Array(result.rows);
+          _drawingsContainer.innerHTML = "";
+          Main.loadTemplate("folderContent", {
+            drawings: _currentLoadedDrawings
+          }, _drawingsContainer, function (templateDom) {
+            _drawingsContainer.scrollTop = 0;
+          });
+        }
+      });
+    });
+
+  }
+
   function onTopnavTouchStart (e) {
 
     e.preventDefault();
@@ -91,7 +130,7 @@
 
   function _onTouchStart (e) {
 
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0) {
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }
@@ -124,6 +163,53 @@
 
   function _initDb () {
 
+    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.99 * 1024 * 1024, function (db) {
+      //callback only for first creation
+      _dbJustCreated = true;
+    });
+
+    _db.transaction(function (tx) {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS Drawings (" +
+          "id INTEGER PRIMARY KEY, " +
+          "title TEXT, " +
+          "artistId INTEGER, " +
+          "artistName TEXT, " +
+          "state INTEGER, " +   // 1 = draft, 2 = saved, 3 = public
+          "folderId INTEGER DEFAULT 0, " +    // todo in the future
+          "createTimestamp DATETIME, " +
+          "updateTimestamp DATETIME, " +
+          "gpsCoordinates TEXT, " +
+          "localPathSmall TEXT, " +
+          "localPathBig TEXT, " +
+          "minX INTEGER, " +
+          "maxX INTEGER, " +
+          "minY INTEGER, " +
+          "maxY INTEGER, " +
+          "width INTEGER, " +
+          "height INTEGER, " +
+          "mainColor TEXT, " +
+          "dashboardX INTEGER, " +
+          "dashboardY INTEGER" +
+        ");",
+        [],
+        function (tx, result) {
+          console.log("create ok");
+          var now = new Date().getTime();
+          tx.executeSql(
+            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, width, height) " +
+            "VALUES (1, ?, ?, 'http://drawith.me/img/draw.png', 'http://drawith.me/img/draw.png', 100, 100, 1080, 608)",
+            [now, now], function () {
+              console.log("insert ok");
+            }
+          );
+
+        }
+      );
+    });
+
+
+
   }
 
   function _onRotate (e) {
@@ -134,8 +220,7 @@
 
     Main.loadTemplate("folder", {
       selectText: _selectText,
-      doneText: _doneText,
-      drawings: []  // TODO
+      doneText: _doneText
     }, Param.container, function (templateDom) {
 
       _container = templateDom;
@@ -153,8 +238,8 @@
       _drawingsContainer.addEventListener(Param.eventStart, _onTouchStart, true);
       _drawingsContainer.addEventListener(Param.eventEnd, _onTouchEnd, true);
       _toolsMaxScroll = _drawingsContainer.scrollHeight - _drawingsContainer.clientHeight;
-      Main.addRotationHandler(_onRotate);
-      show();
+      // Main.addRotationHandler(_onRotate);
+      show(false, true);
 
     });
 

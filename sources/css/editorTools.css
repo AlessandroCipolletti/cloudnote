@@ -52,6 +52,7 @@
   background-repeat: no-repeat;
   border-right: solid 0.2rem transparent;
   border-left: solid 0.2rem transparent;
+  cursor: pointer;
 }
 .drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-selected,
 .drawith__EDITOR-TOOLS-RIGHT .drawith-editor-tools__tool-activated {
@@ -135,6 +136,7 @@
   border: solid 1px black;
   background-color: white;
   color: black;
+  cursor: pointer;
 }
 .drawith__PHONE .drawith-editor-tools__versions-button {
   margin: 0.6rem 0.75rem;

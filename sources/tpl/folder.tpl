@@ -7,11 +7,6 @@
     <div class="drawith-folder__topbar-button drawith-folder__topbar-button-ICON drawith-folder__topbar-button-delete disabled"></div>
   </div>
 
-  <div class="drawith-folder__drawings-container">
-    <div class="drawith-folder__drawing drawith-folder__drawing-new"></div>
-    <div class="drawith-folder__drawing drawith-folder__drawing-new"></div>
-    <div class="drawith-folder__drawing drawith-folder__drawing-new"></div>
-    <div class="drawith-folder__drawing drawith-folder__drawing-new"></div>
-  </div>
+  <div class="drawith-folder__drawings-container"></div>
 
 </div>
