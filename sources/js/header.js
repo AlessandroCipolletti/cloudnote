@@ -38,8 +38,10 @@
     var logo = document.createElement("div");
     logo.classList.add("drawith-header__logo");
     _container.appendChild(logo);
+    _container.addEventListener(Param.eventStart, Utils.preventDefault);
+    _container.addEventListener(Param.eventMove, Utils.preventDefault);
     Param.container.appendChild(_container);
-    Main.addRotationHandler(_onRotate);
+    // Main.addRotationHandler(_onRotate);
 
   }
 

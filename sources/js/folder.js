@@ -16,6 +16,7 @@
   var Utils = {};
   var Main = {};
   var Editor = {};
+  var Messages = {};
   var MATH = Math;
 
   var _config = {
@@ -29,12 +30,9 @@
 
   function show (spinner, forceReload) {
 
-    // TODO questo modulo va cambiato. non è su init che bisogna riempire il container ma su show. per aggiungere il disegno appena salvato
-    // in più quel metodo sarà utile anche per aggiornare la grafica dopo il cestino
     Utils.addGlobalStatus("drawith__FOLDER-OPEN");
     _loadContent(forceReload);
     Utils.fadeInElements(_container);
-
     if (spinner) {
       Utils.setSpinner(false);
     }
@@ -62,7 +60,8 @@
 
   function _selectButtonClick () {
 
-    if (_selectButton.classList.contains("disabled") || _doneButton.classList.contains("displayNone")) return;
+    if (_selectButton.classList.contains("disabled") || _selectButton.classList.contains("displayNone")) return;
+    Messages.info("To Do");
 
   }
 
@@ -81,6 +80,10 @@
   function _deleteButtonClick () {
 
     if (_deleteButton.classList.contains("disabled")) return;
+    // aggiornare _currentLoadedDrawings
+    // eliminare a db
+    // eliminare dal dom pagina
+    // eliminare immagini locali
 
   }
 
@@ -130,7 +133,7 @@
 
   function _onTouchStart (e) {
 
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || (e.touches && e.touches.length > 1)) {
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || _toolsMaxScroll === 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }
@@ -152,11 +155,9 @@
       return;
     }
     _currentScroll = 0;
-    if (e.target.classList.contains("drawith-folder__drawing-new")) {
+    if (e.target.classList.contains("drawith-folder__drawing")) {
       hide();
-      Editor.show();
-    } else {
-      // TODO open the seleted draw preloaded into editor
+      Editor.show(_currentLoadedDrawings[e.target.getAttribute("data-index")] || false);
     }
 
   }
@@ -208,8 +209,6 @@
       );
     });
 
-
-
   }
 
   function _onRotate (e) {
@@ -251,6 +250,7 @@
     Utils = app.Utils;
     Main = app.Main;
     Editor = app.Editor;
+    Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _config.topnavHeight *= Param.pixelRatio;
     _initDb();

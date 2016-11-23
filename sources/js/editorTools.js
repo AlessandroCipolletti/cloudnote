@@ -329,6 +329,36 @@
 
   }
 
+  function selectInitialTools () {
+
+    _selectTool("marker");
+    _selectVersionButton("marker", 1);
+    _selectVersionButton("pencil", 0, true);
+    _selectVersionButton("eraser", 2, true);
+    var selectedVersion = false;
+    selectedVersion = _pencilVersions.querySelector(".drawith-editor-tools__versions-button-selected");
+    if (selectedVersion) {
+      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
+    }
+    selectedVersion = _markerVersions.querySelector(".drawith-editor-tools__versions-button-selected");
+    if (selectedVersion) {
+      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
+    }
+    selectedVersion = _eraserVersions.querySelector(".drawith-editor-tools__versions-button-selected");
+    if (selectedVersion) {
+      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
+    }
+    _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
+    _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
+    _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
+
+    if (_toolsContainer.querySelector(".drawith-editor-tools__tool-rule").classList.contains("drawith-editor-tools__tool-activated")) {
+      _toolsContainer.querySelector(".drawith-editor-tools__tool-rule").classList.remove("drawith-editor-tools__tool-activated");
+      Editor.Rule.hide();
+    }
+
+  }
+
   function _toggleVersions (tool) {
 
     var versions = _versionsContainer.querySelector(".drawith-editor-tools__versions-" + tool);
@@ -401,7 +431,7 @@
 
   function _onToolsTouchStart (e) {
 
-    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || (e.touches && e.touches.length > 1)) {
+    if (e.type.indexOf("mouse") >= 0 && e.button > 0 || _toolsMaxScroll === 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }
@@ -499,14 +529,7 @@
       _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
       _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
       _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
-
-      _selectTool("marker");
-      _selectVersionButton("marker", 1);
-      _selectVersionButton("pencil", 0, true);
-      _selectVersionButton("eraser", 2, true);
-      _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
-      _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
-      _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
+      selectInitialTools();
       //Main.addRotationHandler(_onRotate);
 
     });
@@ -529,7 +552,8 @@
     init: init,
     toggleButton: toggleButton,
     clickButton: clickButton,
-    closeVersions: closeVersions
+    closeVersions: closeVersions,
+    selectInitialTools: selectInitialTools
   });
 
 })(drawith);

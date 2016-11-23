@@ -314,10 +314,31 @@
 
   }
 
-  function show () {
+  function show (preloadedDraw) {
 
     Utils.addGlobalStatus("drawith__EDITOR-OPEN");
-    Utils.fadeInElements(_container);
+    _clear();
+    Tools.selectInitialTools();
+    if (preloadedDraw) {
+      var img = new Image();
+      img.onload = function () {
+        _context.drawImage(img, preloadedDraw.minX, preloadedDraw.minY);
+        _minX = preloadedDraw.minX;
+        _minY = preloadedDraw.minY;
+        _maxX = preloadedDraw.maxX;
+        _maxY = preloadedDraw.maxY;
+        _saveStep();
+        Tools.toggleButton("redo", false);
+        Tools.toggleButton("undo", false);
+        Utils.fadeInElements(_container);
+      };
+      img.src = preloadedDraw.localPathBig;
+    } else {
+      _saveStep();
+      Tools.toggleButton("redo", false);
+      Tools.toggleButton("undo", false);
+      Utils.fadeInElements(_container);
+    }
 
   }
 
@@ -419,9 +440,9 @@
 
   }
 
-  function clear () {
+  function clear (force) {
 
-    if (_minX === -1) {
+    if (force || _minX === -1) {
       return;
     }
     _clear();

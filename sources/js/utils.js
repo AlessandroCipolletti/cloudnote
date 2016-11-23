@@ -13,6 +13,13 @@
 
   Utils.emptyFN = function () {};
 
+  Utils.preventDefault = function (e) {
+
+    e.preventDefault();
+    e.stopPropagation();
+    
+  };
+
   Utils.arrayOrderStringDown = function (a, b) {
 
     if (a < b) return +1;
