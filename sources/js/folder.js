@@ -164,7 +164,7 @@
 
   function _initDb () {
 
-    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.99 * 1024 * 1024, function (db) {
+    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.9 * 1024 * 1024, function (db) {
       //callback only for first creation
       _dbJustCreated = true;
     });
@@ -198,8 +198,8 @@
           console.log("create ok");
           var now = new Date().getTime();
           tx.executeSql(
-            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, width, height) " +
-            "VALUES (1, ?, ?, 'http://drawith.me/img/draw.png', 'http://drawith.me/img/draw.png', 100, 100, 1080, 608)",
+            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+            "VALUES (1, ?, ?, 'http://drawith.me/img/draw.png', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
             [now, now], function () {
               console.log("insert ok");
             }

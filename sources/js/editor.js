@@ -56,7 +56,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
-  var _step = [], _stepCacheLength = 21, _currentStep = 0;
+  var _step = [], _stepCacheLength = 21, _currentStep = 0, _initialStep = 0;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
   var _tool = {
@@ -284,7 +284,7 @@
     Utils.setSpinner(true);
     if (_minX >= 0) {
       var draw = {}; // with id se già generato
-      draw.id = _localDbDrawId;
+      draw.id = _localDbDrawId; // db id or false
       Folder.saveNew(draw);
     }
     hide();
@@ -317,26 +317,26 @@
   function show (preloadedDraw) {
 
     Utils.addGlobalStatus("drawith__EDITOR-OPEN");
-    _clear();
     Tools.selectInitialTools();
+    ColorPicker.selectInitialColor();
     if (preloadedDraw) {
+      _localDbDrawId = preloadedDraw.id;
+      _initialStep = 1;
+      _clear();
       var img = new Image();
       img.onload = function () {
+        _context.globalAlpha = 1;
         _context.drawImage(img, preloadedDraw.minX, preloadedDraw.minY);
-        _minX = preloadedDraw.minX;
-        _minY = preloadedDraw.minY;
-        _maxX = preloadedDraw.maxX;
-        _maxY = preloadedDraw.maxY;
+        _checkCoord(preloadedDraw.minX, preloadedDraw.minY);
+        _checkCoord(preloadedDraw.maxX, preloadedDraw.maxY);
         _saveStep();
-        Tools.toggleButton("redo", false);
-        Tools.toggleButton("undo", false);
         Utils.fadeInElements(_container);
       };
       img.src = preloadedDraw.localPathBig;
     } else {
-      _saveStep();
-      Tools.toggleButton("redo", false);
-      Tools.toggleButton("undo", false);
+      _localDbDrawId = false;
+      _initialStep = 0;
+      clear();
       Utils.fadeInElements(_container);
     }
 
@@ -381,11 +381,11 @@
       _currentStep = 0;
     }
     _step.splice(0, 0, _saveLayer());
-    if (_step.length > _stepCacheLength)
+    if (_step.length > _stepCacheLength) {
       _step.splice(_stepCacheLength, _step.length);
-
+    }
     if (_coworking === false) {
-      if (_step.length > 1) {
+      if (_step.length > 1 + _initialStep) {
         Tools.toggleButton("undo", true);
         // Tools.toggleButton("save", true);
       } else {
@@ -394,7 +394,6 @@
       }
       Tools.toggleButton("redo", false);
     }
-
 
   }
 
@@ -406,7 +405,7 @@
       _currentStep = _currentStep + 1;
       _clear();
       _restoreStep(step);
-      if (tot === 0) {
+      if (tot === _initialStep) {
         Tools.toggleButton("undo", false);
         // Tools.toggleButton("save", false);
       } else {

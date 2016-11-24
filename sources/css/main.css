@@ -10,6 +10,9 @@
   letter-spacing: 0.05rem;
   user-select: none;
   opacity: 1;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+          user-select: none;
 }
 
 html, body {

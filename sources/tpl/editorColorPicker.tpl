@@ -1,7 +1,7 @@
 <div class="drawith-editor-colorpicker__container">
 
   <div class="drawith-editor-colorpicker__random-container">
-    <div class="drawith-editor-colorpicker__random drawith-editor-colorpicker__random-selected"></div>
+    <div class="drawith-editor-colorpicker__random"></div>
   </div>
   <div class="drawith-editor-colorpicker__colors-container">
     <div>

@@ -15,6 +15,10 @@
   var _dragged = false, _touchDown = false, _currentScroll = 0;
   var _selectedValue = "random";
 
+  function selectInitialColor () {
+    _selectRandom(false);
+  }
+
   function _selectColor (target) {
 
     _randomButtom.classList.remove("drawith-editor-colorpicker__random-selected");
@@ -81,6 +85,14 @@
 
   }
 
+  function _onTouchMove (e) {
+
+    if (e.target.classList.contains("drawith-editor-colorpicker__random")) {
+      //e.preventDefault();
+    }
+
+  }
+
   function _initDom (moduleContainer) {
 
     Main.loadTemplate("editorColorPicker", {
@@ -91,8 +103,10 @@
       _randomButtom = _container.querySelector(".drawith-editor-colorpicker__random");
       _colorsContainer = _container.querySelector(".drawith-editor-colorpicker__colors-container");
       _container.addEventListener(Param.eventStart, _onTouchStart, true);
+      _container.addEventListener(Param.eventMove, _onTouchMove, true);
       _container.addEventListener(Param.eventEnd, _onTouchEnd, true);
       _container.querySelector(".drawith-editor-colorpicker__colors-container > div").style.width = (_config.colors.length * 49 * Param.pixelRatio) + "px";
+      selectInitialColor();
 
     });
 
@@ -110,7 +124,8 @@
   }
 
   app.module("Editor.ColorPicker", {
-    init: init
+    init: init,
+    selectInitialColor: selectInitialColor
   });
 
 })(drawith);
