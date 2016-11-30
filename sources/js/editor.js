@@ -24,9 +24,8 @@
   var Folder = {};
 
   // TODO bug prima pressione rilevata è più alta del normale
-  // TODO bug min width e max width immagine dopo bucket
   // TODO bug bucket with black thin line
-  // TODO periodicamente salvare una bozza se
+  // TODO periodicamente salvare una bozza
 
   var _config = {
     colors: [
@@ -52,13 +51,17 @@
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
-  var _touchDown = false, _isNearRule = false;
+  var _touchDown = false, _isNearRule = false, _changedAfterDraft = true;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
   var _step = [], _stepCacheLength = 21, _currentStep = 0, _initialStep = 0;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
+  var _labels = {
+    draftSaved: "Draft Saved",
+    draftError: "An error occurred during draft saving"
+  };
   var _tool = {
     name: "",
     size: 25,
@@ -192,8 +195,8 @@
       }
     } else if (data.type === "save") {
       if (data.ok) {
-        _savedDraw.id = data.id;
-        __save();
+        _savedDraw.globalID = data.id;
+        __saveToDashboard();
       } else if (data.ok === false) {
         Messages.error("Salvataggio non riuscito");
       }
@@ -209,7 +212,57 @@
 
   }
 
-  function __save () {
+  function save () {
+
+    Utils.setSpinner(true);
+    _saveDrawInfo();
+    _saveToLocal();
+
+    // if (Socket.isConnected()) {
+    //   _saveToServer();
+    // } else {
+    //   _saveToDashboard();
+    // }
+
+  }
+
+  function _saveDrawInfo () {
+
+    _savedDraw = _saveLayer();
+    _savedDraw.localDbId = _localDbDrawId; // db id or false
+    // var coords = Dashboard.getCoords();
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = _savedDraw.data.width;
+    tempCanvas.height = _savedDraw.data.height;
+    tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);
+    _savedDraw.base64 = tempCanvas.toDataURL("image/png");
+    _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
+    _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
+    // _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + coords.x + (_config.toolsSide === "left" ? _config.toolsWidth : 0);
+    // _savedDraw.y = coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
+    _savedDraw.r = _savedDraw.x + _savedDraw.w;
+    _savedDraw.b = _savedDraw.y - _savedDraw.h;
+    _savedDraw.data = undefined;
+    delete _savedDraw.data;
+    delete _savedDraw.oldX;
+    delete _savedDraw.oldY;
+    // delete _savedDraw.maxX;
+    // delete _savedDraw.maxY;
+    // delete _savedDraw.minX;
+    // delete _savedDraw.minY;
+    tempCanvas = undefined;
+
+  }
+
+  function _saveToDashboard () {
+
+    _currentFakeId += 10;
+    _savedDraw.globalID = _currentFakeId.toString();
+    __saveToDashboard();
+
+  }
+
+  function __saveToDashboard () {
 
     _savedDraw.user = _currentUser;
     Dashboard.addDraw(_savedDraw, true);
@@ -225,14 +278,6 @@
 
   }
 
-  function _saveToDashboard () {
-
-    _currentFakeId += 10;
-    _savedDraw.id = _currentFakeId.toString();
-    __save();
-
-  }
-
   function _saveToServer () {
 
     _currentUser = User.getUserInfo();
@@ -244,65 +289,47 @@
 
   }
 
-  function save () {
+  function _saveToLocal () {
 
-    _saveToLocal();
-
-    // Utils.setSpinner(true);
-    // _savedDraw = _saveLayer();
-    // var _coords = Dashboard.getCoords();
-    // var _tempCanvas = document.createElement("canvas");
-    // _tempCanvas.width = _savedDraw.data.width;
-    // _tempCanvas.height = _savedDraw.data.height;
-    // _tempCanvas.getContext("2d").putImageData(_savedDraw.data, 0, 0);
-    // _savedDraw.base64 = _tempCanvas.toDataURL("image/png");
-    // _savedDraw.w = _savedDraw.maxX - _savedDraw.minX;
-    // _savedDraw.h = _savedDraw.maxY - _savedDraw.minY;
-    // _savedDraw.x = _savedDraw.minX - app.WIDTH / 2 + _coords.x + (_config.toolsSide === "left" ? _config.toolsWidth : 0);
-    // _savedDraw.y = _coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
-    // _savedDraw.r = _savedDraw.x + _savedDraw.w;
-    // _savedDraw.b = _savedDraw.y - _savedDraw.h;
-    // _savedDraw.data = undefined;
-    // delete _savedDraw.data;
-    // delete _savedDraw.oldX;
-    // delete _savedDraw.oldY;
-    // delete _savedDraw.maxX;
-    // delete _savedDraw.maxY;
-    // delete _savedDraw.minX;
-    // delete _savedDraw.minY;
-    // _tempCanvas = undefined;
-    // if (Socket.isConnected()) {
-    //   _saveToServer();
-    // } else {
-    //   _saveToDashboard();
-    // }
+    if (_savedDraw.minX >= 0) {
+      Folder.saveDraw(_savedDraw, _goToFolder);
+    } else {
+      _goToFolder();
+    }
 
   }
 
-  function _saveToLocal () {
+  function _goToFolder () {
 
-    Utils.setSpinner(true);
-    if (_minX >= 0) {
-      var draw = {}; // with id se già generato
-      draw.id = _localDbDrawId; // db id or false
-      Folder.saveNew(draw);
-    }
     hide();
     clear();
     Folder.show(true);
-    // Utils.setSpinner(false);
+    Utils.setSpinner(false);
 
   }
 
   function _draft () {
 
-    // salva una bozza in folder, e la prima volta riceve l'id del disegno nuovo
-    // poi si salva sempre in quello
-    // se quando esco il disegno è vuoto, cancello la bozza
-    var draw;
-    _localDbDrawId = Folder.saveDraft(draw);
-    Messages.error("ToDo");
-    Messages.info("Draft saved");
+    if (_changedAfterDraft) {
+      _changedAfterDraft = false;
+      _saveDrawInfo();
+      Folder.saveDraft(_savedDraw, setLocalDbDrawId);
+      Messages.info("draft"); // TODO remove this
+    }
+
+  }
+
+  function setLocalDbDrawId (id) {
+
+    if (id) {
+      if (_localDbDrawId === false) {
+        Messages.info(_labels.draftSaved);
+        _localDbDrawId = id;
+      }
+    } else {
+      _localDbDrawId = false;
+      Messages.error(_labels.draftError);
+    }
 
   }
 
@@ -319,6 +346,7 @@
     Utils.addGlobalStatus("drawith__EDITOR-OPEN");
     Tools.selectInitialTools();
     ColorPicker.selectInitialColor();
+    _changedAfterDraft = true;
     if (preloadedDraw) {
       _localDbDrawId = preloadedDraw.id;
       _initialStep = 1;
@@ -339,6 +367,7 @@
       clear();
       Utils.fadeInElements(_container);
     }
+    debugger;
 
   }
 
@@ -446,6 +475,7 @@
     }
     _clear();
     _saveStep();
+    _localDbDrawId = false;
     Tools.toggleButton("redo", false);
     // Tools.toggleButton("save", false);
 
@@ -775,6 +805,7 @@
   function _stepStart (context, params, tool) {
 
     var x = params.x, y = params.y;
+    _changedAfterDraft = true;
     context.globalCompositeOperation = tool.globalCompositeOperation;
     context.lineWidth = tool.size;
     if (tool.name === "bucket") {
@@ -1163,7 +1194,8 @@
     makeTouchEndNearRule: makeTouchEndNearRule,
     onSocketMessage: onSocketMessage,
     startCoworking: startCoworking,
-    stopCoworking: stopCoworking
+    stopCoworking: stopCoworking,
+    setLocalDbDrawId: setLocalDbDrawId
   });
 
 })(drawith);

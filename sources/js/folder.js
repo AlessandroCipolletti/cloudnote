@@ -16,6 +16,7 @@
   var Utils = {};
   var Main = {};
   var Editor = {};
+  var Folder = {};
   var Messages = {};
   var MATH = Math;
 
@@ -46,15 +47,71 @@
 
   }
 
-  function saveNew (draw) {
-    // TODO sincono
+  function _updateDraw (draw, draft, aSync, callback) {
+    // TODO eliminare vecchi file locali
+    // TODO aggiungere nuovi file locali
+    // TODO save a db
+
   }
 
-  function saveDraft (draw) {
-    // TODO asincrono
+  function _addDraw (draw, draft, aSync, callback) {
+
+    if (aSync) {
+      _db.transaction(function (tx) {
+        var now = new Date().getTime();
+        tx.executeSql(
+          "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+          "VALUES (?, ?, ?, '', '?', ?, ?, ?, ?, ?, ?)",
+          [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h],
+          function (tx, result) {
+            callback(result.insertId);
+          }
+        );
+      });
+    } else {
+      // TODO
+      new Promise (function (resolve, reject) {
+        _db.transaction(function (tx) {
+          var now = new Date().getTime();
+          tx.executeSql(
+            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+            "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?)",
+            [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h],
+            function (tx, result) {
+              resolve(result.insertId);
+            }
+          );
+        });
+      }).then(function (result) {
+        callback(result);
+      });
+
+
+    }
+
   }
 
-  function deleteDraft (idDraw) {
+  function saveDraw (draw, callback) {
+
+    if (draw.localDbId) {
+      _updateDraw(draw, false, false, callback);
+    } else {
+      _addDraw(draw, false, false, callback);
+    }
+
+  }
+
+  function saveDraft (draw, callback) {
+
+    if (draw.localDbId) {
+      _updateDraw(draw, true, true);
+    } else {
+      _addDraw(draw, true, true);
+    }
+
+  }
+
+  function deleteDraft (localDbId) {
     // TODO asincrono
   }
 
@@ -164,7 +221,7 @@
 
   function _initDb () {
 
-    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.9 * 1024 * 1024, function (db) {
+    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.90 * 1024 * 1024, function (db) {
       //callback only for first creation
       _dbJustCreated = true;
     });
@@ -194,17 +251,16 @@
           "dashboardY INTEGER" +
         ");",
         [],
-        function (tx, result) {
+        function (tx, result) { // TODO remove this
           console.log("create ok");
           var now = new Date().getTime();
           tx.executeSql(
             "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-            "VALUES (1, ?, ?, 'http://drawith.me/img/draw.png', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
-            [now, now], function () {
+            "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
+            [now, now], function (tx, result) {
               console.log("insert ok");
             }
           );
-
         }
       );
     });
@@ -250,6 +306,7 @@
     Utils = app.Utils;
     Main = app.Main;
     Editor = app.Editor;
+    Folder = app.Folder;
     Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _config.topnavHeight *= Param.pixelRatio;
@@ -262,7 +319,7 @@
     init: init,
     show: show,
     hide: hide,
-    saveNew: saveNew,
+    saveDraw: saveDraw,
     saveDraft: saveDraft,
     deleteDraft: deleteDraft
   });
