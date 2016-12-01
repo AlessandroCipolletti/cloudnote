@@ -320,9 +320,8 @@
 
   function closeVersions () {
 
-    var opened = _versionsContainer.querySelector(".drawith-editor-tools__versions-open");
-    if (opened) {
-      opened.classList.remove("drawith-editor-tools__versions-open");
+    if (_versionsTimeout !== false) {
+      _versionsContainer.querySelector(".drawith-editor-tools__versions-open").classList.remove("drawith-editor-tools__versions-open");
       clearTimeout(_versionsTimeout);
       _versionsTimeout = false;
     }

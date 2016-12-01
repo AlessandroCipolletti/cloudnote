@@ -45,8 +45,8 @@
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true,
-    draftInterval: 60,
-    stepCacheLength: 16     // sec
+    draftInterval: 60,  // sec
+    stepCacheLength: 16
   };
 
   var PI = MATH.PI;
@@ -827,6 +827,7 @@
 
     var x = params.x, y = params.y;
     _changedAfterDraft = true;
+    Tools.closeVersions();
     context.globalCompositeOperation = tool.globalCompositeOperation;
     context.lineWidth = tool.size;
     if (tool.name === "bucket") {
