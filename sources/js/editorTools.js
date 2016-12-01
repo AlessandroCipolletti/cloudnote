@@ -65,8 +65,8 @@
         button: true,
         slider: false,
         params: {
-          size: 50,
-          forceFactor: 1.2
+          size: 60,
+          forceFactor: 0.9
         }
       }
       /*{

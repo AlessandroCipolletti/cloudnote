@@ -1140,11 +1140,11 @@
       _initSubModules();
 
       _canvasWidth = app.WIDTH - _config.toolsWidth;
-      _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize;
+      _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize + 20 * Param.pixelRatio;
 
-      if (Param.ios && Param.isAppOnline) {
-        _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize + 20 * Param.pixelRatio;
-      }
+      // if (Param.ios && Param.isAppOnline) {
+        _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize;
+      // }
 
       _canvas.width = _canvasCoworking.width = _canvasWidth;
       _canvas.height = _canvasCoworking.height = _canvasHeight;
