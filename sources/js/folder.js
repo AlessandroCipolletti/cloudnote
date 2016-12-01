@@ -282,14 +282,17 @@
         Utils.emptyFN
         // function (tx, result) { // TODO remove this
         //   console.log("create ok");
-        //   var now = new Date().getTime();
-        //   tx.executeSql(
-        //     "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-        //     "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
-        //     [now, now], function (tx, result) {
-        //       console.log("insert ok");
-        //     }
-        //   );
+        //   // var now = new Date().getTime();
+        //   // tx.executeSql(
+        //   //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+        //   //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
+        //   //   [now, now], function (tx, result) {
+        //   //     console.log("insert ok");
+        //   //   }
+        //   // );
+        //   tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
+        //     console.log("delete ok");
+        //   });
         // }
       );
     });

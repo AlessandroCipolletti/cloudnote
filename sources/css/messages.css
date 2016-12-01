@@ -31,6 +31,7 @@
   color: white;
   margin: auto;
   white-space: nowrap;
+  letter-spacing: 2px;
 }
 .drawith-messages__container-button-ok, .drawith-messages__container-button-cancel {
   border: solid 1px white;

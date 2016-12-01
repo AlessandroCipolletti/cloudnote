@@ -44,14 +44,15 @@
     ruleMarginToDraw: 25,
     toolsSide: "left",
     minPxToDraw: 3,
-    hightPerformance: true
+    hightPerformance: true,
+    draftInterval: 60 // sec
   };
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
   var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
-  var _touchDown = false, _isNearRule = false, _changedAfterDraft = true;
+  var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
@@ -313,7 +314,19 @@
       _changedAfterDraft = false;
       _saveDrawInfo();
       Folder.saveDraft(_savedDraw, setLocalDbDrawId);
-      Messages.info("draft"); // TODO remove this
+    }
+
+  }
+
+  function _setDraftInterval (start) {
+
+    if (start) {
+      if (_draftInterval === false) {
+        _draftInterval = setInterval(_draft, _config.draftInterval * 1000);
+      }
+    } else {
+      clearInterval(_draftInterval);
+      _draftInterval = false;
     }
 
   }
@@ -334,6 +347,7 @@
 
   function exit () {
 
+    _setDraftInterval(false);
     hide();
     Folder.show();
     // Dashboard.show();
@@ -345,7 +359,7 @@
     Utils.addGlobalStatus("drawith__EDITOR-OPEN");
     Tools.selectInitialTools();
     ColorPicker.selectInitialColor();
-    _changedAfterDraft = true;
+    _changedAfterDraft = false;
     if (preloadedDraw) {
       _localDbDrawId = preloadedDraw.id;
       _initialStep = 1;
@@ -361,6 +375,7 @@
         _checkCoord(preloadedDraw.maxX, preloadedDraw.maxY);
         _saveStep();
         Utils.fadeInElements(_container);
+        _setDraftInterval(true);
       };
       img.src = preloadedDraw.localPathBig;
     } else {
@@ -370,6 +385,7 @@
       _currentStep = 0;
       clear();
       Utils.fadeInElements(_container);
+      _setDraftInterval(true);
     }
 
   }
@@ -377,6 +393,7 @@
   function hide () {
 
     Utils.removeGlobalStatus("drawith__EDITOR-OPEN");
+    _setDraftInterval(false);
     Utils.fadeOutElements(_container);
 
   }
