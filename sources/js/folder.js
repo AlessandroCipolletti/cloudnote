@@ -128,6 +128,7 @@
 
   function saveDraft (draw, callback) {
 
+    console.log("draft");
     if (draw.localDbId) {
       _updateDraw(draw, true, true, callback);
     } else {
@@ -174,6 +175,9 @@
     var result = [];
     for (var i = 0; i < rows.length; i++) {
       result.push(rows.item(i));
+    }
+    for (i = result.length; i--; ) {
+      result[i].draft = (result[i].state === 1);
     }
     return result;
 

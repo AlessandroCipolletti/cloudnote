@@ -20,6 +20,22 @@
   margin: 2rem 0rem;
   cursor: pointer;
 }
+.drawith-folder__drawing-draft-icon {
+  position: relative;
+  top: 0rem;
+  left: 0rem;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem 0rem;
+  border-right: solid 0.1rem rgb(220, 220, 220);
+  border-bottom: solid 0.1rem rgb(220, 220, 220);
+  background-color: rgba(245, 245, 245, 1);
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../img/icons/draft.png');
+}
+
 .drawith__TABLET.drawith__LANDSCAPE .drawith-folder__drawing {
   width: 20vw;
   height: 21vh;

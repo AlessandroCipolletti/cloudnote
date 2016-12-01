@@ -25,7 +25,7 @@
 
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug bucket with black thin line
-  // TODO periodicamente salvare una bozza
+  // TODO pulsante exit che chiede conferma mandatory se vuoi uscire senza salvare
 
   var _config = {
     colors: [
@@ -45,7 +45,8 @@
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true,
-    draftInterval: 60 // sec
+    draftInterval: 60,
+    stepCacheLength: 16     // sec
   };
 
   var PI = MATH.PI;
@@ -56,7 +57,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
-  var _step = [], _stepCacheLength = 21, _currentStep = 0, _initialStep = 0;
+  var _step = [], _currentStep = 0, _initialStep = 0;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
   var _labels = {
@@ -430,8 +431,8 @@
       _currentStep = 0;
     }
     _step.splice(0, 0, _saveLayer());
-    if (_step.length > _stepCacheLength) {
-      _step.splice(_stepCacheLength, _step.length);
+    if (_step.length > _config.stepCacheLength) {
+      _step.splice(_config.stepCacheLength, _step.length);
     }
     if (_coworking === false) {
       if (_step.length > 1 + _initialStep) {
