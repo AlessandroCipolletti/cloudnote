@@ -1,0 +1,3 @@
+tx.executeSql("SELECT * FROM Drawings", [], function (tx, result) {
+  console.log(result);
+});

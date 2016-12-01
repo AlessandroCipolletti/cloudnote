@@ -303,8 +303,7 @@
 
     hide();
     clear();
-    Folder.show(true);
-    Utils.setSpinner(false);
+    Folder.show(true, true);
 
   }
 
@@ -351,6 +350,9 @@
       _localDbDrawId = preloadedDraw.id;
       _initialStep = 1;
       _clear();
+      _step = [];
+      _currentStep = 0;
+      _saveStep();
       var img = new Image();
       img.onload = function () {
         _context.globalAlpha = 1;
@@ -364,10 +366,11 @@
     } else {
       _localDbDrawId = false;
       _initialStep = 0;
+      _step = [];
+      _currentStep = 0;
       clear();
       Utils.fadeInElements(_container);
     }
-    debugger;
 
   }
 
@@ -1133,7 +1136,6 @@
       } else {
         _canvas.style.right = _config.toolsWidth + "px";
       }
-      _saveStep();
       // Main.addRotationHandler(_onRotate);
       // show();
 
