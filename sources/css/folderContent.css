@@ -13,7 +13,7 @@
 
 .drawith-folder__drawing {
   width: 18vw;
-  height: 22vh;
+  height: 21vh;
   border: solid 1px rgb(220, 220, 220);
   border-radius: 0.75rem;
   box-shadow: inset 0px 0px 0.5rem 0.1rem rgba(220, 220, 220, 0.5);
@@ -22,6 +22,7 @@
 }
 .drawith-folder__drawing-draft-icon {
   position: relative;
+  display: inline-block;
   top: 0rem;
   left: 0rem;
   width: 4rem;
@@ -35,14 +36,45 @@
   background-repeat: no-repeat;
   background-image: url('../img/icons/draft.png');
 }
+.drawith-folder__drawing-select-icon {
+  float: right;
+  top: 0rem;
+  right: 0rem;
+  margin: 0.75rem;
+  height: 2.5rem;
+  width: 2.5rem;
+  border: solid 0.1rem white;
+  background-color: white;
+  border-radius: 50%;
+  background-size: 60%;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0px 0px 0.2rem 0px rgba(0,0,0,0.75);
+  /*, inset 0px 0px 0.2rem 0px rgba(0,0,0,0.75);*/
+  display: none;
+}
+.drawith__FOLDER-SELECT-MODE .drawith-folder__drawing-select-icon {
+  display: inline-block;
+}
+.drawith__FOLDER-SELECT-MODE .drawith-folder__drawing-new {
+  filter: opacity(30%) !important;
+  cursor: auto;
+}
+.drawith__FOLDER-SELECT-MODE .drawith-folder__drawing-selected {
+  /*filter: opacity(60%);*/
+}
+.drawith__FOLDER-SELECT-MODE .drawith-folder__drawing-selected .drawith-folder__drawing-select-icon {
+  background-color: rgb(25, 110, 225);
+  background-image: url('../img/icons/select.png');
+}
 
 .drawith__TABLET.drawith__LANDSCAPE .drawith-folder__drawing {
   width: 20vw;
-  height: 21vh;
+  height: 18.5vh;
 }
 .drawith__TABLET.drawith__PORTRAIT .drawith-folder__drawing {
   width: 29vw;
-  height: 16vh;
+  height: 15vh;
 }
 .drawith__PHONE .drawith-folder__drawing {
   margin: 1rem 0rem;

@@ -12,8 +12,9 @@
   border-bottom: solid 1px rgb(220, 220, 220);
   top: 0px;
   left: 0rem;
-  width: 100%;
+  width: calc(100% - 2rem);
   z-index: 60;
+  padding-left: 2rem;
 }
 
 .drawith-folder__topbar-button {
@@ -21,6 +22,7 @@
   height: 100%;
   margin: 0 0.5rem;
   z-index: 70;
+  cursor: pointer;
 }
 .drawith-folder__topbar-button-ICON {
   width: 5rem;
@@ -35,9 +37,6 @@
   line-height: 5rem;
   font-family: sans-serif;
   color: rgb(0, 122, 255);
-}
-.drawith-folder__topbar-button:first-child {
-  margin-left: 2rem;
 }
 .drawith-folder__topbar-button-delete {
   background-image: url("../img/icons/delete.png");

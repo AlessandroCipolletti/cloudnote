@@ -24,10 +24,13 @@
   };
 
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
-  var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0;
+  var _toolsButtons = [];
+  var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
   var _db = {}, _dbJustCreated = false, _currentLoadedDrawings = -1;
-  var _selectText = "Select", _doneText = "Done";
-
+  var _labels = {
+    select: "Select",
+    done: "Done"
+  };
   function _show (spinner) {
 
     Utils.fadeInElements(_container);
@@ -116,6 +119,21 @@
 
   }
 
+  function _removeDrawPromise (localDbId) {
+
+    return new Promise (function (resolve, reject) {
+      _db.transaction(function (tx) {
+        tx.executeSql("SELECT * FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
+          // TODO delete local files
+          tx.executeSql("DELETE FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
+            resolve(true);
+          });
+        });
+      });
+    });
+
+  }
+
   function saveDraw (draw, callback) {
 
     if (draw.localDbId) {
@@ -144,29 +162,73 @@
   function _selectButtonClick () {
 
     if (_selectButton.classList.contains("disabled") || _selectButton.classList.contains("displayNone")) return;
-    Messages.info("To Do");
+    _modeSelection = true;
+    Utils.addGlobalStatus("drawith__FOLDER-SELECT-MODE");
+    _selectButton.classList.add("disabled", "displayNone");
+    _doneButton.classList.remove("disabled", "displayNone");
 
   }
 
   function _doneButtonClick () {
 
     if (_doneButton.classList.contains("disabled") || _doneButton.classList.contains("displayNone")) return;
+    _modeSelection = false;
+    Utils.removeGlobalStatus("drawith__FOLDER-SELECT-MODE");
+    _doneButton.classList.add("disabled", "displayNone");
+    _selectButton.classList.remove("disabled", "displayNone");
+    _deselectAll();
 
   }
 
   function _exportButtonClick () {
 
     if (_exportButton.classList.contains("disabled")) return;
+    console.log(_getSelectedIds());
+    // TODO
 
   }
 
   function _deleteButtonClick () {
 
     if (_deleteButton.classList.contains("disabled")) return;
-    // aggiornare _currentLoadedDrawings
-    // eliminare a db
-    // eliminare dal dom pagina
-    // eliminare immagini locali
+    var currentIds = _getSelectedIds();
+    var promises = [];
+    Utils.disableElements(_toolsButtons);
+    for (var id in currentIds) {
+      promises.push(_removeDrawPromise(currentIds[id]));
+    }
+    Promise.all(promises).then(_loadContent.bind({}, false, Utils.emptyFN));
+
+  }
+
+  function _getSelectedIds () {
+
+    var selected = _drawingsContainer.querySelectorAll(".drawith-folder__drawing-selected");
+    var result = [];
+    for (var i = selected.length; i--; ) {
+      result.push(parseInt(selected[i].getAttribute("data-id")));
+    }
+    return result;
+
+  }
+
+  function _deselectAll () {
+
+    var selected = _drawingsContainer.querySelectorAll(".drawith-folder__drawing-selected");
+    for (var i = selected.length; i--; ) {
+      selected[i].classList.remove("drawith-folder__drawing-selected");
+    }
+    Utils.disableElements(_toolsButtons);
+
+  }
+
+  function _updateTopnavButtons () {
+
+    if (_drawingsContainer.querySelectorAll(".drawith-folder__drawing-selected").length) {
+      Utils.enableElements(_toolsButtons);
+    } else {
+      Utils.disableElements(_toolsButtons);
+    }
 
   }
 
@@ -245,8 +307,15 @@
     }
     _currentScroll = 0;
     if (e.target.classList.contains("drawith-folder__drawing")) {
-      hide();
-      Editor.show(_currentLoadedDrawings[e.target.getAttribute("data-index")] || false);
+      if (_modeSelection) {
+        if (!e.target.classList.contains("drawith-folder__drawing-new")) {
+          e.target.classList.toggle("drawith-folder__drawing-selected");
+          _updateTopnavButtons();
+        }
+      } else {
+        hide();
+        Editor.show(_currentLoadedDrawings[e.target.getAttribute("data-index")] || false);
+      }
     }
 
   }
@@ -283,21 +352,21 @@
           "dashboardY INTEGER" +
         ");",
         [],
-        Utils.emptyFN
-        // function (tx, result) { // TODO remove this
-        //   console.log("create ok");
-        //   // var now = new Date().getTime();
-        //   // tx.executeSql(
-        //   //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-        //   //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
-        //   //   [now, now], function (tx, result) {
-        //   //     console.log("insert ok");
-        //   //   }
-        //   // );
-        //   tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
-        //     console.log("delete ok");
-        //   });
-        // }
+        // Utils.emptyFN
+        function (tx, result) { // TODO remove this
+          console.log("create ok");
+          // var now = new Date().getTime();
+          // tx.executeSql(
+          //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+          //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
+          //   [now, now], function (tx, result) {
+          //     console.log("insert ok");
+          //   }
+          // );
+          // tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
+          //   console.log("delete ok");
+          // });
+        }
       );
     });
 
@@ -310,8 +379,8 @@
   function _initDom () {
 
     Main.loadTemplate("folder", {
-      selectText: _selectText,
-      doneText: _doneText
+      selectText: _labels.select,
+      doneText: _labels.done
     }, Param.container, function (templateDom) {
 
       _container = templateDom;
@@ -322,6 +391,7 @@
       _doneButton = _container.querySelector(".drawith-folder__topbar-button-done");
       _exportButton = _container.querySelector(".drawith-folder__topbar-button-export");
       _deleteButton = _container.querySelector(".drawith-folder__topbar-button-delete");
+      _toolsButtons = [_exportButton, _deleteButton];
       _container.querySelector(".drawith-folder__topbar").addEventListener(Param.eventStart, onTopnavTouchStart, true);
       _drawingsContainer = _container.querySelector(".drawith-folder__drawings-container");
       _drawingsContainer.style.height = "calc(100% - " + _config.topnavHeight + "px)";
