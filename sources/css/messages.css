@@ -17,7 +17,7 @@
   top: 5.05rem;
   left: 50%;
   background-repeat: no-repeat;
-  background-position: 1.5rem 1.0rem;
+  background-position: 1.5rem 50%;
   background-size: 2.5rem 2.5rem;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   transform: translateX(-50%) translateY(-110%);
@@ -27,19 +27,23 @@
 .drawith-messages__container-text {
   font-size: 1.5rem;
   line-height: 2.5rem;
-  height: 2.5rem;
   color: white;
   margin: auto;
-  white-space: nowrap;
   letter-spacing: 0.2rem;
 }
 .drawith-messages__container-button-ok, .drawith-messages__container-button-cancel {
-  border: solid 1px white;
+  border: solid 0.1rem white;
   display: none;
   align-items: center;
-  font-size: 2rem;
   justify-content: space-around;
   cursor: pointer;
+  width: 8rem;
+  height: 3rem;
+  border-radius: 1.5rem;
+}
+.drawith-messages__container-button-ok > p, .drawith-messages__container-button-cancel > p {
+  font-family: sans-serif;
+  font-size: 1.5rem;
 }
 
 .drawith__MESSAGE-OPEN .drawith-messages__container {
@@ -48,38 +52,66 @@
   border-radius: 0 0 0.7rem 0.7rem;
 }
 .drawith__MESSAGE-MANDATORY-OPEN.drawith__MESSAGE-OPEN .drawith-messages__container {
-  transform: translateX(-50%) translateY(10rem);
+  transform: translateX(-50%) translateY(7rem);
   z-index: 1000;
+  border-radius: 0.5rem;
 }
 
 
 /* ALERT */
 .drawith-messages__container.drawith-messages__container-alert {
   height: auto;
-  width: 100%;
-}
-.drawith-messages__container-alert {
-  background-color: #eee;
+  width: 60%;
+  background-color: lightgray;
   background-image: url("../img/icons/alert.png");
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  flex-direction: column;
 }
 .drawith-messages__container-alert .drawith-messages__container-text {
   color: black;
-  max-width: 85%;
-  margin: 0rem 2.5%;
+  text-align: center;
+  margin: 0.5rem 0rem 1rem;
 }
 .drawith-messages__container-alert .drawith-messages__container-button-ok {
-  width: 8rem;
-  height: 4rem;
-  float: right;
-  border-color: black;
   display: flex;
+  border-color: black;
 }
 .drawith-messages__container-alert .drawith-messages__container-button-cancel,
 .drawith-messages__container-alert .drawith-messages__container-input {
+  display: none;
+}
+
+
+/* CONFIRM */
+.drawith-messages__container.drawith-messages__container-confirm {
+  height: auto;
+  width: 60%;
+  background-color: lightgray;
+  background-image: url("../img/icons/confirm.png");
+}
+.drawith-messages__container-confirm .drawith-messages__container-text {
+  color: black;
+  text-align: center;
+  margin: 0.5rem 0rem 1rem;
+}
+.drawith-messages__container-confirm .drawith-messages__container-text > p {
+  word-wrap: break-word;
+}
+.drawith-messages__container-confirm .drawith-messages__container-button-ok,
+.drawith-messages__container-confirm .drawith-messages__container-button-cancel {
+  display: inline-block;
+  margin: auto calc(25% - 4.5rem);
+  border-color: black;
+}
+.drawith-messages__container-confirm .drawith-messages__container-button-ok > p,
+.drawith-messages__container-confirm .drawith-messages__container-button-cancel > p {
+  height: 3rem;
+  line-height: 3rem;
+  width: 100%;
+  text-align: center;
+}
+.drawith-messages__container-confirm .drawith-messages__container-input {
   display: none;
 }
 

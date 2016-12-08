@@ -29,13 +29,21 @@
   var _db = {}, _dbJustCreated = false, _currentLoadedDrawings = -1;
   var _labels = {
     select: "Select",
-    done: "Done"
+    done: "Done",
+    deleteSomeDrawings: "Delete %P% drawings?",
+    deleteOneDrawing: "Delete the drawing?"
   };
+
   function _show (spinner) {
 
     Utils.fadeInElements(_container);
     if (spinner) {
       Utils.setSpinner(false);
+    }
+    if (_currentLoadedDrawings.length === 0) {
+      _selectButton.classList.add("disabled");
+    } else {
+      _selectButton.classList.remove("disabled");
     }
 
   }
@@ -188,16 +196,29 @@
 
   }
 
-  function _deleteButtonClick () {
+  function _deleteSelectedDrawings () {
 
-    if (_deleteButton.classList.contains("disabled")) return;
     var currentIds = _getSelectedIds();
     var promises = [];
     Utils.disableElements(_toolsButtons);
     for (var id in currentIds) {
       promises.push(_removeDrawPromise(currentIds[id]));
     }
-    Promise.all(promises).then(_loadContent.bind({}, false, Utils.emptyFN));
+    Promise.all(promises).then(_loadContent.bind({}, false, function () {
+      if (_currentLoadedDrawings.length === 0) {
+        _doneButtonClick();
+        _selectButton.classList.add("disabled");
+      }
+    }));
+
+  }
+
+  function _deleteButtonClick () {
+
+    if (_deleteButton.classList.contains("disabled")) return;
+    var ids = _getSelectedIds().length;
+    var msg = ids === 1 ? _labels.deleteOneDrawing : _labels.deleteSomeDrawings.replace("%P%", ids);
+    Messages.confirm(msg, true, _deleteSelectedDrawings);
 
   }
 

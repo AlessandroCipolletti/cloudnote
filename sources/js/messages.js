@@ -10,6 +10,7 @@
   };
 
   // TODO ovviamente tutti possono anche interagire con tastiera, invio ed escape
+  // TODO input
 
   var _dom = {}, _overlay = {}, _message = {}, _confirmButton = {}, _cancelButton = {}, _panel = {}, _panelClose = {};
   var _stack = [];  // se arrivano più log allo stesso tempo, creo stack e li mostro uno alla volta
@@ -23,17 +24,17 @@
 
     _isOpen = true;
     _currentIsMandatory = mandatory;
+    Utils.addGlobalStatus("drawith__MESSAGE-OPEN");
     if (mandatory) {
       Utils.addGlobalStatus("drawith__MESSAGE-MANDATORY-OPEN");
       Utils.fadeInElements(_overlay);
     } else {
-      Utils.addGlobalStatus("drawith__MESSAGE-OPEN");
       _autoCloseTimeout = setTimeout(_hide, _config.autoCloseDelay);
     }
 
   }
 
-  function _hide () {
+  function _hide (blockStack) {
 
     _isOpen = false;
     Utils.removeGlobalStatus("drawith__MESSAGE-OPEN");
@@ -46,7 +47,9 @@
       clearTimeout(_autoCloseTimeout);
       _autoCloseTimeout = false;
     }
-    setTimeout(_onHide, 200);
+    if (!blockStack) {
+      setTimeout(_onHide, 200);
+    }
 
   }
 
@@ -63,7 +66,7 @@
 
   }
 
-  function _simpleMessage (type, msg, mandatory) {
+  function _makeMessage (type, msg, mandatory) {
 
     if (_isOpen) {
       _stack.push({
@@ -79,9 +82,8 @@
 
   }
 
-  function _onAlertOk (callback) {
+  function _onButtonClick (callback) {
 
-    _confirmButton.removeEventListener(Param.eventStart, _onAlertOk);
     _hide();
     if (callback) {
       callback();
@@ -89,34 +91,53 @@
 
   }
 
+  function _removeAllListeners (button) {
+
+    var newButton = button.cloneNode(true);
+    button.parentNode.appendChild(newButton);
+    button.parentNode.removeChild(button);
+    return newButton;
+
+  }
+
   function alert (msg, _callback) {
 
-    _confirmButton.addEventListener(Param.eventStart, _onAlertOk.bind({}, _callback));
-    _simpleMessage("alert", msg, true);
+    if (_isOpen) {
+      _hide(true);
+    }
+    _confirmButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, _callback));
+    _makeMessage("alert", msg, true);
 
   }
 
   function info (msg) {
-    _simpleMessage("info", msg, false);
+    _makeMessage("info", msg, false);
   }
 
   function success (msg) {
-    _simpleMessage("success", msg, false);
+    _makeMessage("success", msg, false);
   }
 
   function error (msg) {
-    _simpleMessage("error", msg, false);
+    _makeMessage("error", msg, false);
   }
 
   function confirm (msg, mandatory, onConfirm, onCancel) {
-    // TODO due pulsanti di conferma o annulla. con parametro per decidere se è bloccante o si puo' chiudere
-    _setType("confirm");
-    mandatory = (typeOf(mandatory) === "undefined" ? true : mandatory);
+
+    mandatory = (typeof(mandatory) === "undefined" ? true : mandatory);
+    if (_isOpen) {
+      _hide(true);
+    }
+    _confirmButton = _removeAllListeners(_confirmButton);
+    _cancelButton = _removeAllListeners(_cancelButton);
+    _confirmButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, onConfirm));
+    _cancelButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, onCancel));
+    _makeMessage("confirm", msg, mandatory);
 
   }
 
   function input (msg, mandatory, onConfirm, onCancel) {
-    // TODO con campo di input. con parametro per decidere se è bloccante o si puo' chiudere
+
     _setType("input");
     mandatory = (typeOf(mandatory) === "undefined" ? false : mandatory);
 
@@ -156,7 +177,7 @@
   function _initDom () {
 
     Main.loadTemplate("messages", {
-      labelOk: "OK",
+      labelOk: "Ok",
       labelCancel: "Cancel"
     }, Param.container, function (templateDom) {
 
