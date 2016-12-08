@@ -63,8 +63,8 @@
   }
 
   function _updateDraw (draw, draft, aSync, callback) {
-    // TODO eliminare vecchi file locali con conrdova
-    // TODO aggiungere nuovi file locali con conrdova
+    // TODO eliminare vecchi file locali con cordova
+    // TODO aggiungere nuovi file locali con cordova
     if (aSync) {
       _db.transaction(function (tx) {
         tx.executeSql(
@@ -96,14 +96,14 @@
   }
 
   function _addDraw (draw, draft, aSync, callback) {
-    // TODO aggiungere nuovi file locali con conrdova
+    // TODO aggiungere nuovi file locali con cordova
     if (aSync) {
       _db.transaction(function (tx) {
         var now = new Date().getTime();
         tx.executeSql(
-          "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-          "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?)",
-          [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h],
+          "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height, canvasWidth, canvasHeight) " +
+          "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.canvasWidth, draw.canvasHeight],
           function (tx, result) {
             callback(result.insertId);
           }
@@ -114,9 +114,9 @@
         _db.transaction(function (tx) {
           var now = new Date().getTime();
           tx.executeSql(
-            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-            "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?)",
-            [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h],
+            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height, canvasWidth, canvasHeight) " +
+            "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.canvasWidth, draw.canvasHeight],
             function (tx, result) {
               resolve(result.insertId);
             }
@@ -368,6 +368,8 @@
           "maxY INTEGER, " +
           "width INTEGER, " +
           "height INTEGER, " +
+          "canvasWidth INTEGER, " +
+          "canvasHeight INTEGER, " +
           "mainColor TEXT, " +
           "dashboardX INTEGER, " +
           "dashboardY INTEGER" +

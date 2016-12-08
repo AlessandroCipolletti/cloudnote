@@ -45,7 +45,7 @@
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true,
-    draftInterval: 60,  // sec
+    draftInterval: 30,  // sec
     stepCacheLength: 16
   };
 
@@ -244,6 +244,8 @@
     // _savedDraw.y = coords.y + (app.HEIGHT / 2 - _savedDraw.minY);
     _savedDraw.r = _savedDraw.x + _savedDraw.w;
     _savedDraw.b = _savedDraw.y - _savedDraw.h;
+    _savedDraw.canvasWidth = _canvasWidth;
+    _savedDraw.canvasHeight = _canvasHeight;
     _savedDraw.data = undefined;
     delete _savedDraw.data;
     delete _savedDraw.oldX;
@@ -362,6 +364,7 @@
     ColorPicker.selectInitialColor();
     _changedAfterDraft = false;
     if (preloadedDraw) {
+      _initCanvasDimension(preloadedDraw.canvasWidth, preloadedDraw.canvasHeight);
       _localDbDrawId = preloadedDraw.id;
       _initialStep = 1;
       _clear();
@@ -380,6 +383,7 @@
       };
       img.src = preloadedDraw.localPathBig;
     } else {
+      _initCanvasDimension();
       _localDbDrawId = false;
       _initialStep = 0;
       _step = [];
@@ -504,7 +508,7 @@
 
   function _clear () {
 
-    _context.clearRect(0, 0, app.WIDTH, app.HEIGHT);
+    _context.clearRect(0, 0, _canvasWidth, _canvasHeight);
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = -1;
 
   }
@@ -1099,6 +1103,35 @@
 
   function _onRotate (e) {
 
+    if (_coworking) return;
+    var data = _context.getImageData(0, 0, _canvasWidth, _canvasHeight);
+    _canvasWidth = app.WIDTH - _config.toolsWidth;
+    _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize;
+    _maxX = MATH.min(_maxX, _canvasWidth);
+    _maxY = MATH.min(_maxY, _canvasHeight);
+    _canvas.width = _canvasCoworking.width = _canvasWidth;
+    _canvas.height = _canvasCoworking.height = _canvasHeight;
+    _canvas.style.width = _canvasWidth + "px";
+    _canvas.style.height = _canvasHeight + "px";
+    _context.putImageData(data, 0, 0);
+    data = undefined;
+
+  }
+
+  function _initCanvasDimension (width, height) {
+
+    _canvasWidth = width || (app.WIDTH - _config.toolsWidth);
+    _canvasHeight = height || (app.HEIGHT - _config.colorsPickerHeight - Param.headerSize);
+
+    // if (Param.ios && Param.isAppOnline) {
+    //   _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize;
+    // }
+
+    _canvas.width = _canvasCoworking.width = _canvasWidth;
+    _canvas.height = _canvasCoworking.height = _canvasHeight;
+    _canvas.style.width = _canvasWidth + "px";
+    _canvas.style.height = _canvasHeight + "px";
+
   }
 
   function _initDom () {
@@ -1138,18 +1171,8 @@
       }
 
       _initSubModules();
+      _initCanvasDimension();
 
-      _canvasWidth = app.WIDTH - _config.toolsWidth;
-      _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize + 20 * Param.pixelRatio;
-
-      // if (Param.ios && Param.isAppOnline) {
-        _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize;
-      // }
-
-      _canvas.width = _canvasCoworking.width = _canvasWidth;
-      _canvas.height = _canvasCoworking.height = _canvasHeight;
-      _canvas.style.width = _canvasWidth + "px";
-      _canvas.style.height = _canvasHeight + "px";
       if (_config.toolsSide === "left") {
         _canvas.style.left = _config.toolsWidth + "px";
       } else {
