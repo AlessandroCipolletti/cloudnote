@@ -13,7 +13,7 @@
   // TODO input
 
   var _dom = {}, _overlay = {}, _message = {}, _confirmButton = {}, _cancelButton = {}, _panel = {}, _panelClose = {};
-  var _stack = [];  // se arrivano più log allo stesso tempo, creo stack e li mostro uno alla volta
+  var _stack = [];
   var _isOpen = false, _autoCloseTimeout = false, _panelIsOpen = false, _currentIsMandatory = false;
 
   function _setType (type) {
