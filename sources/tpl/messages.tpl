@@ -2,11 +2,11 @@
 
 <div class="drawith-messages__container displayNone">
   <div class="drawith-messages__container-text"></div>
-  <div class="drawith-messages__container-button-ok">
-    <p>{{labelOk}}</p>
-  </div>
   <div class="drawith-messages__container-button-cancel">
     <p>{{labelCancel}}</p>
+  </div>
+  <div class="drawith-messages__container-button-ok">
+    <p>{{labelOk}}</p>
   </div>
 </div>
 

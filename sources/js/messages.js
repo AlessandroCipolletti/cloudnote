@@ -17,7 +17,23 @@
   var _isOpen = false, _autoCloseTimeout = false, _panelIsOpen = false, _currentIsMandatory = false;
 
   function _setType (type) {
-    _dom.className = "drawith-messages__container drawith-messages__container-" + type;
+
+    _resetType();
+    _dom.classList.add("drawith-messages__container-" + type);
+
+  }
+
+  function _resetType () {
+
+    _dom.classList.remove(
+      "drawith-messages__container-success",
+      "drawith-messages__container-error",
+      "drawith-messages__container-info",
+      "drawith-messages__container-alert",
+      "drawith-messages__container-confirm",
+      "drawith-messages__container-input"
+    );
+
   }
 
   function _show (mandatory) {
@@ -77,7 +93,9 @@
     } else {
       _setType(type);
       _message.innerHTML = msg;
-      _show(mandatory);
+      setTimeout(function () {
+        _show(mandatory);
+      }, 16);
     }
 
   }
@@ -105,6 +123,7 @@
     if (_isOpen) {
       _hide(true);
     }
+    _confirmButton = _removeAllListeners(_confirmButton);
     _confirmButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, _callback));
     _makeMessage("alert", msg, true);
 
@@ -128,8 +147,8 @@
     if (_isOpen) {
       _hide(true);
     }
-    _confirmButton = _removeAllListeners(_confirmButton);
     _cancelButton = _removeAllListeners(_cancelButton);
+    _confirmButton = _removeAllListeners(_confirmButton);
     _confirmButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, onConfirm));
     _cancelButton.addEventListener(Param.eventStart, _onButtonClick.bind({}, onCancel));
     _makeMessage("confirm", msg, mandatory);
