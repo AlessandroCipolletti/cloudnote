@@ -25,7 +25,6 @@
 
   // TODO bug prima pressione rilevata è più alta del normale
   // TODO bug bucket with black thin line
-  // TODO pulsante exit che chiede conferma mandatory se vuoi uscire senza salvare
 
   var _config = {
     colors: [
@@ -363,6 +362,8 @@
     Tools.selectInitialTools();
     ColorPicker.selectInitialColor();
     _changedAfterDraft = false;
+    Tools.toggleButton("undo", false);
+    Tools.toggleButton("redo", false);
     if (preloadedDraw) {
       _initCanvasDimension(preloadedDraw.canvasWidth, preloadedDraw.canvasHeight);
       _localDbDrawId = preloadedDraw.id;
@@ -388,6 +389,7 @@
       _initialStep = 0;
       _step = [];
       _currentStep = 0;
+      _saveStep();
       clear();
       Utils.fadeInElements(_container);
       _setDraftInterval(true);
@@ -439,13 +441,7 @@
       _step.splice(_config.stepCacheLength, _step.length);
     }
     if (_coworking === false) {
-      if (_step.length > 1 + _initialStep) {
-        Tools.toggleButton("undo", true);
-        // Tools.toggleButton("save", true);
-      } else {
-        Tools.toggleButton("undo", false);
-        // Tools.toggleButton("save", false);
-      }
+      Tools.toggleButton("undo", _step.length > 1 + _initialStep);
       Tools.toggleButton("redo", false);
     }
 
@@ -459,12 +455,7 @@
       _currentStep = _currentStep + 1;
       _clear();
       _restoreStep(step);
-      if (tot === _initialStep) {
-        Tools.toggleButton("undo", false);
-        // Tools.toggleButton("save", false);
-      } else {
-        // Tools.toggleButton("save", true);
-      }
+      Tools.toggleButton("undo", tot !== _initialStep);
       Tools.toggleButton("redo", true);
     }
 
@@ -500,7 +491,6 @@
     }
     _clear();
     _saveStep();
-    _localDbDrawId = false;
     Tools.toggleButton("redo", false);
     // Tools.toggleButton("save", false);
 
