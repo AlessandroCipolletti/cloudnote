@@ -44,8 +44,8 @@
     param.isDesktop = !param.isMobile;
     param.isAppOnline = (document.location.host.toLowerCase() === param.appName);
     param.eventResize = "onorientationchange" in window ? "orientationchange" : "resize";
-    // TODO pixelRatio iphone plus ; if isDesktop, controllare funzionamento viewport, altrimenti 1
-    param.pixelRatio = param.ios ? 2 : window.devicePixelRatio;
+    // TODO pixelRatio iphone plus
+    param.pixelRatio = (param.isMobile ? (param.ios ? 2 : window.devicePixelRatio) : 1);
     param.scale = 1 / param.pixelRatio;
     param.supportTouch = ("ontouchstart" in window);
     param.supportGesture = ("ongesturechange" in window);
