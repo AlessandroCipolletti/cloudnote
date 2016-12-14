@@ -582,6 +582,8 @@
     	return false;
     };
 
+    var image, data, length, Q, i, e, w, me, mw, w2, targetcolor;
+
     return function (context, x, y, fillcolor) {
 
       if (fillcolor[0] === "#") {
@@ -591,25 +593,25 @@
       }
       fillcolor.a = 255;
 
-      var image = context.getImageData(0, 0, _canvasWidth, _canvasHeight);
-      var data = image.data;
-      var length = data.length;
-    	var Q = [];
-    	var i = (MATH.floor(x) + MATH.floor(y) * _canvasWidth) * 4;
-    	var e = i, w = i, me, mw, w2 = _canvasWidth * 4;
-    	var targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
+      image = context.getImageData(0, 0, _canvasWidth, _canvasHeight);
+      data = image.data;
+      length = data.length;
+    	Q = [];
+    	i = (MATH.floor(x) + MATH.floor(y) * _canvasWidth) * 4;
+    	e = w = i;
+      w2 = _canvasWidth * 4;
+    	targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
 
     	if(!pixelCompare(i, targetcolor, fillcolor, data, length, tolerance)) { return false; }
     	Q.push(i);
     	while(Q.length) {
     		i = Q.pop();
-    		if(pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance)) {
-    			e = i;
-    			w = i;
+    		if (pixelCompareAndSet(i, targetcolor, fillcolor, data, length, tolerance)) {
+    			e = w = i;
     			mw = parseInt(i / w2) * w2;  //left bound
     			me = mw + w2;  //right bound
-    			while (mw < w && mw<(w-=4) && pixelCompareAndSet(w, targetcolor, fillcolor, data, length, tolerance)); //go left until edge hit
-    			while (me > e && me>(e+=4) && pixelCompareAndSet(e, targetcolor, fillcolor, data, length, tolerance)); //go right until edge hit
+    			while (mw < w && mw < (w -= 4) && pixelCompareAndSet(w, targetcolor, fillcolor, data, length, tolerance)); //go left until edge hit
+    			while (me > e && me > (e += 4) && pixelCompareAndSet(e, targetcolor, fillcolor, data, length, tolerance)); //go right until edge hit
     			for (var j = w; j < e; j += 4) {
     				if (j - w2 >= 0     && pixelCompare(j - w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j - w2); //queue y-1
     				if (j + w2 < length && pixelCompare(j + w2, targetcolor, fillcolor, data, length, tolerance)) Q.push(j + w2); //queue y+1
