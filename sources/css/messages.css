@@ -9,8 +9,9 @@
 }
 
 .drawith-messages__container {
-  width: auto;
+  width: 45%;
   height: 2.5rem;
+  text-align: center;
   display: block;
   padding: 1.3rem 5.5rem 1rem 5.5rem;
   position: absolute;
@@ -30,6 +31,9 @@
   color: white;
   margin: auto;
   letter-spacing: 0.2rem;
+}
+.drawith__PHONE .drawith-messages__container-text {
+  font-size: 1.4rem;
 }
 .drawith-messages__container-button-ok, .drawith-messages__container-button-cancel {
   border: solid 0.1rem white;
