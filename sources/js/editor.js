@@ -356,11 +356,16 @@
 
   }
 
+  function _onShow () {
+
+    Tools.selectInitialTools();
+    ColorPicker.selectInitialColor();
+
+  }
+
   function show (preloadedDraw) {
 
     Utils.addGlobalStatus("drawith__EDITOR-OPEN");
-    Tools.selectInitialTools();
-    ColorPicker.selectInitialColor();
     _changedAfterDraft = false;
     Tools.toggleButton("undo", false);
     Tools.toggleButton("redo", false);
@@ -379,19 +384,42 @@
         _checkCoord(preloadedDraw.minX, preloadedDraw.minY);
         _checkCoord(preloadedDraw.maxX, preloadedDraw.maxY);
         _saveStep();
-        Utils.fadeInElements(_container);
+        Utils.fadeInElements(_container, _onShow);
         _setDraftInterval(true);
       };
       img.src = preloadedDraw.localPathBig;
     } else {
       _initCanvasDimension();
+
+      // var image = new Image();
+      // image.onload = function () {
+      //   _context.globalAlpha = 1;
+      //   var maxX = MATH.max(image.width, _canvasWidth), maxY = MATH.max(image.height, _canvasHeight), Rimage = image.width / image.height;
+      //   if (maxX > _canvasWidth || maxX / maxY > Rimage) {
+      //     maxX = _canvasWidth;
+      //     maxY = maxX / Rimage;
+      //   }
+      //   if (maxY > _canvasHeight) {
+      //     maxY = _canvasHeight;
+      //     maxX = maxY * Rimage;
+      //   }
+      //   _context.drawImage(image, 0, 0, maxX, maxY);
+      //   _checkCoord(0, 0);
+      //   _checkCoord(maxX, maxY);
+      //   _saveStep();
+      //   Utils.fadeInElements(_container, _onShow);
+      //   _setDraftInterval(true);
+      // };
+      // image.src = "drawings/" + (random(15) + 1) + ".jpg";
+      // // image.src = "drawings/11.jpg";
+
       _localDbDrawId = false;
       _initialStep = 0;
       _step = [];
       _currentStep = 0;
       _saveStep();
       clear();
-      Utils.fadeInElements(_container);
+      Utils.fadeInElements(_container, _onShow);
       _setDraftInterval(true);
     }
 

@@ -17,7 +17,7 @@
 
     e.preventDefault();
     e.stopPropagation();
-    
+
   };
 
   Utils.arrayOrderStringDown = function (a, b) {
@@ -135,40 +135,63 @@
     Param.container.classList.remove(status);
   };
 
-  function _iterable (els, fn) {
-    if (els.length) {
-      for (var i = els.length; i--; )
-        fn(els[i]);
+  function _iterable (els, fn, callbacks) {
+    if (els instanceof Array) {
+      var i = els.length;
+      if (callbacks instanceof Array) {
+        for ( ; i--; ) {
+          fn(els[i], callbacks[i]);
+        }
+      } else {
+        for ( ; i--; ) {
+          fn(els[i], callbacks);
+        }
+      }
     } else {
-      fn(els);
+      fn(els, callbacks);
     }
   }
 
-  function _doFadeIn () {
-    this.classList.add("fadeIn");
-    this.classList.remove("fadeOut");
+  function _doFadeIn (el, callback) {
+
+    el.classList.add("fadeIn");
+    el.classList.remove("fadeOut");
+    if (callback) {
+      callback();
+    }
+
   }
 
-  function _fadeInEl (el) {
+  function _fadeInEl (el, callback) {
+
     if (el) {
       el.classList.remove("displayNone");
-      requestAnimationFrame(_doFadeIn.bind(el));
+      requestAnimationFrame(_doFadeIn.bind({}, el, callback));
     }
+
   }
 
-  function _doFadeOut () {
-    this.classList.add("displayNone");
+  function _doFadeOut (el, callback) {
+
+    el.classList.add("displayNone");
+    if (callback) {
+      callback();
+    }
+    
   }
 
-  function _fadeOutEl (el) {
+  function _fadeOutEl (el, callback) {
+
     if (el) {
       el.classList.add("fadeOut");
       el.classList.remove("fadeIn");
-      setTimeout(_doFadeOut.bind(el), 400);
+      setTimeout(_doFadeOut.bind({}, el, callback), 400);
     }
+
   }
 
   function _toggleFadeEl (el) {
+
     if (el) {
       if (el.classList.contains("displayNone")) {
         _fadeInEl(el);
@@ -176,14 +199,15 @@
         _fadeOutEl(el);
       }
     }
+
   }
 
-  Utils.fadeInElements = function (els) {
-    _iterable(els, _fadeInEl);
+  Utils.fadeInElements = function (els, callbacks) {
+    _iterable(els, _fadeInEl, callbacks);
   };
 
-  Utils.fadeOutElements = function (els) {
-    _iterable(els, _fadeOutEl);
+  Utils.fadeOutElements = function (els, callbacks) {
+    _iterable(els, _fadeOutEl, callbacks);
   };
 
   Utils.toggleFadeElements = function (els) {

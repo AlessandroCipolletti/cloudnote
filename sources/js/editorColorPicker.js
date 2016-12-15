@@ -16,7 +16,10 @@
   var _selectedValue = "random";
 
   function selectInitialColor () {
+
     _selectRandom(false);
+    _colorsContainer.scrollLeft = 0;
+
   }
 
   function _selectColor (target) {
