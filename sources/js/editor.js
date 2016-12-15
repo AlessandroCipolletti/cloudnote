@@ -24,11 +24,10 @@
   var Folder = {};
 
   // TODO bug prima pressione rilevata è più alta del normale
-  // TODO bug bucket with black thin line
 
   var _config = {
     colors: [
-      "#000001", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
+      "#00000b", "#2f2f2f", "#4d4d4d", "#808080", "#a2a2a2", "#c6c6c6", "#ffffff", "#b8f9ff", "#00f6ff", "#007eff",
       "#0022ef", "#000688", "#6d0088", "#ddb8ff", "#b8ccff", "#ffb8e5", "#88004a", "#663300", "#883600", "#a00000",
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
@@ -394,14 +393,15 @@
       // var image = new Image();
       // image.onload = function () {
       //   _context.globalAlpha = 1;
-      //   var maxX = MATH.max(image.width, _canvasWidth), maxY = MATH.max(image.height, _canvasHeight), Rimage = image.width / image.height;
-      //   if (maxX > _canvasWidth || maxX / maxY > Rimage) {
+      //   var maxX, maxY;
+      //   var Rimage = image.width / image.height;
+      //   var Rcanvas = _canvasWidth / _canvasHeight;
+      //   if ((Rimage > 1 && Rcanvas > 1 && Rimage >= Rcanvas) || (Rimage <= 1 && Rcanvas <= 1 && Rimage >= Rcanvas) || (Rimage >= 1 && Rcanvas <= 1)) {
       //     maxX = _canvasWidth;
-      //     maxY = maxX / Rimage;
-      //   }
-      //   if (maxY > _canvasHeight) {
+      //     maxY = round(maxX / Rimage);
+      //   } else {
       //     maxY = _canvasHeight;
-      //     maxX = maxY * Rimage;
+      //     maxX = round(maxY * Rimage);
       //   }
       //   _context.drawImage(image, 0, 0, maxX, maxY);
       //   _checkCoord(0, 0);
