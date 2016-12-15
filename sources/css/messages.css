@@ -21,7 +21,7 @@
   background-position: 1.5rem 50%;
   background-size: 2.5rem 2.5rem;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  transform: translateX(-50%) translateY(-110%);
+  transform: translateX(-50%) translateY(-120%);
   transition: transform 200ms;
   z-index: 500;
 }
