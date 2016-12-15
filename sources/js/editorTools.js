@@ -334,6 +334,8 @@
     _selectVersionButton("marker", 1);
     _selectVersionButton("pencil", 0, true);
     _selectVersionButton("eraser", 2, true);
+    _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
+    _toolsContainer.scrollTop = 0;
     var selectedVersion = false;
     selectedVersion = _pencilVersions.querySelector(".drawith-editor-tools__versions-button-selected");
     if (selectedVersion) {
@@ -466,7 +468,7 @@
   }
 
   function _onRotate (e) {
-    // do some stuff
+    _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
   }
 
   function _setToolsSide () {
@@ -504,7 +506,6 @@
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
       _markerVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-marker");
       _eraserVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-eraser");
-      _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
 
       if (_config.tools.indexOf("undo") >= 0) {
         _undoButton = _toolsContainer.querySelector(".drawith-editor-tools__tool-undo");
@@ -529,7 +530,7 @@
       _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
       _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
       selectInitialTools();
-      //Main.addRotationHandler(_onRotate);
+      Main.addRotationHandler(_onRotate);
 
     });
 
