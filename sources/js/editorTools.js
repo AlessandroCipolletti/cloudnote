@@ -358,6 +358,11 @@
       Editor.Rule.hide();
     }
 
+    _currentPaper = _papers[0];
+    _paperButton.classList.remove("paper-squares", "paper-lines", "paper-white");
+    _paperButton.classList.add("paper-" + _papers[1]);
+    Editor.changePaper(_currentPaper);
+
   }
 
   function _toggleVersions (tool) {
