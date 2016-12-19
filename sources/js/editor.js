@@ -55,7 +55,7 @@
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
   var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
-  var _step = [], _currentStep = 0, _initialStep = 0;
+  var _step = [], _currentStep = 0, _initialStep = 0, _bucketIsWorking = false;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
   var _labels = {
@@ -410,7 +410,7 @@
       //   Utils.fadeInElements(_container, _onShow);
       //   _setDraftInterval(true);
       // };
-      // image.src = "drawings/" + (random(15) + 1) + ".jpg";
+      // image.src = "drawings/" + (random(24) + 1) + ".jpg";
       // // image.src = "drawings/11.jpg";
 
       _localDbDrawId = false;
@@ -614,6 +614,7 @@
 
     return function (context, x, y, fillcolor) {
 
+      _bucketIsWorking = true;
       if (fillcolor[0] === "#") {
         fillcolor = Utils.hexToRgb(fillcolor.substring(1));
       } else {
@@ -648,6 +649,7 @@
     	}
 
       context.putImageData(image, 0, 0);
+      _bucketIsWorking = false;
 
     };
 
@@ -943,6 +945,7 @@
 
     e.preventDefault();
     e.stopPropagation();
+    if (_bucketIsWorking) return;
     var touches = Utils.filterTouchesByTarget(e, [_canvas, _toolCursor]);
     _cursorX = Utils.getEventCoordX(touches, _offsetLeft, true);
     _cursorY = Utils.getEventCoordY(touches, _offsetTop, true);
