@@ -23,6 +23,9 @@
     topnavHeight: 50.5
   };
 
+  // TODO if ios >= 10.* ==> indexedDB
+  // TODO if ios <= 9.*  ==> polyfill indexedDB
+
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];

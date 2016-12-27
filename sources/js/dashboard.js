@@ -424,6 +424,7 @@
         _canvasForClick.height = draw.pxh;
         _imageForClick.src = draw.data.getAttributeNS("http://www.w3.org/1999/xlink", "href");
         _contextForClick.drawImage(_imageForClick, 0, 0, draw.pxw, draw.pxh);
+        // TODO test con context.isPointInPath()
         if (_contextForClick.getImageData(x - draw.pxx, y - draw.pxy, 1, 1).data[3] > 0) {
           selectedDraw = draw;
           break;

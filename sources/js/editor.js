@@ -4,6 +4,8 @@
       http://en.wikipedia.org/wiki/B%C3%A9zier_curve
     Display Flex:
       https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+    Canvas context methods:
+      https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
 
 */
 
@@ -24,6 +26,8 @@
   var Folder = {};
 
   // TODO bug prima pressione rilevata è più alta del normale
+  // TODO editor tool picker
+  // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
 
   var _config = {
     colors: [
@@ -54,7 +58,7 @@
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
-  var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false;
+  var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
   var _step = [], _currentStep = 0, _initialStep = 0, _bucketIsWorking = false;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
@@ -368,6 +372,7 @@
     _changedAfterDraft = false;
     Tools.toggleButton("undo", false);
     Tools.toggleButton("redo", false);
+    _currentTouchSupportForce = _lastTouchSupportForce = _deviceSupportForce = _bucketIsWorking = false;
     if (preloadedDraw) {
       _initCanvasDimension(preloadedDraw.canvasWidth, preloadedDraw.canvasHeight);
       _localDbDrawId = preloadedDraw.id;
@@ -788,7 +793,9 @@
   var _initTouchForce = function (touches) {
 
     var force = touches[0].force || 0;
+    _lastTouchSupportForce = _currentTouchSupportForce;
     _currentTouchSupportForce = !!force;
+    _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
     _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.01), _tool.maxForce);
 
   };
@@ -804,6 +811,10 @@
     }
 
   };
+
+  function _checkForceTouch () {
+    return (_deviceSupportForce === false || _currentTouchSupportForce || (!_lastTouchSupportForce && !_currentTouchSupportForce));
+  }
 
   function _coworkingDrawImage (data) {
     // TODO in certi casi posso trasmettere il disegno intero (data base64) ed aggiungerlo intero all'editor
@@ -961,7 +972,9 @@
       [_cursorX, _cursorY] = Rule.getCoordsNearRule(_cursorX, _cursorY, _offsetLeft, _offsetTop);
     }
     _initTouchForce(touches);
-    __touchStart();
+    if (_checkForceTouch()) {
+      __touchStart();
+    }
 
   }
 
