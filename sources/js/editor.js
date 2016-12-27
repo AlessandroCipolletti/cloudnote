@@ -25,7 +25,6 @@
   var Socket = {};
   var Folder = {};
 
-  // TODO bug prima pressione rilevata è più alta del normale
   // TODO editor tool picker
   // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
 
@@ -792,7 +791,7 @@
 
   var _initTouchForce = function (touches) {
 
-    var force = touches[0].force || 0;
+    var force = (touches[0].force / 2) || 0;
     _lastTouchSupportForce = _currentTouchSupportForce;
     _currentTouchSupportForce = !!force;
     _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
