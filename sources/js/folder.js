@@ -6,7 +6,9 @@
       http://stackoverflow.com/questions/18052225/db-changeversion-doesnt-work-as-expected
     SQLite:
       http://sqlite.org/autoinc.html
-
+    IndexedDB:
+      https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+    
 */
 
 (function (app) {

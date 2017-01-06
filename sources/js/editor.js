@@ -27,6 +27,7 @@
 
   // TODO editor tool picker
   // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
+  // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
 
   var _config = {
     colors: [
@@ -68,7 +69,7 @@
   var _tool = {
     name: "",
     size: 25,
-    maxForce: 1,
+    maxAplha: 1,
     forceFactor: 2,
     speedFactor: 0,
     color: "",
@@ -795,7 +796,8 @@
     _lastTouchSupportForce = _currentTouchSupportForce;
     _currentTouchSupportForce = !!force;
     _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
-    _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.01), _tool.maxForce);
+    // _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
+    _touchForce = _oldTouchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
 
   };
 
@@ -804,7 +806,8 @@
     var force = touches[0].force || 0;
     _oldTouchForce = _touchForce;
     if (force > 0) {
-      _touchForce = MATH.min(MATH.max(round(force, 3), 0.01), _tool.maxForce);
+      // _touchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
+      _touchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
     } else {
       _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
     }

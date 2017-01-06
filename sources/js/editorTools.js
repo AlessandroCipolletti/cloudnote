@@ -24,7 +24,7 @@
       size: 10,
       forceFactor: 1.5,
       speedFactor: 0,
-      maxForce: 1,
+      maxAplha: 1,
       shape: "circle",
       globalCompositeOperation: "source-over",
       cursor: false,
@@ -104,7 +104,7 @@
       size: 2,
       forceFactor: 0,
       speedFactor: 0,
-      maxForce: 0.3,
+      maxAplha: 0.5,
       shape: "particlesRect",
       globalCompositeOperation: "source-over",
       cursor: false,
@@ -115,7 +115,7 @@
         params: {
           size: 2,
           shape: "particlesRect",
-          maxForce: 0.2
+          maxAplha: 0.5
         }
       }, {
         name: "HB",
@@ -124,7 +124,7 @@
         params: {
           size: 2,
           shape: "particlesCircle",
-          maxForce: 0.3
+          maxAplha: 0.5
         }
       }, {
         name : "2B",
@@ -133,7 +133,7 @@
         params: {
           size: 4,
           shape: "particlesCircle",
-          maxForce: 0.3
+          maxAplha: 0.5
         }
       }, {
         name : "XL",
@@ -142,7 +142,7 @@
         params: {
           size: 9,
           shape: "particlesCircle",
-          maxForce: 0.5
+          maxAplha: 0.6
         }
       }]
     },
@@ -151,7 +151,7 @@
       size: 12,
       forceFactor: 3,
       speedFactor: 0.5,
-      maxForce: 1,
+      maxAplha: 1,
       shape: "circle",
       globalCompositeOperation: "destination-out",
       cursor: true,
@@ -216,7 +216,7 @@
       size: 1,
       forceFactor: 1,
       speedFactor: 1,
-      maxForce: 1,
+      maxAplha: 1,
       shape: "",
       globalCompositeOperation: "source-over",
       cursor: false
