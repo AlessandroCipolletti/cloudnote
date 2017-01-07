@@ -3,9 +3,8 @@
   quindi width = width * N ; scale = 1 / N
 
 */
-
 (function (app) {
-
+  "use strict";
   // Dependencies
   var Param = {};
   var Utils = {};

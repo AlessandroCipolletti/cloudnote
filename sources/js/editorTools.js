@@ -1,5 +1,9 @@
-(function (app) {
+/*
+  Documentations:
 
+*/
+(function (app) {
+  "use strict";
   // Dependencies
   var Param = {};
   var Utils = {};
@@ -15,7 +19,7 @@
 
   // TODO sub tools di tipo slider
 
-  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {}, _markerVersions = {};
+  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {}, _markerVersions = {}, _eraserVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false, _currentScroll = 0, _toolsMaxScroll = 0;
   var _toolsConfig = {
@@ -115,7 +119,7 @@
         params: {
           size: 2,
           shape: "particlesRect",
-          maxAplha: 0.5
+          maxAplha: 0.4
         }
       }, {
         name: "HB",
@@ -124,7 +128,7 @@
         params: {
           size: 2,
           shape: "particlesCircle",
-          maxAplha: 0.5
+          maxAplha: 0.4
         }
       }, {
         name : "2B",
@@ -133,7 +137,7 @@
         params: {
           size: 4,
           shape: "particlesCircle",
-          maxAplha: 0.5
+          maxAplha: 0.4
         }
       }, {
         name : "XL",
@@ -142,7 +146,7 @@
         params: {
           size: 9,
           shape: "particlesCircle",
-          maxAplha: 0.6
+          maxAplha: 0.5
         }
       }]
     },

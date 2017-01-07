@@ -1,5 +1,9 @@
-(function (app) {
+/*
+  Documentations:
 
+*/
+(function (app) {
+  "use strict";
   var _config = {
     testDebug: true,
     version: 1.0
@@ -48,7 +52,7 @@
     attributes.push("maximum-scale=" + app.Param.scale);
     attributes.push("user-scalable=no");
 
-    viewport = document.createElement("meta");
+    var viewport = document.createElement("meta");
     viewport.setAttribute("name", "viewport");
     viewport.setAttribute("content", attributes.join(","));
     document.head.appendChild(viewport);

@@ -1,5 +1,9 @@
-(function (app) {
+/*
+  Documentations:
 
+*/
+(function (app) {
+  "use strict";
   // Dependencies
   var Param = {};
   var Utils = {};

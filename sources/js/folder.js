@@ -8,11 +8,10 @@
       http://sqlite.org/autoinc.html
     IndexedDB:
       https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
-    
+
 */
-
 (function (app) {
-
+  "use strict";
   // Dependencies
   var Param = {};
   var Utils = {};

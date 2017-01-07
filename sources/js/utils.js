@@ -1,5 +1,9 @@
-(function (app) {
+/*
+  Documentations:
 
+*/
+(function (app) {
+  "use strict";
   // Dependencies
   var Param = {};
   var Utils = {};
@@ -177,7 +181,7 @@
     if (callback) {
       callback();
     }
-    
+
   }
 
   function _fadeOutEl (el, callback) {

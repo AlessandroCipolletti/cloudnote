@@ -1,10 +1,14 @@
-(function (app) {
+/*
+  Documentations:
 
+*/
+(function (app) {
+  "use strict";
   // Dependencies
   var Utils = {};
   var Messages = {};
 
-  _config = {
+  var _config = {
     px4mm: 1,
     gpsRefreshTime: 5000,
     gpsTimeoutTime: 25000,
@@ -171,7 +175,7 @@
 
     if (!callback) return;
     _getPosition(forceRefresh, function (position) {
-      debugger;
+      // debugger;
       _lastPosition = position;
       console.log("GPS - lat:", position.coords.latitude, "lon:", position.coords.longitude);
       var px = _gps2px(position);

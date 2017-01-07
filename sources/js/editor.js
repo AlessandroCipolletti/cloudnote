@@ -8,9 +8,8 @@
       https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
 
 */
-
 (function (app) {
-
+  "use strict";
   // Dependencies
   var MATH = Math;
   var Param = {};
@@ -28,6 +27,7 @@
   // TODO editor tool picker
   // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
   // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
+  // TODO gomma con alpha su pressione, invece che dimensione
 
   var _config = {
     colors: [
