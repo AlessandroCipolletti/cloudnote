@@ -382,6 +382,7 @@
       _currentStep = 0;
       _saveStep();
       var img = new Image();
+      img.crossOrigin = "Anonymous";
       img.onload = function () {
         _context.globalAlpha = 1;
         _context.drawImage(img, preloadedDraw.minX, preloadedDraw.minY);
