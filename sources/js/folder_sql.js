@@ -27,11 +27,10 @@
   // TODO if ios >= 10.* ==> indexedDB
   // TODO if ios <= 9.*  ==> polyfill indexedDB
 
-  var _dbName = "drawith_db", _dbVersion = 1.0, /* _drawingsStore = {}, */ _db = {};
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
-  var _dbJustCreated = false, _currentLoadedDrawings = -1;
+  var _db = {}, _dbJustCreated = false, _currentLoadedDrawings = -1;
   var _labels = {
     select: "Select",
     done: "Done",
@@ -273,36 +272,22 @@
 
   function _loadContent (force, callback) {
 
-    // _db.transaction(function (tx) {
-    //   tx.executeSql("SELECT * FROM Drawings ORDER BY updateTimestamp DESC", [], function (tx, result) {
-    //     if (force || result.rows.length !== _currentLoadedDrawings.length) {
-    //       _currentLoadedDrawings = _rows2Array(result.rows);
-    //       _drawingsContainer.innerHTML = "";
-    //       Main.loadTemplate("folderContent", {
-    //         drawings: _currentLoadedDrawings
-    //       }, _drawingsContainer, function (templateDom) {
-    //         _drawingsContainer.scrollTop = 0;
-    //         callback();
-    //       });
-    //     } else {
-    //       callback();
-    //     }
-    //   });
-    // });
-
-    var tx = _db.transaction("Drawings", "readwrite");
-    var store = tx.objectStore("Drawings");
-    // Get everything in the store;
-    var keyRange = IDBKeyRange.lowerBound(0);
-    var cursorRequest = store.openCursor(keyRange);
-    cursorRequest.onsuccess = function(e) {
-      var result = e.target.result;
-      debugger;
-      renderTodo(result.value);
-      result.continue();
-    };
-
-    debugger;
+    _db.transaction(function (tx) {
+      tx.executeSql("SELECT * FROM Drawings ORDER BY updateTimestamp DESC", [], function (tx, result) {
+        if (force || result.rows.length !== _currentLoadedDrawings.length) {
+          _currentLoadedDrawings = _rows2Array(result.rows);
+          _drawingsContainer.innerHTML = "";
+          Main.loadTemplate("folderContent", {
+            drawings: _currentLoadedDrawings
+          }, _drawingsContainer, function (templateDom) {
+            _drawingsContainer.scrollTop = 0;
+            callback();
+          });
+        } else {
+          callback();
+        }
+      });
+    });
 
   }
 
@@ -360,83 +345,57 @@
 
   }
 
-  function _onDbError (e) {
-    console.log("Folder DB error: "+ JSON.stringify(e));
-  }
-
   function _initDb () {
 
-    var dbRequest = indexedDB.open(_dbName, _dbVersion);
-    dbRequest.onsuccess = function (e) {
-      // db già esistente e della stessa versione
-      debugger;
-      _db = e.target.result;
-      _db.onerror = _onDbError;
-    };
-    dbRequest.onupgradeneeded = function (e) {
-      // db nuovo o nuova versione
-      _db = e.target.result;
-      _db.onerror = _onDbError;
-      if (_dbVersion === 1.0) {
-        _dbJustCreated = true;
-      }
-      /*_*/var drawingsStore = _db.createObjectStore("Drawings", { keyPath: "id", autoIncrement: true });
-      /*_*/drawingsStore.createIndex("artistId", "artistId", { unique: false });
-      /*_*/drawingsStore.createIndex("folderId", "folderId", { unique: false });
-    };
-    dbRequest.onfailure = dbRequest.onerror = _onDbError;
+    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.90 * 1024 * 1024, function (db) {
+      //callback only for first creation
+      _dbJustCreated = true;
+    });
 
-
-
-    // _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.90 * 1024 * 1024, function (db) {
-    //   //callback only for first creation
-    //   _dbJustCreated = true;
-    // });
-    //
-    // _db.transaction(function (tx) {
-    //   tx.executeSql(
-    //     "CREATE TABLE IF NOT EXISTS Drawings (" +
-    //       "id INTEGER PRIMARY KEY, " +
-    //       "title TEXT, " +
-    //       "artistId INTEGER, " +
-    //       "artistName TEXT, " +
-    //       "state INTEGER, " +   // 1 = draft, 2 = saved, 3 = public
-    //       "folderId INTEGER DEFAULT 0, " +    // todo in the future
-    //       "createTimestamp DATETIME, " +
-    //       "updateTimestamp DATETIME, " +
-    //       "gpsCoordinates TEXT, " +
-    //       "localPathSmall TEXT, " +
-    //       "localPathBig TEXT, " +
-    //       "minX INTEGER, " +
-    //       "maxX INTEGER, " +
-    //       "minY INTEGER, " +
-    //       "maxY INTEGER, " +
-    //       "width INTEGER, " +
-    //       "height INTEGER, " +
-    //       "canvasWidth INTEGER, " +
-    //       "canvasHeight INTEGER, " +
-    //       "mainColor TEXT, " +
-    //       "dashboardX INTEGER, " +
-    //       "dashboardY INTEGER" +
-    //     ");",
-    //     [],
-    //     // Utils.emptyFN
-    //     function (tx, result) { // TODO remove this
-    //       console.log("create ok");
-    //       // var now = new Date().getTime();
-    //       // tx.executeSql(
-    //       //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-    //       //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
-    //       //   [now, now], function (tx, result) {
-    //       //     console.log("insert ok");
-    //       //   }
-    //       // );
-    //       // tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
-    //       //   console.log("delete ok");
-    //       // });
-    //     }
-    //   );
-    // });
+    _db.transaction(function (tx) {
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS Drawings (" +
+          "id INTEGER PRIMARY KEY, " +
+          "title TEXT, " +
+          "artistId INTEGER, " +
+          "artistName TEXT, " +
+          "state INTEGER, " +   // 1 = draft, 2 = saved, 3 = public
+          "folderId INTEGER DEFAULT 0, " +    // todo in the future
+          "createTimestamp DATETIME, " +
+          "updateTimestamp DATETIME, " +
+          "gpsCoordinates TEXT, " +
+          "localPathSmall TEXT, " +
+          "localPathBig TEXT, " +
+          "minX INTEGER, " +
+          "maxX INTEGER, " +
+          "minY INTEGER, " +
+          "maxY INTEGER, " +
+          "width INTEGER, " +
+          "height INTEGER, " +
+          "canvasWidth INTEGER, " +
+          "canvasHeight INTEGER, " +
+          "mainColor TEXT, " +
+          "dashboardX INTEGER, " +
+          "dashboardY INTEGER" +
+        ");",
+        [],
+        // Utils.emptyFN
+        function (tx, result) { // TODO remove this
+          console.log("create ok");
+          // var now = new Date().getTime();
+          // tx.executeSql(
+          //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
+          //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
+          //   [now, now], function (tx, result) {
+          //     console.log("insert ok");
+          //   }
+          // );
+          // tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
+          //   console.log("delete ok");
+          // });
+        }
+      );
+    });
 
   }
 

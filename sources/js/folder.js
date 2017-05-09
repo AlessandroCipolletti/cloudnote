@@ -9,6 +9,15 @@
     IndexedDB:
       https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
 
+      // find one row by index value
+      var index = objectStore.index("indexName");
+      index.get("indexValue").onsuccess = function(e) {
+        if (e.target.result) {
+          alert("result id" + e.target.result.id);
+          e.target.result.continue();
+        }
+      };
+
 */
 (function (app) {
   "use strict";
@@ -27,10 +36,11 @@
   // TODO if ios >= 10.* ==> indexedDB
   // TODO if ios <= 9.*  ==> polyfill indexedDB
 
+  var _dbName = "drawith_db", _dbVersion = 1.0, /* _drawingsStore = {}, */ _db = {}, _dbInitialized = false;
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
-  var _db = {}, _dbJustCreated = false, _currentLoadedDrawings = -1;
+  var _dbJustCreated = false, _currentLoadedDrawings = -1;
   var _labels = {
     select: "Select",
     done: "Done",
@@ -134,14 +144,29 @@
   function _removeDrawPromise (localDbId) {
 
     return new Promise (function (resolve, reject) {
-      _db.transaction(function (tx) {
-        tx.executeSql("SELECT * FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
-          // TODO delete local files
-          tx.executeSql("DELETE FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
-            resolve(true);
-          });
-        });
-      });
+
+
+      var trans = _db.transaction(["todo"], "readwrite");
+      var store = trans.objectStore("todo");
+      var request = store.delete(localDbId);
+      request.onsuccess = function (e) {
+        console.log("delete succesfull", e);
+      };
+      request.onerror = function (e) {
+        console.log("delete error", e);
+      };
+
+
+      // _db.transaction(function (tx) {
+      //   tx.executeSql("SELECT * FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
+      //     // TODO delete local files
+      //     tx.executeSql("DELETE FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
+      //       resolve(true);
+      //     });
+      //   });
+      // });
+
+
     });
 
   }
@@ -200,6 +225,15 @@
 
   }
 
+  function _deleteSelectedDrawingsCallback () {
+
+    if (_currentLoadedDrawings.length === 0) {
+      _doneButtonClick();
+      _selectButton.classList.add("disabled");
+    }
+
+  }
+
   function _deleteSelectedDrawings () {
 
     var currentIds = _getSelectedIds();
@@ -208,12 +242,7 @@
     for (var id in currentIds) {
       promises.push(_removeDrawPromise(currentIds[id]));
     }
-    Promise.all(promises).then(_loadContent.bind({}, false, function () {
-      if (_currentLoadedDrawings.length === 0) {
-        _doneButtonClick();
-        _selectButton.classList.add("disabled");
-      }
-    }));
+    Promise.all(promises).then(_loadContent.bind({}, false, _deleteSelectedDrawingsCallback));
 
   }
 
@@ -257,37 +286,41 @@
 
   }
 
-  function _rows2Array (rows) {
+  function _renderContent (callback) {
 
-    var result = [];
-    for (var i = 0; i < rows.length; i++) {
-      result.push(rows.item(i));
-    }
-    for (i = result.length; i--; ) {
-      result[i].draft = (result[i].state === 1);
-    }
-    return result;
+    _drawingsContainer.innerHTML = "";
+    Main.loadTemplate("folderContent", {
+      drawings: _currentLoadedDrawings
+    }, _drawingsContainer, function (templateDom) {
+      _drawingsContainer.scrollTop = 0;
+      callback();
+    });
 
   }
 
   function _loadContent (force, callback) {
 
-    _db.transaction(function (tx) {
-      tx.executeSql("SELECT * FROM Drawings ORDER BY updateTimestamp DESC", [], function (tx, result) {
-        if (force || result.rows.length !== _currentLoadedDrawings.length) {
-          _currentLoadedDrawings = _rows2Array(result.rows);
-          _drawingsContainer.innerHTML = "";
-          Main.loadTemplate("folderContent", {
-            drawings: _currentLoadedDrawings
-          }, _drawingsContainer, function (templateDom) {
-            _drawingsContainer.scrollTop = 0;
-            callback();
-          });
+    var tx = _db.transaction("Drawings", "readwrite");
+    var store = tx.objectStore("Drawings");
+    // Get everything in the store;
+    var keyRange = IDBKeyRange.lowerBound(0);
+    var cursorRequest = store.openCursor(keyRange);
+    var results = [];
+    cursorRequest.onsuccess = function (e) {
+      var row = e.target.result;
+      if (row) {
+        results.push(row.value);
+        row.continue();
+      } else {
+        if (force || results.length !== _currentLoadedDrawings.length) {
+          _currentLoadedDrawings = results;
+          results = undefined;
+          _renderContent(callback);
         } else {
           callback();
         }
-      });
-    });
+      }
+    };
 
   }
 
@@ -345,57 +378,72 @@
 
   }
 
-  function _initDb () {
+  function _onDbError (e) {
+    console.log("Folder DB error: "+ JSON.stringify(e));
+  }
 
-    _db = openDatabase("drawith_db", "1.0", "Drawith drawings local db", 4.90 * 1024 * 1024, function (db) {
-      //callback only for first creation
-      _dbJustCreated = true;
-    });
+  function ___insertFooData (loadContent) {
 
-    _db.transaction(function (tx) {
-      tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS Drawings (" +
-          "id INTEGER PRIMARY KEY, " +
-          "title TEXT, " +
-          "artistId INTEGER, " +
-          "artistName TEXT, " +
-          "state INTEGER, " +   // 1 = draft, 2 = saved, 3 = public
-          "folderId INTEGER DEFAULT 0, " +    // todo in the future
-          "createTimestamp DATETIME, " +
-          "updateTimestamp DATETIME, " +
-          "gpsCoordinates TEXT, " +
-          "localPathSmall TEXT, " +
-          "localPathBig TEXT, " +
-          "minX INTEGER, " +
-          "maxX INTEGER, " +
-          "minY INTEGER, " +
-          "maxY INTEGER, " +
-          "width INTEGER, " +
-          "height INTEGER, " +
-          "canvasWidth INTEGER, " +
-          "canvasHeight INTEGER, " +
-          "mainColor TEXT, " +
-          "dashboardX INTEGER, " +
-          "dashboardY INTEGER" +
-        ");",
-        [],
-        // Utils.emptyFN
-        function (tx, result) { // TODO remove this
-          console.log("create ok");
-          // var now = new Date().getTime();
-          // tx.executeSql(
-          //   "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height) " +
-          //   "VALUES (2, ?, ?, '', 'http://drawith.me/img/draw.png', 100, 100, 1180, 708, 1080, 608)",
-          //   [now, now], function (tx, result) {
-          //     console.log("insert ok");
-          //   }
-          // );
-          // tx.executeSql("DELETE FROM Drawings", [], function (tx, result) {
-          //   console.log("delete ok");
-          // });
+    var trans = _db.transaction(["Drawings"], "readwrite");
+    var store = trans.objectStore("Drawings");
+    var data = {
+      state: 2,
+      createTimestamp: new Date().getTime(),
+      updateTimestamp: new Date().getTime(),
+      localPathSmall: "",
+      localPathBig: "http://drawith.me/img/draw.png",
+      minX: 100,
+      minY: 100,
+      maxX: 1180,
+      maxY: 708,
+      width: 1080,
+      height: 608
+    };
+    var request = store.put(data);
+    request.onsuccess = function (e) {
+      console.log("insert ok", e);
+      if (loadContent) {
+        _loadContent();
+      }
+    };
+    request.onerror = function (e) {
+      console.log("insert error", e);
+    };
+
+  }
+
+  function _initDb (loadContent) {
+
+    var dbRequest = indexedDB.open(_dbName, _dbVersion);
+    dbRequest.onsuccess = function (e) {  // db già esistente e della stessa versione
+      console.log("indexDb: init - onsuccess");
+      _db = e.target.result;
+      _db.onerror = _onDbError;
+      _dbInitialized = true;
+      // ___insertFooData(loadContent);
+      if (loadContent) {
+        show(false, true);
+      }
+    };
+    dbRequest.onupgradeneeded = function (e) {  // db nuovo o nuova versione
+      console.log("IndexDb: init - onupgradeneeded");
+      _db = e.target.result;
+      _db.onerror = _onDbError;
+      if (_dbVersion === 1.0) {
+        _dbJustCreated = true;
+      }
+      var drawingsStore = _db.createObjectStore("Drawings", { keyPath: "id", autoIncrement: true });
+      drawingsStore.createIndex("artistId", "artistId", { unique: false });
+      drawingsStore.createIndex("folderId", "folderId", { unique: false });
+      drawingsStore.transaction.oncomplete = function (e) {
+        _dbInitialized = true;
+        // ___insertFooData(loadContent);
+        if (loadContent) {
+          show(false, true);
         }
-      );
-    });
+      }
+    };
+    dbRequest.onfailure = dbRequest.onerror = _onDbError;
 
   }
 
@@ -427,7 +475,7 @@
       _drawingsContainer.addEventListener(Param.eventEnd, _onTouchEnd, true);
       _toolsMaxScroll = _drawingsContainer.scrollHeight - _drawingsContainer.clientHeight;
       // Main.addRotationHandler(_onRotate);
-      show(false, true);
+      _initDb(true);
 
     });
 
@@ -442,7 +490,7 @@
     Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _config.topnavHeight *= Param.pixelRatio;
-    _initDb();
+    // _initDb();
     _initDom();
 
   }
