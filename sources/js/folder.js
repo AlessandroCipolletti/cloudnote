@@ -8,6 +8,7 @@
       http://sqlite.org/autoinc.html
     IndexedDB:
       https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+      https://www.codeproject.com/Articles/744986/How-to-do-some-magic-with-indexedDB
 
       // find one row by index value
       var index = objectStore.index("indexName");
@@ -33,10 +34,7 @@
     topnavHeight: 50.5
   };
 
-  // TODO if ios >= 10.* ==> indexedDB
-  // TODO if ios <= 9.*  ==> polyfill indexedDB
-
-  var _dbName = "drawith_db", _dbVersion = 1.0, /* _drawingsStore = {}, */ _db = {}, _dbInitialized = false;
+  var _dbName = "drawith_db", _dbVersion = 1.0, /* _drawingsStore = {}, */ _db = {}, _dbInitialized = false, _polyfillPromise = {};
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
@@ -346,33 +344,33 @@
     console.log("Folder DB error: "+ JSON.stringify(e));
   }
 
-  function ___insertFooData (loadContent) {
-
-    var data = {
-      state: 2,
-      createTimestamp: new Date().getTime(),
-      updateTimestamp: new Date().getTime(),
-      localPathSmall: "",
-      localPathBig: "http://drawith.me/img/draw.png",
-      minX: 100,
-      minY: 100,
-      maxX: 1180,
-      maxY: 708,
-      width: 1080,
-      height: 608
-    };
-    var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").put(data);
-    request.onsuccess = function (e) {
-      console.log("insert ok", e);
-      if (loadContent) {
-        _loadContent();
-      }
-    };
-    request.onerror = function (e) {
-      console.log("insert error", e);
-    };
-
-  }
+  // function ___insertFooData (loadContent) {
+  //
+  //   var data = {
+  //     state: 2,
+  //     createTimestamp: new Date().getTime(),
+  //     updateTimestamp: new Date().getTime(),
+  //     localPathSmall: "",
+  //     localPathBig: "http://drawith.me/img/draw.png",
+  //     minX: 100,
+  //     minY: 100,
+  //     maxX: 1180,
+  //     maxY: 708,
+  //     width: 1080,
+  //     height: 608
+  //   };
+  //   var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").put(data);
+  //   request.onsuccess = function (e) {
+  //     console.log("insert ok", e);
+  //     if (loadContent) {
+  //       _loadContent();
+  //     }
+  //   };
+  //   request.onerror = function (e) {
+  //     console.log("insert error", e);
+  //   };
+  //
+  // }
 
   function _initDb (loadContent) {
 
@@ -437,8 +435,36 @@
       _drawingsContainer.addEventListener(Param.eventEnd, _onTouchEnd, true);
       _toolsMaxScroll = _drawingsContainer.scrollHeight - _drawingsContainer.clientHeight;
       // Main.addRotationHandler(_onRotate);
-      _initDb(true);
+      _polyfillPromise.then(function (result) {
+        if (result) {
+          _initDb(true);
+        }
+      });
 
+    });
+
+  }
+
+  function _loadPolyfill () {
+
+    return new Promise (function (resolve, reject) {
+      if (!window.indexedDB) {
+        // window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        // window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || {READ_WRITE: "readwrite"};
+        // window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+        var js = document.createElement("script");
+        js.src = "polyfill/indexeddb-shim3.js";
+        js.onload = function() {
+          resolve(true);
+        };
+        js.onerror = function() {
+          console.log("Failed to load script polyfill indexedDB");
+          resolve(false);
+        };
+        document.head.appendChild(js);
+      } else {
+        resolve(true);
+      }
     });
 
   }
@@ -450,9 +476,10 @@
     Main = app.Main;
     Editor = app.Editor;
     Messages = app.Messages;
+    _polyfillPromise = _loadPolyfill();
     _config = Utils.setConfig(params, _config);
     _config.topnavHeight *= Param.pixelRatio;
-    // _initDb();
+    // _initDb(false);
     _initDom();
 
   }
