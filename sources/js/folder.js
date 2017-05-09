@@ -76,68 +76,54 @@
 
   }
 
-  function _updateDraw (draw, draft, aSync, callback) {
+  function _updateDraw (draw, draft, callback) {
     // TODO eliminare vecchi file locali con cordova
     // TODO aggiungere nuovi file locali con cordova
-    if (aSync) {
-      _db.transaction(function (tx) {
-        tx.executeSql(
-          "UPDATE Drawings " +
-          "SET state = ?, updateTimestamp = ?, localPathSmall = '', localPathBig = ?, minX = ?, minY = ?, maxX = ?, maxY = ?, width = ?, height = ? " +
-          "WHERE id = ?",
-          [(draft ? 1 : 2), new Date().getTime(), draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.localDbId],
-          function (tx, result) {
-            callback(draw.localDbId);
-          }
-        );
-      });
-    } else {
-      new Promise (function (resolve, reject) {
-        _db.transaction(function (tx) {
-          tx.executeSql(
-            "UPDATE Drawings " +
-            "SET state = ?, updateTimestamp = ?, localPathSmall = '', localPathBig = ?, minX = ?, minY = ?, maxX = ?, maxY = ?, width = ?, height = ? " +
-            "WHERE id = ?",
-            [(draft ? 1 : 2), new Date().getTime(), draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.localDbId],
-            function (tx, result) {
-              resolve(draw.localDbId);
-            }
-          );
-        });
-      }).then(callback);
-    }
+    var store = _db.transaction("Drawings", "readwrite").objectStore("Drawings");
+    var request = store.get(draw.localDbId);
+    request.onsuccess = function (e) {
+      var row = event.target.result;
+      row.state = (draft ? 1 : 2);
+      row.draft = draft;
+      row.updateTimestamp = new Date().getTime();
+      row.localPathSmall = "";
+      row.localPathBig = draw.base64;
+      row.minX = draw.minX;
+      row.minY = draw.minY;
+      row.maxX = draw.maxX;
+      row.maxY = draw.maxY;
+      row.width = draw.w;
+      row.height = row.h;
+      var requestUpdate = store.put(row);
+      requestUpdate.onsuccess = function (e) {
+        callback(draw.localDbId);
+      };
+    };
 
   }
 
-  function _addDraw (draw, draft, aSync, callback) {
+  function _addDraw (draw, draft, callback) {
     // TODO aggiungere nuovi file locali con cordova
-    if (aSync) {
-      _db.transaction(function (tx) {
-        var now = new Date().getTime();
-        tx.executeSql(
-          "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height, canvasWidth, canvasHeight) " +
-          "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.canvasWidth, draw.canvasHeight],
-          function (tx, result) {
-            callback(result.insertId);
-          }
-        );
-      });
-    } else {
-      new Promise (function (resolve, reject) {
-        _db.transaction(function (tx) {
-          var now = new Date().getTime();
-          tx.executeSql(
-            "INSERT INTO Drawings (state, createTimestamp, updateTimestamp, localPathSmall, localPathBig, minX, minY, maxX, maxY, width, height, canvasWidth, canvasHeight) " +
-            "VALUES (?, ?, ?, '', ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [(draft ? 1 : 2), now, now, draw.base64, draw.minX, draw.minY, draw.maxX, draw.maxY, draw.w, draw.h, draw.canvasWidth, draw.canvasHeight],
-            function (tx, result) {
-              resolve(result.insertId);
-            }
-          );
-        });
-      }).then(callback);
-    }
+    var now = new Date().getTime();
+    var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").put({
+      state: (draft ? 1 : 2),
+      draft: draft,
+      createTimestamp: now,
+      updateTimestamp: now,
+      localPathSmall: "",
+      localPathBig: draw.base64,
+      minX: draw.minX,
+      minY: draw.minX,
+      maxX: draw.minX,
+      maxY: draw.minX,
+      width: draw.w,
+      height: draw.h,
+      canvasWidth: draw.canvasWidth,
+      canvasHeight: draw.canvasHeight
+    });
+    request.onsuccess = function (e) {
+      callback(e.target.result);
+    };
 
   }
 
@@ -155,20 +141,19 @@
   function saveDraw (draw, callback) {
 
     if (draw.localDbId) {
-      _updateDraw(draw, false, false, callback);
+      _updateDraw(draw, false, callback);
     } else {
-      _addDraw(draw, false, false, callback);
+      _addDraw(draw, false, callback);
     }
 
   }
 
   function saveDraft (draw, callback) {
 
-    console.log("draft");
     if (draw.localDbId) {
-      _updateDraw(draw, true, true, callback);
+      _updateDraw(draw, true, callback);
     } else {
-      _addDraw(draw, true, true, callback);
+      _addDraw(draw, true, callback);
     }
 
   }
@@ -283,7 +268,7 @@
 
     // Get everything in the store;
     var keyRange = IDBKeyRange.lowerBound(0);
-    var cursorRequest = _db.transaction("Drawings", "readwrite").objectStore("Drawings").openCursor(keyRange);
+    var cursorRequest = _db.transaction("Drawings", "readwrite").objectStore("Drawings").openCursor(keyRange, "prev");
     var results = [];
     cursorRequest.onsuccess = function (e) {
       var row = e.target.result;
@@ -363,8 +348,6 @@
 
   function ___insertFooData (loadContent) {
 
-    var trans = _db.transaction(["Drawings"], "readwrite");
-    var store = trans.objectStore("Drawings");
     var data = {
       state: 2,
       createTimestamp: new Date().getTime(),
@@ -378,7 +361,7 @@
       width: 1080,
       height: 608
     };
-    var request = store.put(data);
+    var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").put(data);
     request.onsuccess = function (e) {
       console.log("insert ok", e);
       if (loadContent) {
