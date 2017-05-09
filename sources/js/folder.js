@@ -144,29 +144,10 @@
   function _removeDrawPromise (localDbId) {
 
     return new Promise (function (resolve, reject) {
-
-
-      var trans = _db.transaction(["todo"], "readwrite");
-      var store = trans.objectStore("todo");
-      var request = store.delete(localDbId);
+      var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").delete(localDbId);
       request.onsuccess = function (e) {
-        console.log("delete succesfull", e);
+        resolve(true);
       };
-      request.onerror = function (e) {
-        console.log("delete error", e);
-      };
-
-
-      // _db.transaction(function (tx) {
-      //   tx.executeSql("SELECT * FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
-      //     // TODO delete local files
-      //     tx.executeSql("DELETE FROM Drawings WHERE id = ?", [localDbId], function (tx, result) {
-      //       resolve(true);
-      //     });
-      //   });
-      // });
-
-
     });
 
   }
@@ -300,11 +281,9 @@
 
   function _loadContent (force, callback) {
 
-    var tx = _db.transaction("Drawings", "readwrite");
-    var store = tx.objectStore("Drawings");
     // Get everything in the store;
     var keyRange = IDBKeyRange.lowerBound(0);
-    var cursorRequest = store.openCursor(keyRange);
+    var cursorRequest = _db.transaction("Drawings", "readwrite").objectStore("Drawings").openCursor(keyRange);
     var results = [];
     cursorRequest.onsuccess = function (e) {
       var row = e.target.result;
