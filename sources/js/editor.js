@@ -7,6 +7,29 @@
     Canvas context methods:
       https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
 
+
+    const savePic = (dataUrl) => {
+      const imgData = atob(dataUrl.split(',')[1]);
+      const arrayBuffer = new ArrayBuffer(imgData.length);
+      const view = new Uint8Array(arrayBuffer);
+
+      for (var i=0; i<imgData.length; i++) {
+        view[i] = imgData.charCodeAt(i) & 0xff;
+      }
+      let blob;
+      try {
+        blob = new Blob([arrayBuffer], {type: 'application/octet-stream'});
+      } catch (e) {
+        const bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
+        bb.append(arrayBuffer);
+        blob = bb.getBlob('application/octet-stream');
+      }
+
+      var url = (window.webkitURL || window.URL).createObjectURL(blob);
+      console.log(url);
+      location.href = url; // <-- Download!
+    }
+
 */
 (function (app) {
   "use strict";
@@ -36,7 +59,7 @@
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
-    tools: ["marker", "pencil", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
+    tools: ["marker", "pencil", "brush", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
     toolsWidth: 50,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
@@ -75,6 +98,7 @@
     color: "",
     randomColor: true,
     shape: "circle",
+    image: {},
     globalCompositeOperation: "",
     cursor: false
   };
@@ -709,7 +733,13 @@
 
   }
 
-  function _image (context, x, y) {
+  function _image (context, x, y, alpha, color, size, image, rotation) {
+
+    // TODO size by forceFactor
+    // TODO ruotare in base alla direzione
+    // TODO colore
+    context.globalAlpha = alpha;
+    context.drawImage(image, x - size/2, y - size/2, size, size);
 
   }
 
@@ -880,6 +910,8 @@
       _particlesRect(context, x, y, params.force, tool.color, tool.size);
     } else if (tool.shape === "particlesCircle") {
       _particlesRect(context, x, y, params.force, tool.color, tool.size);
+    } else if (tool.shape === "image") {
+      _image(context, x, y, params.force, tool.color, tool.size, tool.image, 0);
     }
     if (tool.name === "eraser") {
       _oldX = x;

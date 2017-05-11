@@ -19,7 +19,7 @@
 
   // TODO sub tools di tipo slider
 
-  var _toolsContainer = {}, _versionsContainer = {}, _pencilVersions = {}, _markerVersions = {}, _eraserVersions = {};
+  var _toolsContainer = {}, _versionsContainer = {}, _markerVersions = {}, _pencilVersions = {}, _brushVersions = {}, _eraserVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false, _currentScroll = 0, _toolsMaxScroll = 0;
   var _toolsConfig = {
@@ -30,6 +30,7 @@
       speedFactor: 0,
       maxAplha: 1,
       shape: "circle",
+      image: {},
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -110,6 +111,7 @@
       speedFactor: 0,
       maxAplha: 0.5,
       shape: "particlesRect",
+      image: {},
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -150,6 +152,50 @@
         }
       }]
     },
+
+
+    brush: {
+      name: "brush",
+      size: 100,
+      forceFactor: 0,
+      speedFactor: 0,
+      maxAplha: 0.5,
+      shape: "image",
+      image: {},
+      globalCompositeOperation: "source-over",
+      cursor: false,
+      versions: [{
+        name : "1",
+        button: true,
+        slider: false,
+        params: {
+          image: "1.png"
+        }
+      }, {
+        name: "2",
+        button: true,
+        slider: false,
+        params: {
+          image: "2.png"
+        }
+      }, {
+        name : "3",
+        button: true,
+        slider: false,
+        params: {
+          image: "3.png"
+        }
+      }, {
+        name : "4",
+        button: true,
+        slider: false,
+        params: {
+          image: "4.png"
+        }
+      }]
+    },
+
+
     eraser: {
       name: "eraser",
       size: 12,
@@ -157,6 +203,7 @@
       speedFactor: 0.5,
       maxAplha: 1,
       shape: "circle",
+      image: {},
       globalCompositeOperation: "destination-out",
       cursor: true,
       versions: [
@@ -222,6 +269,7 @@
       speedFactor: 1,
       maxAplha: 1,
       shape: "",
+      image: {},
       globalCompositeOperation: "source-over",
       cursor: false
     }
@@ -241,6 +289,14 @@
       } else {
         _selectTool("pencil");
         Editor.setTool(_toolsConfig.pencil);
+      }
+    },
+    brush: function (selected) {
+      if (selected) {
+        _toggleVersions("brush");
+      } else {
+        _selectTool("brush");
+        Editor.setTool(_toolsConfig.brush);
       }
     },
     eraser: function (selected) {
@@ -336,32 +392,26 @@
 
     _selectTool("marker");
     _selectVersionButton("marker", 1);
-    _selectVersionButton("pencil", 0, true);
+    _selectVersionButton("pencil", 0, true);3
+    _selectVersionButton("brush", 0, true);
     _selectVersionButton("eraser", 2, true);
     _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
     _toolsContainer.scrollTop = 0;
     var selectedVersion = false;
-    selectedVersion = _pencilVersions.querySelector(".drawith-editor-tools__versions-button-selected");
-    if (selectedVersion) {
-      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
+    for (var l = [_markerVersions, _pencilVersions, _brushVersions, _eraserVersions], i = l.length; i--; ) {
+      selectedVersion = l[i].querySelector(".drawith-editor-tools__versions-button-selected");
+      if (selectedVersion) {
+        selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
+      }
     }
-    selectedVersion = _markerVersions.querySelector(".drawith-editor-tools__versions-button-selected");
-    if (selectedVersion) {
-      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
-    }
-    selectedVersion = _eraserVersions.querySelector(".drawith-editor-tools__versions-button-selected");
-    if (selectedVersion) {
-      selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
-    }
-    _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
     _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
+    _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
+    _brushVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
     _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
-
     if (_toolsContainer.querySelector(".drawith-editor-tools__tool-rule").classList.contains("drawith-editor-tools__tool-activated")) {
       _toolsContainer.querySelector(".drawith-editor-tools__tool-rule").classList.remove("drawith-editor-tools__tool-activated");
       Editor.Rule.hide();
     }
-
     _currentPaper = _papers[0];
     _paperButton.classList.remove("paper-squares", "paper-lines", "paper-white");
     _paperButton.classList.add("paper-" + _papers[1]);
@@ -419,10 +469,12 @@
     e.preventDefault();
     e.stopPropagation();
     var container, target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
-    if (tool === "pencil") {
-      container = _pencilVersions;
-    } else if (tool === "marker") {
+    if (tool === "marker") {
       container = _markerVersions;
+    } else if (tool === "pencil") {
+      container = _pencilVersions;
+    } else if (tool === "brush") {
+      container = _brushVersions;
     } else if (tool === "eraser") {
       container = _eraserVersions;
     }
@@ -492,6 +544,24 @@
 
   }
 
+  function _initBrush () {
+
+    var imgSrc, img;
+    var onloadFn = function (i) {
+      _toolsConfig.brush.versions[i].params.image = this;
+      this.onload = undefined;
+    };
+    for (var i = _toolsConfig.brush.versions.length; i--; ) {
+      imgSrc = "img/brush/" + _toolsConfig.brush.versions[i].params.image;
+      if (typeof(imgSrc) === "string") {
+        img = new Image();
+        img.onload = onloadFn.bind(img, i);
+        img.src = imgSrc;
+      }
+    }
+
+  }
+
   function _initDom (moduleContainer) {
 
     var tools = [];
@@ -514,6 +584,7 @@
       _versionsContainer = templateDom[1];
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
       _markerVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-marker");
+      _brushVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-brush");
       _eraserVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-eraser");
 
       if (_config.tools.indexOf("undo") >= 0) {
@@ -537,8 +608,10 @@
       _toolsContainer.addEventListener(Param.eventEnd, _onToolsTouchEnd, true);
       _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
       _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
+      _brushVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "brush"), true);
       _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
       selectInitialTools();
+      _initBrush();
       Main.addRotationHandler(_onRotate);
 
     });
