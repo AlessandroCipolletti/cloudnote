@@ -200,7 +200,7 @@
       _touchDown = false;
       return;
     }
-    var ruleOriginCoord = {}, gestureOneCoord = {}, gestureTwoCoor = {}, cursorX = 0, cursorY = 0;
+    var ruleOriginCoord = {}, gestureOneCoord = {}, gestureTwoCoord = {}, cursorX = 0, cursorY = 0;
     _touchDown = true;
     if (_startOriginX === 0) {
       ruleOriginCoord = _ruleOrigin.getBoundingClientRect();
