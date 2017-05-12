@@ -152,11 +152,9 @@
         }
       }]
     },
-
-
     brush: {
       name: "brush",
-      size: 100,
+      size: 50,
       forceFactor: 0,
       speedFactor: 0,
       maxAplha: 0.5,
@@ -194,8 +192,6 @@
         }
       }]
     },
-
-
     eraser: {
       name: "eraser",
       size: 12,

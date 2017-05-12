@@ -81,7 +81,7 @@
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
-  var _touchForce = 0, _oldTouchForce = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
+  var _touchForce = 0, _oldTouchForce = 0, _oldSize = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
   var _step = [], _currentStep = 0, _initialStep = 0, _bucketIsWorking = false;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
@@ -735,9 +735,9 @@
 
   function _image (context, x, y, alpha, color, size, image, rotation) {
 
-    // TODO size by forceFactor
-    // TODO ruotare in base alla direzione
+    // TODO rotazione
     // TODO colore
+    // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
     context.globalAlpha = alpha;
     context.drawImage(image, x - size/2, y - size/2, size, size);
 
@@ -791,13 +791,33 @@
     return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
+  function _curvedImageLine (context, delta, touchForce, oldTouchForce, color, size, oldSize, fromX, fromY, midX, midY, toX, toY, image, rotation) {
+
+    // TODO ruotare in base alla direzione
+    touchForce = touchForce - oldTouchForce;
+    size = size - oldSize;
+    delta = 1 / delta;
+    for (var i = 0; i <= 1; i = i + delta) {
+      _image(
+        context,
+        _getQuadraticBezierValue(i, fromX, midX, toX),
+        _getQuadraticBezierValue(i, fromY, midY, toY),
+        oldTouchForce + touchForce * i,
+        color,
+        oldSize + size * i,
+        image,
+        rotation
+      );
+    }
+
+  }
+
   function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
 
     touchForce = touchForce - oldTouchForce;
-    var particles = (circleShape ? _particlesCircle : _particlesRect);
     delta = 1 / delta;
     for (var i = 0; i <= 1; i = i + delta) {
-      particles(
+      (circleShape ? _particlesCircle : _particlesRect)(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
@@ -928,7 +948,9 @@
     if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     } else if (tool.shape === "particlesCircle" || tool.shape === "particlesRect") {
-      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, tool.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
+      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
+    } else if (tool.shape === "image") {
+      _curvedImageLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.image, params.imageRotation);
     }
     if (tool.name === "eraser") {
       _oldX = params.x;
@@ -971,12 +993,13 @@
       _toolCursor.style.cssText = style;
       _toolCursor.classList.remove("displayNone");
     }
+    var size = _oldSize = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1);
     var params = {
       type: "start",
       x: _cursorX,
       y: _cursorY,
       force: _touchForce,
-      size: _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1)
+      size: size
     };
     _stepStart(_context, params, _tool);
     if (_coworking) {
@@ -1049,6 +1072,7 @@
         x: _cursorX,
         y: _cursorY,
         size: size,
+        oldSize: _oldSize,
         delta: round((curveLength || distance) / (size - 1), 2),
         oldMidX: _oldMidX,
         oldMidY: _oldMidY,
@@ -1057,7 +1081,8 @@
         midX: midX,
         midY: midY,
         touchForce: _touchForce,
-        oldTouchForce: _oldTouchForce
+        oldTouchForce: _oldTouchForce,
+        imageRotation: 0
       };
       _stepMove(_context, params, _tool);
       if (_coworking) {
@@ -1066,6 +1091,7 @@
       _oldMidX = midX;
       _oldMidY = midY;
       _oldTouchForce = _touchForce;
+      _oldSize = size;
       delta = midX = midY = undefined;
 
     };
