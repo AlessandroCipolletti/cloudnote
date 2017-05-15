@@ -157,7 +157,7 @@
       size: 50,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.5,
+      maxAplha: 0.15,
       shape: "image",
       image: {},
       globalCompositeOperation: "source-over",
@@ -189,6 +189,13 @@
         slider: false,
         params: {
           image: "4.png"
+        }
+      }, {
+        name : "5",
+        button: true,
+        slider: false,
+        params: {
+          image: "5.png"
         }
       }]
     },

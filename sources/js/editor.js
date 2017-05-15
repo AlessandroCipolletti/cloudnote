@@ -471,6 +471,7 @@
         _tool[key] = tool[key];
       }
     }
+    _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
 
   }
 
@@ -846,24 +847,37 @@
     var force = (touches[0].force / 2) || 0;
     _lastTouchSupportForce = _currentTouchSupportForce;
     _currentTouchSupportForce = !!force;
-    _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
-    // _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
-    _touchForce = _oldTouchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
-
-  };
-
-  var _updateTouchForce = function (touches) {
-
-    var force = touches[0].force || 0;
-    _oldTouchForce = _touchForce;
-    if (force > 0) {
-      // _touchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
-      _touchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
+    if (_currentTouchSupportForce) {
+      _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
+      // _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
+      _touchForce = _oldTouchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
     } else {
-      _touchForce = (_currentTouchSupportForce ? 0 : 0.25);
+      _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
     }
+    console.log(_touchForce);
 
   };
+
+  var _updateTouchForce = (function () {
+
+    var force = 0;
+
+    return function (touches) {
+
+      if (_currentTouchSupportForce) {
+        var force = touches[0].force || 0;
+        _oldTouchForce = _touchForce;
+        if (force > 0) {
+          // _touchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
+          _touchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
+        } else {
+          _touchForce = (_currentTouchSupportForce ? 0 : _tool.maxAplha * 0.5);
+        }
+      }
+
+    };
+
+  })();
 
   function _checkForceTouch () {
     return (_deviceSupportForce === false || _currentTouchSupportForce || (!_lastTouchSupportForce && !_currentTouchSupportForce));
@@ -1067,13 +1081,14 @@
       midY = _oldY + _cursorY >> 1;
       distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
       curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
+      delta = _tool.shape === "image" ? round((curveLength || distance) / 2, 2) : round((curveLength || distance) / (size - 1), 2);
       params = {
         type: "move",
         x: _cursorX,
         y: _cursorY,
         size: size,
         oldSize: _oldSize,
-        delta: round((curveLength || distance) / (size - 1), 2),
+        delta: delta,
         oldMidX: _oldMidX,
         oldMidY: _oldMidY,
         oldX: _oldX,
@@ -1313,7 +1328,7 @@
     _initDom();
 
     if (Param.supportTouch === false) {
-      _touchForce = _oldTouchForce = 0.25;
+      _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
       _initTouchForce = _updateTouchForce = Utils.emptyFN;
     }
 
