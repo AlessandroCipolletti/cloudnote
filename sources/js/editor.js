@@ -76,7 +76,7 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking;
+  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking, _canvasForTools = {}, _contextForTools = {};
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -798,9 +798,11 @@
     touchForce = touchForce - oldTouchForce;
     size = size - oldSize;
     delta = 1 / delta;
+    _contextForTools.clearRect(0, 0, _canvasForTools.width, _canvasForTools.height);
+    _contextForTools.globalAlpha = 1;
     for (var i = 0; i <= 1; i = i + delta) {
       _image(
-        context,
+        _contextForTools,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
         oldTouchForce + touchForce * i,
@@ -810,6 +812,8 @@
         rotation
       );
     }
+    _context.globalAlpha = 1;
+    _context.drawImage(_canvasForTools, 0, 0);
 
   }
 
@@ -1221,8 +1225,8 @@
     _canvasHeight = app.HEIGHT - _config.colorsPickerHeight - Param.headerSize;
     _maxX = MATH.min(_maxX, _canvasWidth);
     _maxY = MATH.min(_maxY, _canvasHeight);
-    _canvas.width = _canvasCoworking.width = _canvasWidth;
-    _canvas.height = _canvasCoworking.height = _canvasHeight;
+    _canvas.width = _canvasCoworking.width = _canvasForTools.width = _canvasWidth;
+    _canvas.height = _canvasCoworking.height = _canvasForTools.height = _canvasHeight;
     _canvas.style.width = _canvasWidth + "px";
     _canvas.style.height = _canvasHeight + "px";
     _context.putImageData(data, 0, 0);
@@ -1239,8 +1243,8 @@
     //   _canvasWidth = _canvasHeight = MATH.max(_canvasWidth, _canvasHeight) + Param.headerSize;
     // }
 
-    _canvas.width = _canvasCoworking.width = _canvasWidth;
-    _canvas.height = _canvasCoworking.height = _canvasHeight;
+    _canvas.width = _canvasCoworking.width = _canvasForTools.width = _canvasWidth;
+    _canvas.height = _canvasCoworking.height = _canvasForTools.height = _canvasHeight;
     _canvas.style.width = _canvasWidth + "px";
     _canvas.style.height = _canvasHeight + "px";
 
@@ -1261,6 +1265,8 @@
       _context = _canvas.getContext("2d");
       _canvasCoworking = document.createElement("canvas");
       _contextCoworking = _canvasCoworking.getContext("2d");
+      _canvasForTools = document.createElement("canvas");
+      _contextForTools = _canvasForTools.getContext("2d");
       _toolCursor = templateDom.querySelector(".drawith-editor__tool-cursor");
       _popupCoworking = templateDom.querySelector(".drawith-editor__coworking-popup");
       _coworkingIdText = templateDom.querySelector(".drawith-editor__coworking-popup input");
