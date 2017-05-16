@@ -590,6 +590,9 @@
     var imgSrc, img;
     var onloadFn = function (tool, i) {
       _toolsConfig[tool].versions[i].params.image = this;
+      var version = document.querySelector(".drawith-editor-tools__versions-" + tool + " [data-versionsIndex='" + i + "']");
+      version.innerHTML = "";
+      version.style.backgroundImage = "url('" + this.src + "')";
       this.onload = undefined;
     };
     for (var tool in _toolsConfig) {
