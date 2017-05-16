@@ -19,7 +19,7 @@
 
   // TODO sub tools di tipo slider
 
-  var _toolsContainer = {}, _versionsContainer = {}, _markerVersions = {}, _pencilVersions = {}, _brushVersions = {}, _eraserVersions = {};
+  var _toolsContainer = {}, _versionsContainer = {}, _markerVersions = {}, _pencilVersions = {}, _highlighterVersions = {}, _brushVersions = {}, _eraserVersions = {};
   var _undoButton = false, _redoButton = false, _saveButton = false, _paperButton = false, _clearButton = false;
   var _papers = ["white", "squares", "lines"], _currentPaper = _papers[0], _versionsTimeout = false, _currentScroll = 0, _toolsMaxScroll = 0;
   var _toolsConfig = {
@@ -152,12 +152,38 @@
         }
       }]
     },
+    highlighter: {
+      name: "brush",
+      size: 50,
+      forceFactor: 0,
+      speedFactor: 0,
+      maxAplha: 0.06,
+      shape: "image",
+      image: {},
+      globalCompositeOperation: "source-over",
+      cursor: false,
+      versions: [{
+        name : "left",
+        button: true,
+        slider: false,
+        params: {
+          image: "highlighterLeft.png"
+        }
+      }, {
+        name : "right",
+        button: true,
+        slider: false,
+        params: {
+          image: "highlighterRight.png"
+        }
+      }]
+    },
     brush: {
       name: "brush",
       size: 50,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.15,
+      maxAplha: 0.06,
       shape: "image",
       image: {},
       globalCompositeOperation: "source-over",
@@ -294,6 +320,14 @@
         Editor.setTool(_toolsConfig.pencil);
       }
     },
+    highlighter: function (selected) {
+      if (selected) {
+        _toggleVersions("highlighter");
+      } else {
+        _selectTool("highlighter");
+        Editor.setTool(_toolsConfig.highlighter);
+      }
+    },
     brush: function (selected) {
       if (selected) {
         _toggleVersions("brush");
@@ -395,13 +429,14 @@
 
     _selectTool("marker");
     _selectVersionButton("marker", 1);
-    _selectVersionButton("pencil", 0, true);3
+    _selectVersionButton("pencil", 0, true);
+    _selectVersionButton("highlighter", 0, true);
     _selectVersionButton("brush", 0, true);
     _selectVersionButton("eraser", 2, true);
     _toolsMaxScroll = _toolsContainer.scrollHeight - _toolsContainer.clientHeight;
     _toolsContainer.scrollTop = 0;
     var selectedVersion = false;
-    for (var l = [_markerVersions, _pencilVersions, _brushVersions, _eraserVersions], i = l.length; i--; ) {
+    for (var l = [_markerVersions, _pencilVersions, _highlighterVersions, _brushVersions, _eraserVersions], i = l.length; i--; ) {
       selectedVersion = l[i].querySelector(".drawith-editor-tools__versions-button-selected");
       if (selectedVersion) {
         selectedVersion.classList.remove("drawith-editor-tools__versions-button-selected");
@@ -409,6 +444,7 @@
     }
     _markerVersions.querySelector("[data-versionsIndex='1']").classList.add("drawith-editor-tools__versions-button-selected");
     _pencilVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
+    _highlighterVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
     _brushVersions.querySelector("[data-versionsIndex='0']").classList.add("drawith-editor-tools__versions-button-selected");
     _eraserVersions.querySelector("[data-versionsIndex='2']").classList.add("drawith-editor-tools__versions-button-selected");
     if (_toolsContainer.querySelector(".drawith-editor-tools__tool-rule").classList.contains("drawith-editor-tools__tool-activated")) {
@@ -476,6 +512,8 @@
       container = _markerVersions;
     } else if (tool === "pencil") {
       container = _pencilVersions;
+    } else if (tool === "highlighter") {
+      container = _highlighterVersions;
     } else if (tool === "brush") {
       container = _brushVersions;
     } else if (tool === "eraser") {
@@ -547,19 +585,23 @@
 
   }
 
-  function _initBrush () {
+  function _initToolsImages () {
 
     var imgSrc, img;
-    var onloadFn = function (i) {
-      _toolsConfig.brush.versions[i].params.image = this;
+    var onloadFn = function (tool, i) {
+      _toolsConfig[tool].versions[i].params.image = this;
       this.onload = undefined;
     };
-    for (var i = _toolsConfig.brush.versions.length; i--; ) {
-      imgSrc = "img/brush/" + _toolsConfig.brush.versions[i].params.image;
-      if (typeof(imgSrc) === "string") {
-        img = new Image();
-        img.onload = onloadFn.bind(img, i);
-        img.src = imgSrc;
+    for (var tool in _toolsConfig) {
+      if (_toolsConfig[tool].shape === "image") {
+        for (var i = _toolsConfig[tool].versions.length; i--; ) {
+          imgSrc = "img/tools/" + _toolsConfig[tool].versions[i].params.image;
+          if (typeof(imgSrc) === "string") {
+            img = new Image();
+            img.onload = onloadFn.bind(img, tool, i);
+            img.src = imgSrc;
+          }
+        }
       }
     }
 
@@ -586,6 +628,7 @@
       _toolsContainer = templateDom[0];
       _versionsContainer = templateDom[1];
       _pencilVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-pencil");
+      _highlighterVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-highlighter");
       _markerVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-marker");
       _brushVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-brush");
       _eraserVersions = _versionsContainer.querySelector(".drawith-editor-tools__versions-eraser");
@@ -610,11 +653,12 @@
       _toolsContainer.addEventListener(Param.eventStart, _onToolsTouchStart, true);
       _toolsContainer.addEventListener(Param.eventEnd, _onToolsTouchEnd, true);
       _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
+      _highlighterVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "highlighter"), true);
       _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
       _brushVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "brush"), true);
       _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
       selectInitialTools();
-      _initBrush();
+      _initToolsImages();
       Main.addRotationHandler(_onRotate);
 
     });

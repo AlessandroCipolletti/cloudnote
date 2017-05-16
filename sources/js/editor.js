@@ -59,7 +59,7 @@
       "#ec0000", "#ff6600", "#005f00", "#00d500", "#ffe400", "#00ff5a", "#b8ffbf", "#f6ffb8", "#ffe7b8", "#ffd4b8",
       "#ffb8b8", "#FF6666", "#3d5232", "#5e4b38", "#5e3838", "#5e385e", "#40385e", "#38475e", "#385e5e", "#294638"
     ],
-    tools: ["marker", "pencil", "brush", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
+    tools: ["marker", "pencil", "highlighter", "brush", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
     toolsWidth: 50,
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
@@ -799,7 +799,6 @@
     size = size - oldSize;
     delta = 1 / delta;
     _contextForTools.clearRect(0, 0, _canvasForTools.width, _canvasForTools.height);
-    _contextForTools.globalAlpha = 1;
     for (var i = 0; i <= 1; i = i + delta) {
       _image(
         _contextForTools,
