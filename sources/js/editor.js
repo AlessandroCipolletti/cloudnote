@@ -970,6 +970,7 @@
     } else if (tool.shape === "particlesCircle" || tool.shape === "particlesRect") {
       _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
     } else if (tool.shape === "image") {
+      
       _curvedImageLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.image, params.imageRotation);
     }
     if (tool.name === "eraser") {
