@@ -728,8 +728,8 @@
     var s2 = size / 2;
     for (var i = size * (size + 1); i--; ) {
       context.fillRect(
-        x + random(size) - s2,
-        y + random(size) - s2,
+        MATH.round(x + random(size) - s2),
+        MATH.y + random(size) - s2,
         1,
         1
       );
@@ -743,7 +743,7 @@
     // TODO colore
     // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
     context.globalAlpha = alpha;
-    context.drawImage(image, x - size/2, y - size/2, size, size);
+    context.drawImage(image, MATH.round(x - size/2), MATH.round(y - size/2), size, size);
 
   }
 
@@ -802,7 +802,7 @@
     size = size - oldSize;
     delta = 1 / delta;
     _contextForTools.clearRect(0, 0, _canvasForTools.width, _canvasForTools.height);
-    for (var i = 0; i <= 1; i = i + delta) {
+    for (var i = 0, l = 1 - delta; i < l; i = i + delta) {
       _image(
         _contextForTools,
         _getQuadraticBezierValue(i, fromX, midX, toX),
@@ -823,7 +823,7 @@
 
     touchForce = touchForce - oldTouchForce;
     delta = 1 / delta;
-    for (var i = 0; i <= 1; i = i + delta) {
+    for (var i = 0, l = 1 - delta; i <= l; i = i + delta) {
       (circleShape ? _particlesCircle : _particlesRect)(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
