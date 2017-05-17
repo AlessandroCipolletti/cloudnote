@@ -51,6 +51,9 @@
   // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
   // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
   // TODO gomma con alpha su pressione, invece che dimensione
+  // TODO BUG bucket su zona colorata con tool image
+  // TODO TOOL highlighter => scegli un colore, no rotazione, su pressione cambia alpha
+  // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
 
   var _config = {
     colors: [

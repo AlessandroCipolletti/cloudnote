@@ -154,10 +154,10 @@
     },
     highlighter: {
       name: "brush",
-      size: 50,
+      size: 60,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.06,
+      maxAplha: 0.05,
       shape: "image",
       image: {},
       globalCompositeOperation: "source-over",
