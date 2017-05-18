@@ -52,7 +52,7 @@
   // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
   // TODO gomma con alpha su pressione, invece che dimensione
   // TODO BUG bucket su zona colorata con tool image
-  // TODO TOOL highlighter => scegli un colore, no rotazione, su pressione cambia alpha
+  // TODO BUG Rule buttons 
   // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
 
   var _config = {
@@ -79,7 +79,8 @@
 
   var PI = MATH.PI;
   var PI2 = PI * 2;
-  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking, _canvasForTools = {}, _contextForTools = {};
+  var _container, _canvas, _context, _toolCursor, _canvasCoworking, _contextCoworking, _canvasForTools, _contextForTools;
+  var _canvasForShape = document.createElement("canvas"), _contextForShape = _canvasForShape.getContext("2d");
   var _coworking = false, _coworkingSteps = [], _personalRoomId = false, _popupCoworking = {}, _coworkingIdText = {}, _coworkingIdLabel = {};
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
@@ -102,6 +103,7 @@
     randomColor: true,
     shape: "circle",
     image: {},
+    imageShape: _canvasForShape,
     globalCompositeOperation: "",
     cursor: false
   };
@@ -474,7 +476,16 @@
         _tool[key] = tool[key];
       }
     }
-    _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
+    if (_tool.image && tool.color) {
+      _canvasForShape.width = _tool.image.width;
+      _canvasForShape.hqight = _tool.image.height;
+      _contextForShape.fillStyle = _tool.color;
+      _contextForShape.globalCompositeOperation = "source-over";
+      _contextForShape.fillRect(0, 0, _canvasForShape.width, _canvasForShape.height);
+      _contextForShape.globalCompositeOperation = "destination-in";
+      _contextForShape.drawImage(_tool.image, 0, 0, _canvasForShape.width, _canvasForShape.height);
+    }
+    // _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
 
   }
 
@@ -712,8 +723,8 @@
       radius = random(size) + 1;
       w = random(2) + 1;
       context.fillRect(
-        x + radius * MATH.cos(angle),
-        y + radius * MATH.sin(angle),
+        round(x + radius * MATH.cos(angle), 1),
+        round(y + radius * MATH.sin(angle), 1),
         w,
         (w === 2 ? 1 : random(2) + 1)
       );
@@ -728,8 +739,8 @@
     var s2 = size / 2;
     for (var i = size * (size + 1); i--; ) {
       context.fillRect(
-        MATH.round(x + random(size) - s2),
-        MATH.y + random(size) - s2,
+        round(x + random(size) - s2, 1),
+        round(y + random(size) - s2, 1),
         1,
         1
       );
@@ -737,10 +748,9 @@
 
   }
 
-  function _image (context, x, y, alpha, color, size, image, rotation) {
+  function _image (context, x, y, alpha, size, image, rotation) {
 
     // TODO rotazione
-    // TODO colore
     // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
     context.globalAlpha = alpha;
     context.drawImage(image, MATH.round(x - size/2), MATH.round(y - size/2), size, size);
@@ -795,7 +805,7 @@
     return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
-  function _curvedImageLine (context, delta, touchForce, oldTouchForce, color, size, oldSize, fromX, fromY, midX, midY, toX, toY, image, rotation) {
+  function _curvedImageLine (context, delta, touchForce, oldTouchForce, size, oldSize, fromX, fromY, midX, midY, toX, toY, image, rotation) {
 
     // TODO ruotare in base alla direzione
     touchForce = touchForce - oldTouchForce;
@@ -808,7 +818,6 @@
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
         oldTouchForce + touchForce * i,
-        color,
         oldSize + size * i,
         image,
         rotation
@@ -823,7 +832,7 @@
 
     touchForce = touchForce - oldTouchForce;
     delta = 1 / delta;
-    for (var i = 0, l = 1 - delta; i <= l; i = i + delta) {
+    for (var i = 0; i <= 1; i = i + delta) {
       (circleShape ? _particlesCircle : _particlesRect)(
         context,
         _getQuadraticBezierValue(i, fromX, midX, toX),
@@ -951,7 +960,7 @@
     } else if (tool.shape === "particlesCircle") {
       _particlesRect(context, x, y, params.force, tool.color, tool.size);
     } else if (tool.shape === "image") {
-      _image(context, x, y, params.force, tool.color, tool.size, tool.image, 0);
+      _image(context, x, y, params.force, tool.size, tool.imageShape, 0);
     }
     if (tool.name === "eraser") {
       _oldX = x;
@@ -970,8 +979,7 @@
     } else if (tool.shape === "particlesCircle" || tool.shape === "particlesRect") {
       _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
     } else if (tool.shape === "image") {
-      
-      _curvedImageLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.image, params.imageRotation);
+      _curvedImageLine(context, params.delta, params.touchForce, params.oldTouchForce, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.imageShape, params.imageRotation);
     }
     if (tool.name === "eraser") {
       _oldX = params.x;
@@ -1002,12 +1010,16 @@
   function __touchStart () {
 
     _touchDown = true;
+    var color = false;
     if (_tool.randomColor === true || (_tool.randomColor === "last" && !_lastRandomColor)) {
-      _tool.color = _lastRandomColor = _getRandomColor();
+      color = _lastRandomColor = _getRandomColor();
     }
     if (_tool.color === "") {
-      _tool.color = _lastRandomColor;
+      color = _lastRandomColor;
     }
+    color && setTool({
+      color: color
+    });
     if (_tool.cursor) {
       var style = "width: " + _tool.size + "px; height: " + _tool.size + "px; ";
       style += "left: " + (_cursorX - 1 - (_tool.size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (_tool.size / 2)) + "px; ";

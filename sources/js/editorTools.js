@@ -30,7 +30,7 @@
       speedFactor: 0,
       maxAplha: 1,
       shape: "circle",
-      image: {},
+      image: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -111,7 +111,7 @@
       speedFactor: 0,
       maxAplha: 0.5,
       shape: "particlesRect",
-      image: {},
+      image: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -153,13 +153,13 @@
       }]
     },
     highlighter: {
-      name: "brush",
-      size: 60,
+      name: "highlighter",
+      size: 80,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.05,
+      maxAplha: 0.06,
       shape: "image",
-      image: {},
+      image: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -185,7 +185,7 @@
       speedFactor: 0,
       maxAplha: 0.06,
       shape: "image",
-      image: {},
+      image: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -232,7 +232,7 @@
       speedFactor: 0.5,
       maxAplha: 1,
       shape: "circle",
-      image: {},
+      image: false,
       globalCompositeOperation: "destination-out",
       cursor: true,
       versions: [
@@ -298,7 +298,7 @@
       speedFactor: 1,
       maxAplha: 1,
       shape: "",
-      image: {},
+      image: false,
       globalCompositeOperation: "source-over",
       cursor: false
     }
