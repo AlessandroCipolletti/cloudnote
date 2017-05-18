@@ -52,7 +52,7 @@
   // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
   // TODO gomma con alpha su pressione, invece che dimensione
   // TODO BUG bucket su zona colorata con tool image
-  // TODO BUG Rule buttons 
+  // TODO BUG Rule buttons
   // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
 
   var _config = {
@@ -73,7 +73,7 @@
     toolsSide: "left",
     minPxToDraw: 3,
     hightPerformance: true,
-    draftInterval: 30,  // sec
+    draftInterval: 15,  // sec
     stepCacheLength: 16
   };
 
@@ -102,7 +102,7 @@
     color: "",
     randomColor: true,
     shape: "circle",
-    image: {},
+    image: false,
     imageShape: _canvasForShape,
     globalCompositeOperation: "",
     cursor: false
