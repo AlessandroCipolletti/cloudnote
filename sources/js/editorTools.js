@@ -157,7 +157,7 @@
       size: 100,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.06,
+      maxAplha: 0.08,
       shape: "image",
       image: false,
       globalCompositeOperation: "source-over",
@@ -180,10 +180,10 @@
     },
     brush: {
       name: "brush",
-      size: 50,
+      size: 100,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.06,
+      maxAplha: 0.08,
       shape: "image",
       image: false,
       globalCompositeOperation: "source-over",
@@ -222,6 +222,20 @@
         slider: false,
         params: {
           image: "5.png"
+        }
+      }, {
+        name : "6",
+        button: true,
+        slider: false,
+        params: {
+          image: "6.png"
+        }
+      }, {
+        name : "7",
+        button: true,
+        slider: false,
+        params: {
+          image: "7.png"
         }
       }]
     },

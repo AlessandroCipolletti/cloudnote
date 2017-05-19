@@ -476,7 +476,7 @@
         _tool[key] = tool[key];
       }
     }
-    if (_tool.image && tool.color) {
+    if (_tool.image && (tool.color || !_tool.randomColor)) {
       _canvasForShape.width = _tool.image.width;
       _canvasForShape.hqight = _tool.image.height;
       _contextForShape.fillStyle = _tool.color;
@@ -1100,7 +1100,7 @@
       midY = _oldY + _cursorY >> 1;
       distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
       curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
-      delta = _tool.shape === "image" ? round((curveLength || distance) / 2, 2) : round((curveLength || distance) / (size - 1), 2);
+      delta = _tool.shape === "image" ? round((curveLength || distance) / 3, 2) : round((curveLength || distance) / (size - 1), 2);
       params = {
         type: "move",
         x: _cursorX,
