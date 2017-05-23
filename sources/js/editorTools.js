@@ -157,7 +157,7 @@
       size: 100,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.08,
+      maxAplha: 0.06,
       shape: "image",
       image: false,
       globalCompositeOperation: "source-over",
@@ -183,13 +183,13 @@
       size: 100,
       forceFactor: 0,
       speedFactor: 0,
-      maxAplha: 0.08,
+      maxAplha: 0.06,
       shape: "image",
       image: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
-        name : "1",
+        name: "1",
         button: true,
         slider: false,
         params: {
@@ -203,39 +203,60 @@
           image: "2.png"
         }
       }, {
-        name : "3",
+        name: "3",
         button: true,
         slider: false,
         params: {
           image: "3.png"
         }
       }, {
-        name : "4",
+        name: "4",
         button: true,
         slider: false,
         params: {
           image: "4.png"
         }
       }, {
-        name : "5",
+        name: "5",
         button: true,
         slider: false,
         params: {
           image: "5.png"
         }
       }, {
-        name : "6",
+        name: "6",
         button: true,
         slider: false,
         params: {
           image: "6.png"
         }
       }, {
-        name : "7",
+        name: "7",
         button: true,
         slider: false,
         params: {
           image: "7.png"
+        }
+      }, {
+        name: "8",
+        button: true,
+        slider: false,
+        params: {
+          image: "8.png"
+        }
+      }, {
+        name: "9",
+        button: true,
+        slider: false,
+        params: {
+          image: "9.png"
+        }
+      }, {
+        name: "10",
+        button: true,
+        slider: false,
+        params: {
+          image: "10.png"
         }
       }]
     },
