@@ -64,6 +64,7 @@
     ],
     tools: ["marker", "pencil", "highlighter", "brush", "eraser", "bucket", "rule", "undo", "redo", "paper", "clear", "save"],  // "exit", "pen", "crayon", "coworkingStart", "coworkingStop"
     toolsWidth: 50,
+    versionsCloseDelay: 4000, // ms
     colorsPickerHeight: 55,
     ruleMinOffset: 50,
     ruleWidth: 4,

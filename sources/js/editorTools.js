@@ -14,7 +14,8 @@
 
   var _config = {
     tools: [],
-    toolsSide: "left"
+    toolsSide: "left",
+    versionsCloseDelay: 4000
   };
 
   // TODO sub tools di tipo slider
@@ -257,6 +258,41 @@
         slider: false,
         params: {
           image: "10.png"
+        }
+      }, {
+        name: "11",
+        button: true,
+        slider: false,
+        params: {
+          image: "11.png"
+        }
+      }, {
+        name: "12",
+        button: true,
+        slider: false,
+        params: {
+          image: "12.png"
+        }
+      }, {
+        name: "13",
+        button: true,
+        slider: false,
+        params: {
+          image: "13.png"
+        }
+      }, {
+        name: "14",
+        button: true,
+        slider: false,
+        params: {
+          image: "14.png"
+        }
+      }, {
+        name: "15",
+        button: true,
+        slider: false,
+        params: {
+          image: "15.png"
         }
       }]
     },
@@ -504,7 +540,7 @@
       } else {
         versions.classList.add("drawith-editor-tools__versions-open");
         clearTimeout(_versionsTimeout);
-        _versionsTimeout = setTimeout(closeVersions, 4000);
+        _versionsTimeout = setTimeout(closeVersions, _config.versionsCloseDelay);
       }
     }
 
@@ -538,68 +574,64 @@
 
   }
 
-  function _versionsTouchStart (tool, e) {
+  function _onVersionsTouchStart (e) {
 
     e.preventDefault();
     e.stopPropagation();
-    var container, target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
-    if (tool === "marker") {
-      container = _markerVersions;
-    } else if (tool === "pencil") {
-      container = _pencilVersions;
-    } else if (tool === "highlighter") {
-      container = _highlighterVersions;
-    } else if (tool === "brush") {
-      container = _brushVersions;
-    } else if (tool === "eraser") {
-      container = _eraserVersions;
-    }
+    var target = e.target.nodeName === "P" ? e.target.parentNode : e.target;
     if (
       target.classList.contains("drawith-editor-tools__versions-button") &&
       !target.classList.contains("drawith-editor-tools__versions-button-selected")
     ) {
-      container.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
+      var tool = target.getAttribute("data-tool");
+      this.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
       target.classList.add("drawith-editor-tools__versions-button-selected");
       clearTimeout(_versionsTimeout);
-      _versionsTimeout = setTimeout(closeVersions, 4000);
+      _versionsTimeout = setTimeout(closeVersions, _config.versionsCloseDelay);
       _selectVersionButton(tool, target.getAttribute("data-versionsIndex"));
     }
 
   }
 
-  function _onToolsTouchStart (e) {
+  function _onToolsScrollTouchStart (e) {
 
     if (e.type.indexOf("mouse") >= 0 && e.button > 0 || _toolsMaxScroll === 0 || (e.touches && e.touches.length > 1)) {
       e.preventDefault();
       return;
     }
-    if (_toolsContainer.scrollTop === 0) {
-      _currentScroll = _toolsContainer.scrollTop = 1;
-    } else if (_toolsContainer.scrollTop === _toolsMaxScroll) {
-      _currentScroll = _toolsContainer.scrollTop = _toolsMaxScroll - 1;
+    if (this.scrollTop === 0) {
+      _currentScroll = this.scrollTop = 1;
+    } else if (this.scrollTop === _toolsMaxScroll) {
+      _currentScroll = this.scrollTop = _toolsMaxScroll - 1;
     } else {
-      _currentScroll = _toolsContainer.scrollTop;
+      _currentScroll = this.scrollTop;
     }
 
   }
 
-  function _onToolsTouchEnd (e) {
+  function _onToolsScrollTouchEnd (e) {
 
     e.preventDefault();
     e.stopPropagation();
-    if (MATH.abs(_currentScroll - _toolsContainer.scrollTop) > 10) {
+    if (MATH.abs(_currentScroll - this.scrollTop) > 10) {
       return;
     }
     _currentScroll = 0;
     var target = e.target;
-    if (
-      target.classList.contains("drawith-editor-tools__tool") &&
-      target.classList.contains("disabled") === false
-    ) {
-      var tool = target.getAttribute("data-tool");
+    var tool = target.getAttribute("data-tool");
+    if (target.classList.contains("drawith-editor-tools__tool") && !target.classList.contains("disabled")) {
       if (_toolsFunctions.hasOwnProperty(tool)) {
         (_toolsFunctions[tool])(target.classList.contains("drawith-editor-tools__tool-selected"));
       }
+    } else if (
+      target.classList.contains("drawith-editor-tools__versions-button") &&
+      !target.classList.contains("drawith-editor-tools__versions-button-selected")
+    ) {
+      this.querySelector(".drawith-editor-tools__versions-button-selected").classList.remove("drawith-editor-tools__versions-button-selected");
+      target.classList.add("drawith-editor-tools__versions-button-selected");
+      clearTimeout(_versionsTimeout);
+      _versionsTimeout = setTimeout(closeVersions, _config.versionsCloseDelay);
+      _selectVersionButton(tool, target.getAttribute("data-versionsIndex"));
     }
 
   }
@@ -688,13 +720,14 @@
         _paperButton.classList.add("paper-squares");
       }
       (_toolsFunctions[_config.tools[0]])();
-      _toolsContainer.addEventListener(Param.eventStart, _onToolsTouchStart, true);
-      _toolsContainer.addEventListener(Param.eventEnd, _onToolsTouchEnd, true);
-      _pencilVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "pencil"), true);
-      _highlighterVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "highlighter"), true);
-      _markerVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "marker"), true);
-      _brushVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "brush"), true);
-      _eraserVersions.addEventListener(Param.eventStart, _versionsTouchStart.bind({}, "eraser"), true);
+      _toolsContainer.addEventListener(Param.eventStart, _onToolsScrollTouchStart.bind(_toolsContainer), true);
+      _toolsContainer.addEventListener(Param.eventEnd, _onToolsScrollTouchEnd.bind(_toolsContainer), true);
+      _pencilVersions.addEventListener(Param.eventStart, _onVersionsTouchStart.bind(_pencilVersions), true);
+      _highlighterVersions.addEventListener(Param.eventStart, _onVersionsTouchStart.bind(_highlighterVersions), true);
+      _markerVersions.addEventListener(Param.eventStart, _onVersionsTouchStart.bind(_markerVersions), true);
+      _brushVersions.addEventListener(Param.eventStart, _onToolsScrollTouchStart.bind(_brushVersions), true);
+      _brushVersions.addEventListener(Param.eventEnd, _onToolsScrollTouchEnd.bind(_brushVersions), true);
+      _eraserVersions.addEventListener(Param.eventStart, _onVersionsTouchStart.bind(_eraserVersions), true);
       selectInitialTools();
       _initToolsImages();
       Main.addRotationHandler(_onRotate);

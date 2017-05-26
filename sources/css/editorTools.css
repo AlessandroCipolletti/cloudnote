@@ -37,6 +37,8 @@
   flex-direction: column;
   background-color: rgba(250, 250, 250, 0.9);
   opacity: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .drawith-editor-tools__versions-open {
   transform: translate3d(100%, 0rem, 0rem);
@@ -135,10 +137,10 @@
 
 
 .drawith-editor-tools__versions-button {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 2rem;
-  margin: 1.25rem 0.75rem;
+  margin: 0.75rem 0.5rem;
   border: solid 1px black;
   background-color: white;
   background-size: 80%;
@@ -168,7 +170,7 @@
 .drawith-editor-tools__versions-button > p {
   font-size: 1.75rem;
   text-align: center;
-  line-height: 3.5rem;
+  line-height: 4rem;
   width: 100%;
   height: 100%;
   font-family: arial;

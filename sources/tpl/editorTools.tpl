@@ -13,7 +13,7 @@
       <div class="drawith-editor-tools__versions drawith-editor-tools__versions-{{this.name}}">
         {{#each this.versions}}
           {{#if this.button}}
-            <div class="drawith-editor-tools__versions-button{{#if this.params.image}} drawith-editor-tools__versions-button-image{{/if}}" data-versionsIndex="{{@index}}"><p>{{this.name}}</p></div>
+            <div class="drawith-editor-tools__versions-button{{#if this.params.image}} drawith-editor-tools__versions-button-image{{/if}}" data-versionsIndex="{{@index}}" data-tool="{{../this.name}}"><p>{{this.name}}</p></div>
           {{else if this.slider}}
 
           {{/if}}
