@@ -47,13 +47,12 @@
   var Socket = {};
   var Folder = {};
 
-  // TODO editor tool picker
+  // TODO editor tool picker-color
   // TODO tool foreground per aggiungere in primo o ultimo piano le modifiche
   // TODO su doppio click con gomma --> bucket con colore trasparente per cancellare quella zona
   // TODO gomma con alpha su pressione, invece che dimensione
   // TODO BUG bucket su zona colorata con tool image
   // TODO BUG Rule buttons
-  // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
 
   var _config = {
     colors: [
@@ -104,6 +103,7 @@
     randomColor: true,
     shape: "circle",
     image: false,
+    rotation: false,
     imageShape: _canvasForShape,
     globalCompositeOperation: "",
     cursor: false
@@ -751,10 +751,18 @@
 
   function _image (context, x, y, alpha, size, image, rotation) {
 
-    // TODO rotazione
+    // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
     // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
     context.globalAlpha = alpha;
-    context.drawImage(image, MATH.round(x - size/2), MATH.round(y - size/2), size, size);
+    if (rotation) {
+      context.translate(x, y);
+      context.rotate(-rotation);
+      context.drawImage(image, -size/2, -size/2, size, size);
+      context.rotate(rotation);
+      context.translate(-x, -y);
+    } else {
+      context.drawImage(image, MATH.round(x - size/2), MATH.round(y - size/2), size, size);
+    }
 
   }
 
@@ -1083,7 +1091,7 @@
 
   var __touchMove = (function () {
 
-    var distance = 0, curveLength = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, params = {};
+    var distance = 0, curveLength = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, imageRotation = 0, params = {};
 
     return function () {
 
@@ -1102,6 +1110,7 @@
       distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
       curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
       delta = _tool.shape === "image" ? round((curveLength || distance) / 2, 2) : round((curveLength || distance) / (size - 1), 2);
+      imageRotation = _tool.rotation ? Utils.angleRad(_oldX, _oldY, _cursorX, _cursorY) : 0;
       params = {
         type: "move",
         x: _cursorX,
@@ -1117,7 +1126,7 @@
         midY: midY,
         touchForce: _touchForce,
         oldTouchForce: _oldTouchForce,
-        imageRotation: 0
+        imageRotation: imageRotation
       };
       _stepMove(_context, params, _tool);
       if (_coworking) {
@@ -1127,7 +1136,7 @@
       _oldMidY = midY;
       _oldTouchForce = _touchForce;
       _oldSize = size;
-      delta = midX = midY = undefined;
+      imageRotation = delta = midX = midY = undefined;
 
     };
 

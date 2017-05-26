@@ -32,6 +32,7 @@
       maxAplha: 1,
       shape: "circle",
       image: false,
+      rotation: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -113,6 +114,7 @@
       maxAplha: 0.5,
       shape: "particlesRect",
       image: false,
+      rotation: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -161,6 +163,7 @@
       maxAplha: 0.06,
       shape: "image",
       image: false,
+      rotation: false,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -187,6 +190,7 @@
       maxAplha: 0.06,
       shape: "image",
       image: false,
+      rotation: true,
       globalCompositeOperation: "source-over",
       cursor: false,
       versions: [{
@@ -304,6 +308,7 @@
       maxAplha: 1,
       shape: "circle",
       image: false,
+      rotation: false,
       globalCompositeOperation: "destination-out",
       cursor: true,
       versions: [
@@ -370,6 +375,7 @@
       maxAplha: 1,
       shape: "",
       image: false,
+      rotation: false,
       globalCompositeOperation: "source-over",
       cursor: false
     }
