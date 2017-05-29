@@ -27,9 +27,11 @@
     marker: {
       name: "marker",
       size: 10,
-      forceFactor: 1.5,
-      speedFactor: 0,
-      maxAplha: 1,
+      sizeForceFactor: 1.5,
+      sizeSpeedFactor: 0,
+      alphaForceFactor: 1,
+      alphaSpeedFactor: 0,
+      degradeAlphaBySize: false,
       shape: "circle",
       image: false,
       rotation: false,
@@ -41,7 +43,7 @@
         slider: false,
         params: {
           size: 1,
-          forceFactor: 3
+          sizeForceFactor: 3
         }
       }, {
         name : "S",
@@ -49,7 +51,7 @@
         slider: false,
         params: {
           size: 5,
-          forceFactor: 2.5
+          sizeForceFactor: 2.5
         }
       }, {
         name : "M",
@@ -57,7 +59,7 @@
         slider: false,
         params: {
           size: 17,
-          forceFactor: 2
+          sizeForceFactor: 2
         }
       }, {
         name : "L",
@@ -65,7 +67,7 @@
         slider: false,
         params: {
           size: 30,
-          forceFactor: 1.5
+          sizeForceFactor: 1.5
         }
       }, {
         name : "XL",
@@ -73,7 +75,7 @@
         slider: false,
         params: {
           size: 60,
-          forceFactor: 0.9
+          sizeForceFactor: 0.9
         }
       }
       /*{
@@ -109,9 +111,11 @@
     pencil: {
       name: "pencil",
       size: 2,
-      forceFactor: 0,
-      speedFactor: 0,
-      maxAplha: 0.5,
+      sizeForceFactor: 0,
+      sizeSpeedFactor: 0,
+      alphaForceFactor: 0.5,
+      alphaSpeedFactor: 0,
+      degradeAlphaBySize: false,
       shape: "particlesRect",
       image: false,
       rotation: false,
@@ -124,7 +128,7 @@
         params: {
           size: 2,
           shape: "particlesRect",
-          maxAplha: 0.4
+          alphaForceFactor: 0.4
         }
       }, {
         name: "HB",
@@ -133,7 +137,7 @@
         params: {
           size: 2,
           shape: "particlesCircle",
-          maxAplha: 0.4
+          alphaForceFactor: 0.4
         }
       }, {
         name : "2B",
@@ -142,7 +146,7 @@
         params: {
           size: 4,
           shape: "particlesCircle",
-          maxAplha: 0.4
+          alphaForceFactor: 0.4
         }
       }, {
         name : "XL",
@@ -151,16 +155,18 @@
         params: {
           size: 9,
           shape: "particlesCircle",
-          maxAplha: 0.5
+          alphaForceFactor: 0.5
         }
       }]
     },
     highlighter: {
       name: "highlighter",
       size: 100,
-      forceFactor: 0,
-      speedFactor: 0,
-      maxAplha: 0.06,
+      sizeForceFactor: 0,
+      sizeSpeedFactor: 0,
+      alphaForceFactor: 0.06,
+      alphaSpeedFactor: 0,
+      degradeAlphaBySize: false,
       shape: "image",
       image: false,
       rotation: false,
@@ -185,9 +191,11 @@
     brush: {
       name: "brush",
       size: 100,
-      forceFactor: 0,
-      speedFactor: 0,
-      maxAplha: 0.06,
+      sizeForceFactor: 0.3,
+      sizeSpeedFactor: 0.2,
+      alphaForceFactor: 0.06,
+      alphaSpeedFactor: -0.05,
+      degradeAlphaBySize: true,
       shape: "image",
       image: false,
       rotation: true,
@@ -303,9 +311,11 @@
     eraser: {
       name: "eraser",
       size: 12,
-      forceFactor: 3,
-      speedFactor: 0.5,
-      maxAplha: 1,
+      sizeForceFactor: 3,
+      sizeSpeedFactor: 0.5,
+      alphaForceFactor: 1,
+      alphaSpeedFactor: 0,
+      degradeAlphaBySize: false,
       shape: "circle",
       image: false,
       rotation: false,
@@ -344,7 +354,7 @@
         slider: false,
         params: {
           size: 22,
-          forceFactor: 2,
+          sizeForceFactor: 2,
           cursor: true
         }
       }, {
@@ -353,7 +363,7 @@
         slider: false,
         params: {
           size: 40,
-          forceFactor: 1.75,
+          sizeForceFactor: 1.75,
           cursor: true
         }
       }, {
@@ -362,7 +372,7 @@
         slider: false,
         params: {
           size: 75,
-          forceFactor: 2,
+          sizeForceFactor: 2,
           cursor: true
         }
       }]
@@ -370,9 +380,11 @@
     bucket: {
       name: "bucket",
       size: 1,
-      forceFactor: 1,
-      speedFactor: 1,
-      maxAplha: 1,
+      sizeForceFactor: 0,
+      sizeSpeedFactor: 0,
+      alphaForceFactor: 0,
+      alphaSpeedFactor: 0,
+      degradeAlphaBySize: false,
       shape: "",
       image: false,
       rotation: false,

@@ -72,6 +72,8 @@
     ruleMarginToDraw: 25,
     toolsSide: "left",
     minPxToDraw: 3,
+    defaultForceTouch: 0.35,
+    maxSpeedFactorLength: 200,
     hightPerformance: true,
     draftInterval: 15,  // sec
     stepCacheLength: 16
@@ -85,7 +87,7 @@
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
-  var _touchForce = 0, _oldTouchForce = 0, _oldSize = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
+  var _touchForce = 0, _oldAlpha = 0, _oldSize = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
   var _step = [], _currentStep = 0, _initialStep = 0, _bucketIsWorking = false;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
@@ -96,9 +98,11 @@
   var _tool = {
     name: "",
     size: 25,
-    maxAplha: 1,
-    forceFactor: 2,
-    speedFactor: 0,
+    sizeForceFactor: 2,
+    sizeSpeedFactor: 0,
+    alphaForceFactor: 1,
+    alphaSpeedFactor: 0,
+    degradeAlphaBySize: false,
     color: "",
     randomColor: true,
     shape: "circle",
@@ -486,7 +490,6 @@
       _contextForShape.globalCompositeOperation = "destination-in";
       _contextForShape.drawImage(_tool.image, 0, 0, _canvasForShape.width, _canvasForShape.height);
     }
-    // _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
 
   }
 
@@ -751,14 +754,12 @@
 
   function _image (context, x, y, alpha, size, image, rotation) {
 
-    // TODO TOOL brush => rotazione seguendo la dirazione di spostamento, su pressione cambia sia alpha che dimensione (forse alpha al contrario di force) (forse anche velocità al contrario di force)
-    // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
     context.globalAlpha = alpha;
     if (rotation) {
       context.translate(x, y);
-      context.rotate(-rotation);
-      context.drawImage(image, -size/2, -size/2, size, size);
       context.rotate(rotation);
+      context.drawImage(image, -size/2, -size/2, size, size);
+      context.rotate(-rotation);
       context.translate(-x, -y);
     } else {
       context.drawImage(image, MATH.round(x - size/2), MATH.round(y - size/2), size, size);
@@ -814,10 +815,10 @@
     return (1 - t) * (1 - t) * p1 + 2 * (1 - t) * t * p2 + t * t * p3;
   }
 
-  function _curvedImageLine (context, delta, touchForce, oldTouchForce, size, oldSize, fromX, fromY, midX, midY, toX, toY, image, rotation) {
+  function _curvedImageLine (context, delta, alpha, oldAlpha, size, oldSize, fromX, fromY, midX, midY, toX, toY, image, rotation) {
 
-    // TODO ruotare in base alla direzione
-    touchForce = touchForce - oldTouchForce;
+    // TODO se mano sinistra (tools a destra) immagine a specchio (ruotata in partenza)
+    alpha = alpha - oldAlpha;
     size = size - oldSize;
     delta = 1 / delta;
     _contextForTools.clearRect(0, 0, _canvasForTools.width, _canvasForTools.height);
@@ -826,7 +827,7 @@
         _contextForTools,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
-        oldTouchForce + touchForce * i,
+        oldAlpha + alpha * i,
         oldSize + size * i,
         image,
         rotation
@@ -837,20 +838,23 @@
 
   }
 
-  function _curvedParticlesLine (context, delta, touchForce, oldTouchForce, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
+  function _curvedParticlesLine (context, delta, alpha, oldAlpha, color, size, fromX, fromY, midX, midY, toX, toY, circleShape) {
 
-    touchForce = touchForce - oldTouchForce;
+    alpha = alpha - oldAlpha;
     delta = 1 / delta;
+    _contextForTools.clearRect(0, 0, _canvasForTools.width, _canvasForTools.height);
     for (var i = 0; i <= 1; i = i + delta) {
       (circleShape ? _particlesCircle : _particlesRect)(
-        context,
+        _contextForTools,
         _getQuadraticBezierValue(i, fromX, midX, toX),
         _getQuadraticBezierValue(i, fromY, midY, toY),
-        oldTouchForce + touchForce * i,
+        oldAlpha + alpha * i,
         color,
         size
       );
     }
+    _context.globalAlpha = 1;
+    _context.drawImage(_canvasForTools, 0, 0);
 
   }
 
@@ -871,14 +875,7 @@
     var force = (touches[0].force / 2) || 0;
     _lastTouchSupportForce = _currentTouchSupportForce;
     _currentTouchSupportForce = !!force;
-    if (_currentTouchSupportForce) {
-      _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
-      // _touchForce = _oldTouchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
-      _touchForce = _oldTouchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
-    } else {
-      _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
-    }
-    console.log(_touchForce);
+    _touchForce = force / 2;
 
   };
 
@@ -888,15 +885,15 @@
 
     return function (touches) {
 
+      force = touches[0].force || 0;
+      _currentTouchSupportForce = _currentTouchSupportForce || !!force;
+      _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
       if (_currentTouchSupportForce) {
-        var force = touches[0].force || 0;
-        _oldTouchForce = _touchForce;
         if (force > 0) {
-          // _touchForce = MATH.min(MATH.max(round(force, 3), 0.001), _tool.maxAplha);
-          _touchForce = MATH.max(round(force * _tool.maxAplha, 3), 0.001);
-        } else {
-          _touchForce = (_currentTouchSupportForce ? 0 : _tool.maxAplha * 0.5);
+          _touchForce = MATH.max(round(force, 3), 0.001);
         }
+      } else {
+        _touchForce = _touchForce || _config.defaultForceTouch;
       }
 
     };
@@ -965,11 +962,11 @@
       _circle(context, x, y, tool.color, params.size);
     } else if (tool.shape === "particlesRect") {
       //context.shadowColor = "#000000";
-      _particlesRect(context, x, y, params.force, tool.color, tool.size);
+      _particlesRect(context, x, y, params.alpha, tool.color, tool.size);
     } else if (tool.shape === "particlesCircle") {
-      _particlesRect(context, x, y, params.force, tool.color, tool.size);
+      _particlesRect(context, x, y, params.alpha, tool.color, tool.size);
     } else if (tool.shape === "image") {
-      _image(context, x, y, params.force, tool.size, tool.imageShape, 0);
+      _image(context, x, y, params.alpha, tool.size, tool.imageShape, 0);
     }
     if (tool.name === "eraser") {
       _oldX = x;
@@ -986,9 +983,9 @@
     if (tool.shape === "circle") {
       _curvedCircleLine(context, params.size, tool.color, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY);
     } else if (tool.shape === "particlesCircle" || tool.shape === "particlesRect") {
-      _curvedParticlesLine(context, params.delta, params.touchForce, params.oldTouchForce, tool.color, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
+      _curvedParticlesLine(context, params.delta, params.alpha, params.oldAlpha, tool.color, params.size, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, (tool.shape === "particlesCircle"));
     } else if (tool.shape === "image") {
-      _curvedImageLine(context, params.delta, params.touchForce, params.oldTouchForce, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.imageShape, params.imageRotation);
+      _curvedImageLine(context, params.delta, params.alpha, params.oldAlpha, params.size, params.oldSize, params.oldMidX, params.oldMidY, params.oldX, params.oldY, params.midX, params.midY, tool.imageShape, params.imageRotation);
     }
     if (tool.name === "eraser") {
       _oldX = params.x;
@@ -1035,12 +1032,13 @@
       _toolCursor.style.cssText = style;
       _toolCursor.classList.remove("displayNone");
     }
-    var size = _oldSize = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1);
+    var size = _oldSize = _tool.size + round(_tool.size * _tool.sizeForceFactor * _touchForce, 1);
+    var alpha = _oldAlpha = MATH.min(round(_touchForce * _tool.alphaForceFactor, 3), 1);
     var params = {
       type: "start",
       x: _cursorX,
       y: _cursorY,
-      force: _touchForce,
+      alpha: alpha,
       size: size
     };
     _stepStart(_context, params, _tool);
@@ -1091,26 +1089,33 @@
 
   var __touchMove = (function () {
 
-    var distance = 0, curveLength = 0, size = 0, style = "", midX = 0, midY = 0, delta = 0, imageRotation = 0, params = {};
+    var distance = 0, curveLength = 0, size = 0, alpha = 0, style = "", midX = 0, midY = 0, delta = 0, imageRotation = 0, params = {};
 
     return function () {
 
-      distance = Utils.distance(_cursorX, _cursorY, _oldX, _oldY);
-      size = _tool.size + round(_tool.size * _tool.forceFactor * _touchForce, 1) + (_tool.speedFactor > 0 ? MATH.min(distance, _tool.size * _tool.speedFactor) : 0);
+      midX = _oldX + _cursorX >> 1;
+      midY = _oldY + _cursorY >> 1;
+      distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
+      size = round(
+        _tool.size +
+        (_tool.size * _tool.sizeForceFactor * _touchForce) +
+        (_tool.size * _tool.sizeSpeedFactor * MATH.min(_config.maxSpeedFactorLength, distance) / _config.maxSpeedFactorLength)
+      , 1);
       if (size < 25 && distance < _config.minPxToDraw) {
         return;
       }
+      alpha = MATH.min(round(
+        (_touchForce * _tool.alphaForceFactor) +
+        (_touchForce * _tool.alphaSpeedFactor * MATH.min(_config.maxSpeedFactorLength, distance) / _config.maxSpeedFactorLength)
+      , 3), 1) / (_tool.degradeAlphaBySize ? (size / _tool.size) : 1);
       if (_tool.cursor) {
         style = "width: " + size + "px; height: " + size + "px; ";
         style += "left: " + (_cursorX - 1 - (size / 2) + _offsetLeft) + "px; top: " + (_cursorY - 1 - (size / 2)) + "px; ";
         _toolCursor.style.cssText = style;
       }
-      midX = _oldX + _cursorX >> 1;
-      midY = _oldY + _cursorY >> 1;
-      distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
       curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
       delta = _tool.shape === "image" ? round((curveLength || distance) / 2, 2) : round((curveLength || distance) / (size - 1), 2);
-      imageRotation = _tool.rotation ? Utils.angleRad(_oldX, _oldY, _cursorX, _cursorY) : 0;
+      imageRotation = _tool.rotation ? -Utils.angleRad(_oldX, _oldY, _cursorX, _cursorY) : 0;
       params = {
         type: "move",
         x: _cursorX,
@@ -1124,8 +1129,8 @@
         oldY: _oldY,
         midX: midX,
         midY: midY,
-        touchForce: _touchForce,
-        oldTouchForce: _oldTouchForce,
+        alpha: alpha,
+        oldAlpha: _oldAlpha,
         imageRotation: imageRotation
       };
       _stepMove(_context, params, _tool);
@@ -1134,8 +1139,8 @@
       }
       _oldMidX = midX;
       _oldMidY = midY;
-      _oldTouchForce = _touchForce;
       _oldSize = size;
+      _oldAlpha = alpha;
       imageRotation = delta = midX = midY = undefined;
 
     };
@@ -1353,13 +1358,14 @@
     _pixelRatio = Param.pixelRatio;
     _config.toolsWidth *= _pixelRatio;
     _config.colorsPickerHeight *= _pixelRatio;
+    _config.maxSpeedFactorLength *= _pixelRatio;
     _offsetLeft = (_config.toolsSide === "left" ? _config.toolsWidth : 0);
     _offsetTop = Param.headerSize;
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
     _initDom();
 
     if (Param.supportTouch === false) {
-      _touchForce = _oldTouchForce = _tool.maxAplha * 0.5;
+      _touchForce = _config.defaultForceTouch;
       _initTouchForce = _updateTouchForce = Utils.emptyFN;
     }
 
