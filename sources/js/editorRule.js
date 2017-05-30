@@ -176,7 +176,7 @@
       }
       _currentRotation = _roundAngleForSteps(180 - _currentRotation);
     }
-    ruleOriginCoord = _ruleCenter.getBoundingClientRect();
+    var ruleOriginCoord = _ruleCenter.getBoundingClientRect();
     _dragCurrentX = round(ruleOriginCoord.left - _startCenterX, 1);
     _dragCurrentY = round(ruleOriginCoord.top - _startCenterY, 1);
     _ruleTransformOrigin = "";
