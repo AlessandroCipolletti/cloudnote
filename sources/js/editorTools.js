@@ -192,7 +192,7 @@
       name: "brush",
       size: 100,
       sizeForceFactor: 0.3,
-      sizeSpeedFactor: 0.2,
+      sizeSpeedFactor: 0.4,
       alphaForceFactor: 0.06,
       alphaSpeedFactor: -0.05,
       degradeAlphaBySize: true,
@@ -206,105 +206,28 @@
         button: true,
         slider: false,
         params: {
-          image: "1.png"
+          image: "brush-1.png"
         }
       }, {
         name: "2",
         button: true,
         slider: false,
         params: {
-          image: "2.png"
+          image: "brush-2.png"
         }
       }, {
         name: "3",
         button: true,
         slider: false,
         params: {
-          image: "3.png"
+          image: "brush-3.png"
         }
       }, {
         name: "4",
         button: true,
         slider: false,
         params: {
-          image: "4.png"
-        }
-      }, {
-        name: "5",
-        button: true,
-        slider: false,
-        params: {
-          image: "5.png"
-        }
-      }, {
-        name: "6",
-        button: true,
-        slider: false,
-        params: {
-          image: "6.png"
-        }
-      }, {
-        name: "7",
-        button: true,
-        slider: false,
-        params: {
-          image: "7.png"
-        }
-      }, {
-        name: "8",
-        button: true,
-        slider: false,
-        params: {
-          image: "8.png"
-        }
-      }, {
-        name: "9",
-        button: true,
-        slider: false,
-        params: {
-          image: "9.png"
-        }
-      }, {
-        name: "10",
-        button: true,
-        slider: false,
-        params: {
-          image: "10.png"
-        }
-      }, {
-        name: "11",
-        button: true,
-        slider: false,
-        params: {
-          image: "11.png"
-        }
-      }, {
-        name: "12",
-        button: true,
-        slider: false,
-        params: {
-          image: "12.png"
-        }
-      }, {
-        name: "13",
-        button: true,
-        slider: false,
-        params: {
-          image: "13.png"
-        }
-      }, {
-        name: "14",
-        button: true,
-        slider: false,
-        params: {
-          image: "14.png"
-        }
-      }, {
-        name: "15",
-        button: true,
-        slider: false,
-        params: {
-          image: "15.png"
+          image: "brush-4.png"
         }
       }]
     },
