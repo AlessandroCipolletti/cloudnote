@@ -86,7 +86,7 @@
   var _touchDown = false, _isNearRule = false, _changedAfterDraft = false, _draftInterval = false;
   var _minX, _minY, _maxX, _maxY, _oldX, _oldY, _oldMidX, _oldMidY, _cursorX, _cursorY;
   var _savedDraw = {}, _currentUser = {}, _currentFakeId = 0, _localDbDrawId = false;
-  var _touchForce = 0, _oldAlpha = 0, _oldSize = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false;
+  var _touchForce = 0, _oldAlpha = 0, _oldSize = 0, _currentTouchSupportForce = false, _lastTouchSupportForce = false, _deviceSupportForce = false, _touchStartSupportForce = false, _touchMoveSupportForce = false;
   var _step = [], _currentStep = 0, _initialStep = 0, _bucketIsWorking = false;
   var _pixelRatio = 1, _offsetLeft = 0, _offsetTop = 0, _canvasWidth = 0, _canvasHeight = 0;
   var _lastRandomColor = "";
@@ -871,10 +871,16 @@
 
   var _initTouchForce = function (touches) {
 
-    var force = (touches[0].force / 2) || 0;
-    _lastTouchSupportForce = _currentTouchSupportForce;
-    _currentTouchSupportForce = !!force;
-    _touchForce = force / 2;
+    if (Param.iphone) {
+      _touchStartSupportForce = _lastTouchSupportForce = _currentTouchSupportForce = false;
+      _touchForce = 0;
+    } else {
+      var force = (touches[0].force / 2) || 0;
+      _lastTouchSupportForce = _currentTouchSupportForce;
+      _currentTouchSupportForce = !!force;
+      _touchStartSupportForce = _touchStartSupportForce || !!force;
+      _touchForce = force / 2;
+    }
 
   };
 
@@ -886,6 +892,7 @@
 
       force = touches[0].force || 0;
       _currentTouchSupportForce = _currentTouchSupportForce || !!force;
+      _touchMoveSupportForce = _touchMoveSupportForce || !!force;
       _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
       if (_currentTouchSupportForce) {
         if (force > 0) {
@@ -900,7 +907,12 @@
   })();
 
   function _checkForceTouch () {
-    return (_deviceSupportForce === false || _currentTouchSupportForce || (!_lastTouchSupportForce && !_currentTouchSupportForce));
+    return (
+      !_deviceSupportForce ||
+      _currentTouchSupportForce ||
+      (!_lastTouchSupportForce && !_currentTouchSupportForce) ||
+      (!_touchStartSupportForce && _touchMoveSupportForce)
+    );
   }
 
   function _coworkingDrawImage (data) {
