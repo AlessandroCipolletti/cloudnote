@@ -39,7 +39,7 @@
     topnavHeight: 50.5
   };
 
-  var _dbName = "drawith_db", _dbVersion = 2, _db = {}, _dbInitialized = false;
+  var _dbName = "drawith_db", _dbVersion = 2, /* _drawingsStore = {}, */ _db = {}, _dbInitialized = false;
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
@@ -80,8 +80,7 @@
   }
 
   function _updateDraw (draw, draft, callback) {
-    // TODO eliminare vecchi file locali con cordova
-    // TODO aggiungere nuovi file locali con cordova
+
     var store = _db.transaction("Drawings", "readwrite").objectStore("Drawings");
     var request = store.get(draw.localDbId);
     request.onsuccess = function (e) {
@@ -89,8 +88,8 @@
       row.state = (draft ? 1 : 2);
       row.draft = draft;
       row.updateTimestamp = new Date().getTime();
-      row.localPathSmall = "";
-      row.localPathBig = draw.base64;
+      row.blobSmall = draw.blobSmall;
+      row.blobBig = draw.blobBig;
       row.minX = draw.minX;
       row.minY = draw.minY;
       row.maxX = draw.maxX;
@@ -106,15 +105,15 @@
   }
 
   function _addDraw (draw, draft, callback) {
-    // TODO aggiungere nuovi file locali con cordova
+
     var now = new Date().getTime();
     var request = _db.transaction("Drawings", "readwrite").objectStore("Drawings").put({
       state: (draft ? 1 : 2),
       draft: draft,
       createTimestamp: now,
       updateTimestamp: now,
-      localPathSmall: "",
-      localPathBig: draw.base64,
+      blobSmall: draw.blobSmall,
+      blobBig: JSON.stringify(draw.blobBig),
       minX: draw.minX,
       minY: draw.minX,
       maxX: draw.minX,
@@ -190,7 +189,6 @@
 
     if (_exportButton.classList.contains("disabled")) return;
     console.log(_getSelectedIds());
-    // TODO
 
   }
 
@@ -255,6 +253,30 @@
 
   }
 
+  function _revokeLocalBlobUrls (draws) {
+
+    for (var i = draws.length; i--; ) {
+      draws[i].localUrlSmall && URL.revokeObjectURL(draws[i].localUrlSmall);
+      draws[i].localUrlBig   && URL.revokeObjectURL(draws[i].localUrlBig);
+    }
+  }
+
+  function _mapDrawBlobToLocalUrl (draws) {
+
+    _revokeLocalBlobUrls(draws);
+    for (var i = draws.length; i--; ) {
+      // draws[i].localUrlSmall = URL.createObjectURL(draws[i].blobSmall);
+      if (draws[i].blobBig) {
+        draws[i].localUrlBig = draws[i].localUrlSmall = URL.createObjectURL(draws[i].blobBig);
+      } else {
+        debugger;
+      }
+
+    }
+    return draws;
+
+  }
+
   function _renderContent (callback) {
 
     _drawingsContainer.innerHTML = "";
@@ -270,8 +292,7 @@
   function _loadContent (force, callback) {
 
     // Get everything in the store;
-    var keyRange = IDBKeyRange.lowerBound(0);
-    var cursorRequest = _db.transaction("Drawings", "readwrite").objectStore("Drawings").openCursor(keyRange, "prev");
+    var cursorRequest = _db.transaction("Drawings", "readwrite").objectStore("Drawings").openCursor(IDBKeyRange.lowerBound(0), "prev");
     var results = [];
     cursorRequest.onsuccess = function (e) {
       var row = e.target.result;
@@ -280,7 +301,7 @@
         row.continue();
       } else {
         if (force || results.length !== _currentLoadedDrawings.length) {
-          _currentLoadedDrawings = results;
+          _currentLoadedDrawings = _mapDrawBlobToLocalUrl(results);
           results = undefined;
           _renderContent(callback);
         } else {
@@ -379,7 +400,6 @@
 
   function _initDb (loadContent) {
 
-    // indexedDB.deleteDatabase(_dbName);
     var dbRequest = indexedDB.open(_dbName, _dbVersion);
     function callback () {
       _dbInitialized = true;
@@ -399,8 +419,9 @@
       console.log("IndexDb: init - onupgradeneeded");
       _db = e.target.result;
       _db.onerror = _onDbError;
-      if (_dbVersion === 1) {
-        _dbJustCreated = true;  // TODO verificare in qualche modo che il db sia stato creato per la prima volta
+      _dbInitialized = true;
+      if (_dbVersion === 1.0) {
+        _dbJustCreated = true;  // TODO verificare in qualche modo se il db è stato davvero creato per la prima volta, non importa a che versione
       }
       if (!_db.objectStoreNames.contains("Drawings")) {
         var drawingsStore = _db.createObjectStore("Drawings", { keyPath: "id", autoIncrement: true });
@@ -408,7 +429,18 @@
         drawingsStore.createIndex("folderId", "folderId", { unique: false });
         drawingsStore.transaction.oncomplete = callback;
       } else {
-        callback();
+        // elimino i vecchi disegni non salvati come blob
+        var cursorRequest = e.target.transaction.objectStore("Drawings").openCursor(IDBKeyRange.lowerBound(0), "prev");
+        cursorRequest.onsuccess = function (e) {
+          var row = e.target.result;
+          if (row) {
+            if (row.localPathBig) {
+              e.target.transaction.objectStore("Drawings").delete(row.id);
+            }
+            row.continue();
+          }
+          callback();
+        };
       }
     };
     dbRequest.onfailure = dbRequest.onerror = _onDbError;
@@ -443,7 +475,7 @@
       _drawingsContainer.addEventListener(Param.eventEnd, _onTouchEnd, true);
       _toolsMaxScroll = _drawingsContainer.scrollHeight - _drawingsContainer.clientHeight;
       // Main.addRotationHandler(_onRotate);
-      _initDb(true);
+       _initDb(true);
 
     });
 

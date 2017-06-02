@@ -190,10 +190,10 @@
     },
     brush: {
       name: "brush",
-      size: 100,
+      size: 70,
       sizeForceFactor: 0.3,
       sizeSpeedFactor: 0.4,
-      alphaForceFactor: 0.06,
+      alphaForceFactor: 0.07,
       alphaSpeedFactor: -0.05,
       degradeAlphaBySize: true,
       shape: "image",
