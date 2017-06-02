@@ -206,28 +206,48 @@
         button: true,
         slider: false,
         params: {
-          image: "brush-1.png"
+          image: "brush-1.png",
+          size: 70,
+          sizeForceFactor: 0.8,
+          sizeSpeedFactor: 2,
+          alphaForceFactor: 0.06,
+          alphaSpeedFactor: -0.08
         }
       }, {
         name: "2",
         button: true,
         slider: false,
         params: {
-          image: "brush-2.png"
+          image: "brush-2.png",
+          size: 70,
+          sizeForceFactor: 0.3,
+          sizeSpeedFactor: 0.4,
+          alphaForceFactor: 0.07,
+          alphaSpeedFactor: -0.05
         }
       }, {
         name: "3",
         button: true,
         slider: false,
         params: {
-          image: "brush-3.png"
+          image: "brush-3.png",
+          size: 70,
+          sizeForceFactor: 0.3,
+          sizeSpeedFactor: 0.4,
+          alphaForceFactor: 0.07,
+          alphaSpeedFactor: -0.05
         }
       }, {
         name: "4",
         button: true,
         slider: false,
         params: {
-          image: "brush-4.png"
+          image: "brush-4.png",
+          size: 80,
+          sizeForceFactor: 0.5,
+          sizeSpeedFactor: 0.5,
+          alphaForceFactor: 0.1,
+          alphaSpeedFactor: -0.05
         }
       }]
     },
