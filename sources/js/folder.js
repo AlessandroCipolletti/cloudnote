@@ -39,7 +39,7 @@
     topnavHeight: 50.5
   };
 
-  var _dbName = "drawith_db", _dbVersion = 2, _db = {}, _dbInitialized = false;
+  var _dbName = "drawith_db", _dbVersion = 1, _db = {}, _dbInitialized = false;
   var _container = {}, _drawingsContainer = {}, _selectButton = {}, _doneButton = {}, _exportButton = {}, _deleteButton = {};
   var _toolsButtons = [];
   var _dragged = false, _currentScroll = 0, _toolsMaxScroll = 0, _modeSelection = false, _selectedDrawings = [];
@@ -116,9 +116,9 @@
       localPathSmall: "",
       localPathBig: draw.base64,
       minX: draw.minX,
-      minY: draw.minX,
-      maxX: draw.minX,
-      maxY: draw.minX,
+      minY: draw.minY,
+      maxX: draw.maxX,
+      maxY: draw.maxY,
       width: draw.w,
       height: draw.h,
       canvasWidth: draw.canvasWidth,
@@ -379,7 +379,7 @@
 
   function _initDb (loadContent) {
 
-    // indexedDB.deleteDatabase(_dbName);
+    indexedDB.deleteDatabase(_dbName);
     var dbRequest = indexedDB.open(_dbName, _dbVersion);
     function callback () {
       _dbInitialized = true;
