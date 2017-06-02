@@ -379,7 +379,7 @@
 
   function _initDb (loadContent) {
 
-    indexedDB.deleteDatabase(_dbName);
+    // indexedDB.deleteDatabase(_dbName);
     var dbRequest = indexedDB.open(_dbName, _dbVersion);
     function callback () {
       _dbInitialized = true;
