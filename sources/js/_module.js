@@ -9,6 +9,7 @@
   var Utils = {};
   var Main = {};
 
+  var _polyfills = [];
   var _config = {
 
   };
@@ -39,7 +40,7 @@
     Utils = app.Utils;
     Main = app.Main;
     _config = Utils.setConfig(params, _config);
-    _initDom();
+    Utils.initWithPolyfills(_polyfills, _initDom);
 
   }
 

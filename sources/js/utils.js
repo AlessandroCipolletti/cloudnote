@@ -439,6 +439,38 @@
 
   };
 
+  Utils.initWithPolyfills = function (polyfills, callbackInit) {
+
+    if (polyfills.lenght) {
+      var promises = [];
+      var js;
+      for (var i = polyfills.length; i--; ) {
+        promises.push(
+          new Promise (function (resolve, reject) {
+            if (!polyfills[i].test) {
+              js = document.createElement("script");
+              js.src = "polyfill/" + polyfills[i].file;
+              js.onload = function() {
+                resolve(true);
+              };
+              js.onerror = function() {
+                console.log("Failed to load script polyfill " + polyfills[i].name);
+                resolve(false);
+              };
+              document.head.appendChild(js);
+            } else {
+              resolve(true);
+            }
+          })
+        );
+      }
+      Promise.all(promises).then(callbackInit);
+    } else {
+      callbackInit();
+    }
+
+  };
+
   function _initDom () {
 
     _overlaySpinner = Utils.createDom("drawith__overlay-spinner", "displayNone", "fadeOut");
