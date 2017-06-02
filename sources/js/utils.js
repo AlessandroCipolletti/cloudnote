@@ -441,7 +441,7 @@
 
   Utils.initWithPolyfills = function (polyfills, callbackInit) {
 
-    if (polyfills.lenght) {
+    if (polyfills.length) {
       var promises = [];
       var js;
       for (var i = polyfills.length; i--; ) {
