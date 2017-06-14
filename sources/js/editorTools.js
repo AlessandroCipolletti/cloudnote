@@ -211,7 +211,7 @@
           sizeForceFactor: 0.8,
           sizeSpeedFactor: 2,
           alphaForceFactor: 0.06,
-          alphaSpeedFactor: -0.08
+          alphaSpeedFactor: -0.05
         }
       }, {
         name: "2",
@@ -243,11 +243,23 @@
         slider: false,
         params: {
           image: "brush-4.png",
-          size: 80,
-          sizeForceFactor: 0.5,
+          size: 40,
+          sizeForceFactor: 1,
           sizeSpeedFactor: 0.5,
-          alphaForceFactor: 0.1,
-          alphaSpeedFactor: -0.05
+          alphaForceFactor: 0.2,
+          alphaSpeedFactor: -0.1
+        }
+      }, {
+        name: "5",
+        button: true,
+        slider: false,
+        params: {
+          image: "brush-5.png",
+          size: 30,
+          sizeForceFactor: 0.5,
+          sizeSpeedFactor: 0.4,
+          alphaForceFactor: 0.3,
+          alphaSpeedFactor: -0.15
         }
       }]
     },
