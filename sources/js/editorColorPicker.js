@@ -135,4 +135,4 @@
     selectInitialColor: selectInitialColor
   });
 
-})(drawith);
+})(APP);

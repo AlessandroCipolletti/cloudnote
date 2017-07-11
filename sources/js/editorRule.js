@@ -521,4 +521,4 @@
     getCoordsNearRule: getCoordsNearRule,
   });
 
-})(drawith);
+})(APP);

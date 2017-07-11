@@ -111,18 +111,7 @@
     cursor: false
   };
 
-  function random (n, float) {
-    if (float) {
-      return MATH.random() * n;
-    } else {
-      return MATH.random() * n | 0;
-    }
-  }
-
-  function round (n, d) {
-    var m = d ? MATH.pow(10, d) : 1;
-    return MATH.round(n * m) / m;
-  }
+  var _random, _round;
 
   function _setCoworkingId (id) {
 
@@ -436,10 +425,10 @@
       //   var Rcanvas = _canvasWidth / _canvasHeight;
       //   if ((Rimage > 1 && Rcanvas > 1 && Rimage >= Rcanvas) || (Rimage <= 1 && Rcanvas <= 1 && Rimage >= Rcanvas) || (Rimage >= 1 && Rcanvas <= 1)) {
       //     maxX = _canvasWidth;
-      //     maxY = round(maxX / Rimage);
+      //     maxY = _round(maxX / Rimage);
       //   } else {
       //     maxY = _canvasHeight;
-      //     maxX = round(maxY * Rimage);
+      //     maxX = _round(maxY * Rimage);
       //   }
       //   _context.drawImage(image, 0, 0, maxX, maxY);
       //   _checkCoord(0, 0);
@@ -448,7 +437,7 @@
       //   Utils.fadeInElements(_container, _onShow);
       //   _setDraftInterval(true);
       // };
-      // image.src = "drawings/" + (random(24) + 1) + ".jpg";
+      // image.src = "drawings/" + (_random(24) + 1) + ".jpg";
       // // image.src = "drawings/11.jpg";
 
       _localDbDrawId = false;
@@ -661,6 +650,7 @@
 
     return function (context, x, y, fillcolor) {
 
+      var now = new Date().getTime();
       _bucketIsWorking = true;
       if (fillcolor[0] === "#") {
         fillcolor = Utils.hexToRgb(fillcolor.substring(1));
@@ -673,8 +663,7 @@
       data = image.data;
       length = data.length;
     	Q = [];
-    	i = (MATH.floor(x) + MATH.floor(y) * _canvasWidth) * 4;
-    	e = w = i;
+    	e = w = i = (MATH.floor(x) + MATH.floor(y) * _canvasWidth) * 4;
       w2 = _canvasWidth * 4;
     	targetcolor = [data[i],data[i+1],data[i+2],data[i+3]];
 
@@ -696,6 +685,7 @@
     	}
 
       context.putImageData(image, 0, 0);
+      alert(new Date().getTime() - now);
       _bucketIsWorking = false;
 
     };
@@ -721,14 +711,14 @@
     context.fillStyle = color;
     var angle = 0, radius = 0, w = 0;
     for (var i = size * size; i--; ) {
-      angle = random(PI2, true);
-      radius = random(size) + 1;
-      w = random(2) + 1;
+      angle = _random(PI2, true);
+      radius = _random(size) + 1;
+      w = _random(2) + 1;
       context.fillRect(
-        round(x + radius * MATH.cos(angle), 1),
-        round(y + radius * MATH.sin(angle), 1),
+        _round(x + radius * MATH.cos(angle), 1),
+        _round(y + radius * MATH.sin(angle), 1),
         w,
-        (w === 2 ? 1 : random(2) + 1)
+        (w === 2 ? 1 : _random(2) + 1)
       );
     }
 
@@ -741,8 +731,8 @@
     var s2 = size / 2;
     for (var i = size * (size + 1); i--; ) {
       context.fillRect(
-        round(x + random(size) - s2, 1),
-        round(y + random(size) - s2, 1),
+        _round(x + _random(size) - s2, 1),
+        _round(y + _random(size) - s2, 1),
         1,
         1
       );
@@ -859,11 +849,11 @@
   function _getRandomColor (alpha) {
     //function (a,b,c){return"#"+((256+a<<8|b)<<8|c).toString(16).slice(1)};
     if (alpha === false || typeof(alpha) === "undefined") {
-      return "rgb(" + random(256) + ", " + random(256) + ", " + random(256) + ")";
+      return "rgb(" + _random(256) + ", " + _random(256) + ", " + _random(256) + ")";
     } else if (alpha === true) {
-      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", 0.7)";
+      return "rgba(" + _random(256) + ", " + _random(256) + ", " + _random(256) + ", 0.7)";
     } else if (typeof(alpha) === "number") {
-      return "rgba(" + random(256) + ", " + random(256) + ", " + random(256) + ", " + alpha + ")";
+      return "rgba(" + _random(256) + ", " + _random(256) + ", " + _random(256) + ", " + alpha + ")";
     }
 
   }
@@ -895,7 +885,7 @@
       _deviceSupportForce = _deviceSupportForce || _currentTouchSupportForce;
       if (_currentTouchSupportForce) {
         if (force > 0) {
-          _touchForce = MATH.max(round(force, 3), 0.001);
+          _touchForce = MATH.max(_round(force, 3), 0.001);
         }
       } else {
         _touchForce = _touchForce || _config.defaultForceTouch;
@@ -1042,8 +1032,8 @@
       _toolCursor.style.cssText = style;
       _toolCursor.classList.remove("displayNone");
     }
-    var size = _oldSize = _tool.size + round(_tool.size * _tool.sizeForceFactor * _touchForce, 1);
-    var alpha = _oldAlpha = MATH.min(round(_touchForce * _tool.alphaForceFactor, 3), 1);
+    var size = _oldSize = _tool.size + _round(_tool.size * _tool.sizeForceFactor * _touchForce, 1);
+    var alpha = _oldAlpha = MATH.min(_round(_touchForce * _tool.alphaForceFactor, 3), 1);
     var params = {
       type: "start",
       x: _cursorX,
@@ -1106,7 +1096,7 @@
       midX = _oldX + _cursorX >> 1;
       midY = _oldY + _cursorY >> 1;
       distance = Utils.distance(_oldMidX, _oldMidY, midX, midY);
-      size = round(
+      size = _round(
         _tool.size +
         (_tool.size * _tool.sizeForceFactor * _touchForce) +
         (_tool.size * _tool.sizeSpeedFactor * MATH.min(_config.maxSpeedFactorLength, distance) / _config.maxSpeedFactorLength)
@@ -1114,7 +1104,7 @@
       if (size < 25 && distance < _config.minPxToDraw) {
         return;
       }
-      alpha = MATH.min(round(
+      alpha = MATH.min(_round(
         (_touchForce * _tool.alphaForceFactor) +
         (_touchForce * _tool.alphaSpeedFactor * MATH.min(_config.maxSpeedFactorLength, distance) / _config.maxSpeedFactorLength)
       , 3), 1) / (_tool.degradeAlphaBySize ? (size / _tool.size) : 1);
@@ -1124,7 +1114,7 @@
         _toolCursor.style.cssText = style;
       }
       curveLength = quadraticBezierLength({x: _oldMidX, y: _oldMidY}, {x: _oldX, y: _oldY}, {x: midX, y: midY});
-      delta = _tool.shape === "image" ? round((curveLength || distance) / 2, 2) : round((curveLength || distance) / (size - 1), 2);
+      delta = _tool.shape === "image" ? _round((curveLength || distance) / 2, 2) : _round((curveLength || distance) / (size - 1), 2);
       imageRotation = _tool.rotation ? -Utils.angleRad(_oldX, _oldY, _cursorX, _cursorY) : 0;
       params = {
         type: "move",
@@ -1372,6 +1362,8 @@
     _offsetLeft = (_config.toolsSide === "left" ? _config.toolsWidth : 0);
     _offsetTop = Param.headerSize;
     _minX = _minY = _maxX = _maxY = _oldX = _oldY = _oldMidX = _oldMidY = -1;
+    _random = Utils.random;
+    _round = Utils.round;
     _initDom();
 
     if (Param.supportTouch === false) {
@@ -1401,4 +1393,4 @@
     setLocalDbDrawId: setLocalDbDrawId
   });
 
-})(drawith);
+})(APP);

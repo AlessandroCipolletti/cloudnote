@@ -242,4 +242,4 @@
     panel: panel
   });
 
-})(drawith);
+})(APP);

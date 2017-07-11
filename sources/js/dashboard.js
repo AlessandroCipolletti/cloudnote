@@ -658,4 +658,4 @@
     onSocketMessage: onSocketMessage
   });
 
-})(drawith);
+})(APP);

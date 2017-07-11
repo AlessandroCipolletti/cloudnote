@@ -15,12 +15,33 @@
   var PI = MATH.PI;
   var PI2 = PI / 2;
 
+  Utils.round = function (n, d) {
+    var m = d ? MATH.pow(10, d) : 1;
+    return MATH.round(n * m) / m;
+  };
+
+  Utils.random = function (n, float) {
+    if (float) {
+      return MATH.random() * n;
+    } else {
+      return MATH.random() * n | 0;
+    }
+  };
+
   Utils.emptyFN = function () {};
 
   Utils.preventDefault = function (e) {
 
     e.preventDefault();
     e.stopPropagation();
+
+  };
+
+  Utils.preventAllDefault = function (el) {
+
+    el.addEventListener(Param.eventStart, Utils.preventDefault);
+    el.addEventListener(Param.eventMove, Utils.preventDefault);
+    el.addEventListener(Param.eventEnd, Utils.preventDefault);
 
   };
 
@@ -168,7 +189,7 @@
 
   function _fadeInEl (el, callback) {
 
-    if (el) {
+    if (el && el.classList.contains("fadeOut")) {
       el.classList.remove("displayNone");
       requestAnimationFrame(_doFadeIn.bind({}, el, callback));
     }
@@ -186,7 +207,7 @@
 
   function _fadeOutEl (el, callback) {
 
-    if (el) {
+    if (el && el.classList.contains("fadeIn")) {
       el.classList.add("fadeOut");
       el.classList.remove("fadeIn");
       setTimeout(_doFadeOut.bind({}, el, callback), 400);
@@ -420,15 +441,15 @@
 
   Utils.filterTouchesByTarget = function (e, targets) {
 
-    if (!(targets instanceof(Array))) {
+    if (targets && !(targets instanceof(Array))) {
       targets = [targets];
     }
     if (e.touches) {
-      return  Array.prototype.filter.call(e.touches, function (touch) {
-        return targets.indexOf(touch.target) >= 0;
+      return Array.prototype.filter.call(e.touches, function (touch) {
+        return !targets || targets.indexOf(touch.target) >= 0;
       });
     }
-    if (targets.indexOf(e.target) >= 0) {
+    if (!targets || targets.indexOf(e.target) >= 0) {
       return [{
         clientX: e.clientX,
         clientY: e.clientY,
@@ -505,4 +526,4 @@
 
   app.module("Utils", Utils);
 
-})(drawith);
+})(APP);

@@ -142,4 +142,4 @@
     hide: hide
   });
 
-})(drawith);
+})(APP);

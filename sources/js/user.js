@@ -203,4 +203,4 @@
     getUserInfo: getUserInfo
   });
 
-})(drawith);
+})(APP);

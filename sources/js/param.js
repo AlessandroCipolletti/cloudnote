@@ -38,12 +38,20 @@
     };
 
     // TODO .android, .isPhone, .isTablet
+    // alert(navigator.userAgent)
     param.android = false;
     param.ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
     param.iosVersion = parseFloat(('' + (/CPU.*OS ([0-9_]{1,5})|(CPU like).*AppleWebKit.*Mobile/i.exec(navigator.userAgent) || [0,''])[1]).replace('undefined', '3_2').replace('_', '.').replace('_', '')) || false;
-    param.ipad = /iPad/.test(navigator.userAgent);
+    // fix cordova
+    // param.ipad = /iPad/.test(navigator.userAgent);
+    // param.iphone = param.ios && !param.ipad;
+    param.iphone = param.ios = /iPhone/.test(navigator.userAgent);
+    param.ipad = param.iphone && Math.max(window.innerWidth, window.innerHeight) > 800;
+    if (param.ipad) {
+      param.iphone = false;
+    }
+    // end fix cordova
     param.isTablet = param.ipad;
-    param.iphone = param.ios && !param.ipad;
     param.isPhone = param.iphone;
     param.isMobile = (navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)) instanceof Array;
     param.isDesktop = !param.isMobile;
@@ -76,4 +84,4 @@
 
   app.module("Param", param);
 
-})(drawith);
+})(APP);

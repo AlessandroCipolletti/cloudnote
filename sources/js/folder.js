@@ -471,4 +471,4 @@
     deleteDraft: deleteDraft
   });
 
-})(drawith);
+})(APP);

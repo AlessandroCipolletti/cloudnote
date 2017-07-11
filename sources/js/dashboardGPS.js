@@ -208,4 +208,4 @@
     coordGps2px: coordGps2px
   });
 
-})(drawith);
+})(APP);

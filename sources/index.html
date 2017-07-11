@@ -40,49 +40,8 @@
     <title>Drawith.me</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/header.css">
-    <script type="text/javascript">
 
-      "use strict";
-      var drawith = {};
-      drawith.NAME = "Drawith.me";
-      drawith.VERSION = "1.0B";
-      drawith.module = function (name, module) {
-
-        var modules = name.split(".");
-        var parent = drawith;
-        var i = 0, l = 0;
-
-        if (modules[0] === parent.NAME) {
-          modules = modules.splice(1);
-        }
-
-        for (i = 0, l = modules.length; i < l; i++) {
-          if (i === l - 1) {
-            if (typeof(parent[modules[i]]) === "undefined") {
-              parent[modules[i]] = module;
-            } else {
-              for (var attr in module) {
-                parent[modules[i]][attr] = module[attr];
-              }
-            }
-          } else if (typeof(parent[modules[i]]) === "undefined") {
-            parent[modules[i]] = {};
-          }
-          parent = parent[modules[i]];
-        }
-
-      };
-
-      document.onreadystatechange = function () {
-        if (document.readyState === "complete") {
-          drawith.Main.init({
-            testDebug: true,
-            version: drawith.VERSION
-          });
-        }
-      };
-
-    </script>
+    <script src="lib/cippo.js"></script>
     <!--
       <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     -->

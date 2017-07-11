@@ -187,4 +187,4 @@
     addRotationHandler: addRotationHandler
   });
 
-})(drawith);
+})(APP);

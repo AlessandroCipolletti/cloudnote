@@ -42,8 +42,7 @@
     var logo = document.createElement("div");
     logo.classList.add("drawith-header__logo");
     _container.appendChild(logo);
-    _container.addEventListener(Param.eventStart, Utils.preventDefault);
-    _container.addEventListener(Param.eventMove, Utils.preventDefault);
+    Utils.preventAllDefault(_container);
     Param.container.appendChild(_container);
     // Main.addRotationHandler(_onRotate);
 
@@ -57,7 +56,7 @@
     Messages = app.Messages;
     _config = Utils.setConfig(params, _config);
     _initDom();
-    Param.headerSize = 50.5 * Param.pixelRatio;
+    Param.headerSize = 65.5 * Param.pixelRatio;
 
     Main.loadTemplate("panel/info", {
       version: Param.appVersion
@@ -87,4 +86,4 @@
     addButton: addButton
   });
 
-})(drawith);
+})(APP);

@@ -15,7 +15,7 @@
   display: block;
   padding: 1.3rem 5.5rem 1rem 5.5rem;
   position: absolute;
-  top: 5.05rem;
+  top: 6.55rem;
   left: 50%;
   background-repeat: no-repeat;
   background-position: 1.5rem 50%;
@@ -56,7 +56,7 @@
   border-radius: 0 0 0.7rem 0.7rem;
 }
 .drawith__MESSAGE-MANDATORY-OPEN.drawith__MESSAGE-OPEN .drawith-messages__container {
-  transform: translateX(-50%) translateY(7rem);
+  transform: translateX(-50%) translateY(8.5rem);
   z-index: 1000;
   border-radius: 0.5rem;
 }
