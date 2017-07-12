@@ -182,7 +182,7 @@
     el.classList.add("fadeIn");
     el.classList.remove("fadeOut");
     if (callback) {
-      callback();
+      requestAnimationFrame(callback)
     }
 
   }
@@ -200,7 +200,7 @@
 
     el.classList.add("displayNone");
     if (callback) {
-      callback();
+      requestAnimationFrame(callback)
     }
 
   }
