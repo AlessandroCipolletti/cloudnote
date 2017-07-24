@@ -154,7 +154,7 @@
       if (_config.watchPosition) {
         _startWatchPosition(callback, error);
       } else if (force || !_positionIsValid()) {
-        _getCurrentPosition(callback, error, _geoOptions);
+        _getCurrentPosition(callback, error);
       } else {
         callback(_lastPosition);
       }

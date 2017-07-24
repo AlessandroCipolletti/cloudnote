@@ -611,18 +611,18 @@
     	if (data[i + 3] === 0 && fillcolor.a > 0) return (targetColor[3] === 0);  //surface is invisible and fill is visible
 
       // TODO test di performance commentando questi due if
-    	if (
-    		MATH.abs(targetColor[3] - fillcolor.a) <= tolerance &&
-    		MATH.abs(targetColor[0] - fillcolor.r) <= tolerance &&
-    		MATH.abs(targetColor[1] - fillcolor.g) <= tolerance &&
-    		MATH.abs(targetColor[2] - fillcolor.b) <= tolerance
-    	) return false; //target is same as fill
-    	if (
-    		(targetColor[3] === data[i + 3]) &&
-    		(targetColor[0] === data[i]) &&
-    		(targetColor[1] === data[i + 1]) &&
-    		(targetColor[2] === data[i + 2])
-    	) return true; //target matches surface
+    	// if (
+    	// 	MATH.abs(targetColor[3] - fillcolor.a) <= tolerance &&
+    	// 	MATH.abs(targetColor[0] - fillcolor.r) <= tolerance &&
+    	// 	MATH.abs(targetColor[1] - fillcolor.g) <= tolerance &&
+    	// 	MATH.abs(targetColor[2] - fillcolor.b) <= tolerance
+    	// ) return false; //target is same as fill
+    	// if (
+    	// 	(targetColor[3] === data[i + 3]) &&
+    	// 	(targetColor[0] === data[i]) &&
+    	// 	(targetColor[1] === data[i + 1]) &&
+    	// 	(targetColor[2] === data[i + 2])
+    	// ) return true; //target matches surface
 
     	if (
     		MATH.abs(targetColor[3] - data[i + 3]) <= (255 - tolerance) &&
